@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+    form(action="", method="post").register_book
+
+        .col.mr-auto 
+            div.d-flex.flex-row
+                input(type="text", name="name", placeholder="Imię", required).form-control.mr-2.d-inline-flex
+                input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ml-2.d-inline-flex
+            input(type="email", name="email", placeholder="E-Mail" required).form-control.mt-2
+            input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control.mt-2
+                                        //- div(style="width: 50%; height: 100vh; background-color: black")
+            div.d-flex.flex-row.mt-5
+                img(style="width: 200px").bookCover
+                .col.m-0.p-0.pl-3
+                    input(type="text", name="isbn", placeholder="ISBN" required).form-control.mt-2
+                    input(type="text", name="title", placeholder="Nazwa Książki" required).form-control.mt-2
+                    input(type="text", name="publisher", placeholder="Wydawca").form-control.mt-2
+                    input(type="text", name="authors", placeholder="Autorzy").form-control.mt-2
+                    input(type="text", name="pubDate", placeholder="Data Publikacji").form-control.mt-2
+                    //- i(type="text", name="msrp", placeholder="ISBN").form-control
+            div.d-flex.flex-row.mt-5
+                input(type="text", name="cost", placeholder="Cena", required).form-control.mr-2.d-inline-flex
+                input(type="text", name="commission", placeholder="Prowizja").form-control.ml-2.d-inline-flex
+
+            .col.mt-5
+                center
+                    input(type="submit", action="submit", value="Wyślij").btn.btn-primary
+

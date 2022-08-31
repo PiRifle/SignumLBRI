@@ -1,0 +1,79 @@
+extends ../layout
+
+block content
+    |<div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    |  <div class="modal-dialog" role="document">
+    |    <div class="modal-content">
+    |      <div class="modal-header">
+    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    |          <span aria-hidden="true">&times;</span>
+    |        </button>
+    |      </div>
+    |      <div class="modal-body">
+    |        ...
+    |      </div>
+    |      <div class="modal-footer">
+    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+    |        <button type="button" class="btn btn-success">Sprzedaj</button>
+    |      </div>
+    |    </div>
+    |  </div>
+    |</div>
+    |<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    |  <div class="modal-dialog" role="document">
+    |    <div class="modal-content">
+    |      <div class="modal-header">
+    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    |          <span aria-hidden="true">&times;</span>
+    |        </button>
+    |      </div>
+    |      <div class="modal-body">
+    |        ...
+    |      </div>
+    |      <div class="modal-footer">
+    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+    |        <button type="button" class="btn btn-danger">Usuń</button>
+    |      </div>
+    |    </div>
+    |  </div>
+    |</div>
+
+    .col.mr-auto
+        h2 Rejestr Książek 
+        ul
+            each item in bookListings
+                div.border.m-3.p-4
+                    div.d-flex.flex-row
+                        div
+                            img(style="width: 120px", src=item.book.image)
+                        .col.m-0.p-0.pl-3
+                            .d-flex.flex-row 
+                                h5.mr-1= item.bookOwner.name
+                                h5= item.bookOwner.surname 
+                            h5= item.bookOwner.phone
+                            div= item.bookOwner.email
+                            br
+                            h5= (item.commission+item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                        .col.m-0.p-0.pl-3
+                            h6 
+                                b= item.book.title
+                            div.font-weight-light= item.book.authors.join(", ")
+                            div.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                            div ISBN: #{item._id}
+                        .col-sm
+                            div.d-flex.flex-col.justify-content-center
+                                div.d-flex.flex-col
+                                    div.col
+                                        center
+                                            a(href=`/book/${item._id}`).btn.btn-primary.mt-2 Zarządzaj
+                                        if edit
+                                            center
+                                                button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
+                                            center
+                                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.mt-2 Usuń
+                       
+
+                                
+                            
