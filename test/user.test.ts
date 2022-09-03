@@ -17,9 +17,9 @@ describe("GET /forgot", () => {
     });
 });
 
-describe("GET /signup", () => {
+describe("GET /adduser", () => {
     it("should return 200 OK", (done) => {
-        request(app).get("/signup")
+        request(app).get("/adduser")
             .expect(200)
             .end(() => done());
     });

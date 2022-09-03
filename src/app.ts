@@ -66,7 +66,7 @@ app.use((req, res, next) => {
     // After successful login, redirect back to the intended page
     if (!req.user &&
     req.path !== "/login" &&
-    req.path !== "/signup" &&
+    req.path !== "/adduser" &&
     !req.path.match(/^\/auth/) &&
     !req.path.match(/\./)) {
         req.session.returnTo = req.path;
@@ -86,16 +86,16 @@ app.use(
  */
 // app.get("/contact", contactController.getContact);
 // app.post("/contact", contactController.postContact);
-app.get("/", homeController.index);
+app.get("/",passportConfig.isAuthenticated, homeController.index);
 app.get("/login", userController.getLogin);
 app.post("/login", userController.postLogin);
-app.get("/logout", userController.logout);
+app.get("/logout",passportConfig.isAuthenticated, userController.logout);
 app.get("/forgot", userController.getForgot);
 app.post("/forgot", userController.postForgot);
 app.get("/reset/:token", userController.getReset);
 app.post("/reset/:token", userController.postReset);
-app.get("/signup", userController.getSignup);
-app.post("/signup", userController.postSignup);
+app.get("/adduser", userController.getSignup);
+app.post("/adduser", userController.postSignup);
 app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
 app.post("/account/profile", passportConfig.isAuthenticated, userController.postUpdateProfile);
 app.post("/account/password", passportConfig.isAuthenticated, userController.postUpdatePassword);
@@ -116,14 +116,21 @@ app.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRe
     res.redirect(req.session.returnTo || "/");
 });
 
-app.get("/find", bookController.getFindListing)
-app.get("/book/registry", bookController.getBookRegistry);
-app.get("/book/list", bookController.getBooks);
-app.get("/book/sell", bookController.getSellBook)
-app.post("/book/sell", bookController.postSellBook)
-app.get("/book/fromisbn", bookController.getFillBookData)
-app.get("/book/:itemID", bookController.editBook)
-app.post("/book/:itemID/sell", bookController.sellBook);
+app.get("/find", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.getFindListing)
+app.get("/book/registry", passportConfig.isAuthenticated, bookController.getBookRegistry);
+app.get("/book/list", passportConfig.isAuthenticated, bookController.getBooks);
+app.get("/book/sell", passportConfig.isAuthenticated, bookController.getSellBook)
+app.post("/book/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.postSellBook)
+app.get("/book/fromisbn", passportConfig.isAuthenticated, bookController.getFillBookData)
+app.get("/book/:itemID", passportConfig.isAuthenticated, bookController.editBook)
+app.post("/book/:itemID/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.sellBook);
 
 
+const applicationRoutes = express.Router()
+applicationRoutes.post("/login", userController.postLogin)
+applicationRoutes.get("/list", passportConfig.isAuthenticated, bookController.getBooks)
+applicationRoutes.post("/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.postSellBook)
+applicationRoutes.post("/:itemID/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.sellBook);
+    
+app.use("/app", applicationRoutes)
 export default app;

@@ -8,6 +8,14 @@ block content
   form.form-horizontal(action='/account/profile', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     .form-group.row.justify-content-md-center
+      h5.my-auto.col-sm-3.col-form-label.text-right.font-weight-bold Role
+      .col-sm-7.my-auto
+        p.my-auto=user.role
+      //- select.form-control(name='role', id='role', placeholder='Choose Role', required)
+      //-       option seller 
+      //-       option viewer
+      //-       option admin 
+    .form-group.row.justify-content-md-center
       label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
       .col-sm-7
         input.form-control(type='email', name='email', id='email', value=user.email)

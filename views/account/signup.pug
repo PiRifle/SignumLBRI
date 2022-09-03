@@ -2,7 +2,13 @@ extends ../layout
 
 block content
   .page-header
-    h3 Sign up
+    if setup
+      h3 Witaj!
+      p Stwórz konto administratora aby móc korzystać z programu!
+    else 
+      h3 Dodaj Konto!
+      p Stwórz nowe konto użytkownika i rozszerz swój zespół :)
+
     hr
   form.form-horizontal(id='signup-form', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
@@ -18,6 +24,14 @@ block content
       label.col-sm-3.col-form-label.text-right.font-weight-bold(for='confirmPassword') Confirm Password
       .col-sm-7
         input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password', required)
+    .form-group.row.justify-content-md-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='role') Role
+      .col-sm-7
+        select.form-control(name='role', id='role', placeholder='Choose Role', required)
+          if !setup
+            option seller 
+            option viewer
+          option admin 
     .form-group.row.justify-content-md-center
       .offset-sm-3.col-sm-7
         button.btn.btn-success(type='submit')

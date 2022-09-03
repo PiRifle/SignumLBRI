@@ -6,7 +6,7 @@ import { check, validationResult } from "express-validator";
 import { BookOwner } from "../models/BookOwner";
 import { BookOwnerDocument } from "../models/BookOwner";
 import { BookListing, BookListingDocument } from "../models/BookListing";
-import { json } from "body-parser";
+import { UserDocument } from "../models/User";
 export async function getFillBookData(req: Request, res: Response) {
   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
   const errors = validationResult(req);
@@ -97,13 +97,24 @@ export async function postSellBook(req: Request, res: Response) {
             book: book.id,
             bookOwner: user.id,
             commission: Number(sellingData.commission),
-            cost: Number(sellingData.cost)
+            cost: Number(sellingData.cost),
+            putOnSaleBy: req.user
           })
-          bookListing.save()
-          req.flash("success", {
-            msg: `Dodano zlecenie do bazy!`,
-          });
-          res.redirect("/")
+          bookListing.save((err)=>{
+            if(err){
+                console.log(err)
+                req.flash("errors", {
+                    msg: err
+                });
+                return res.redirect("/")
+            }else{ 
+                req.flash("success", {
+                    msg: `Dodano zlecenie do bazy!`,
+                  });
+                return res.redirect("/")
+            }
+          })
+
         }
       );
     }
@@ -146,7 +157,9 @@ export async function editBook(
     "-__v -createdAt -updatedAt"
   )
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
-    .populate("book", "-_id -__v -createdAt -updatedAt");
+    .populate("book", "-_id -__v -createdAt -updatedAt")
+    .populate("putOnSaleBy")
+    .populate("soldBy")
     res.render("book/editBook", { item: bookListings, edit: true });
 }
 
@@ -155,5 +168,32 @@ export async function sellBook(
   res: Response,
   next: NextFunction
 ) {
+    await check("itemID").isLength({ min: 13 }).isNumeric().run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        req.flash("errors", errors.array());
+        return res.redirect("/");
+    }
+    var bookListings = await BookListing.findOne(
+      { _id: req.params.itemID },
+      "-__v -createdAt -updatedAt"
+    )
+      .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
+      .populate("book", "-_id -__v -createdAt -updatedAt");
+    bookListings.sold = true
+    bookListings.soldBy = (req.user as UserDocument)
+    bookListings.save((err)=>{
+        if(err){
+            console.log(err)
+            req.flash("errors", {
+                msg: err
+            });
+            return res.redirect("/book/"+req.params.itemID);
+        }else{ 
+            req.flash("success", {msg:"Udało się! Sprzedanio książkę!"});
+            return res.redirect("/book/"+req.params.itemID);
+        }
+    })
+    
 
 }

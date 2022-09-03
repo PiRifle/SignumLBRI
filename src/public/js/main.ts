@@ -6,11 +6,13 @@ $(document).ready(function() {
         // $("input[name='itemID']").blur();
         return true;
       }else{
-        event.preventDefault();
-        $("input[name='isbn']").blur();
+        if($("input[name='isbn']").is(":focus")){
+          event.preventDefault();
+          $("input[name='isbn']").blur();
+          return false
+        }
+        return true
       };
-      
-      return false;
     }
   });
   // Place JavaScript code here...
@@ -40,11 +42,8 @@ async function castData(){
   }
 }
 
-function deleteBook(){
-  let url = new URL(location.href)
-  url.
-  fetch()
-}
-function sellBook(){
-
-}
+// function deleteBook(){
+// }
+// function sellBook(){
+//   fetch(location.href+"/sell", {method: "POST"})
+// }

@@ -1,6 +1,5 @@
 import errorHandler from "errorhandler";
 import app from "./app";
-import { fetchBook } from "./util/findBook";
 /**
  * Error Handler. Provides full stack
  */

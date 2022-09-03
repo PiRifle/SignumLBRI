@@ -126,6 +126,14 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     res.redirect("/login");
 };
 
+export const isSeller = (req: Request, res: Response, next: NextFunction) => {
+    const user = (req.user as UserDocument)
+    if (user.role == "admin" || user.role == "seller") {
+        return next();
+        // req.user()
+    }
+    res.redirect("/login");
+};
 /**
  * Authorization Required middleware.
  */

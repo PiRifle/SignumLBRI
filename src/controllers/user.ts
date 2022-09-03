@@ -9,7 +9,8 @@ import { WriteError } from "mongodb";
 import { body, check, validationResult } from "express-validator";
 import "../config/passport";
 import { CallbackError, NativeError } from "mongoose";
-
+import { roles } from "../config/roles";
+import { userInfo } from "os";
 /**
  * Login page.
  * @route GET /login
@@ -18,9 +19,20 @@ export const getLogin = (req: Request, res: Response): void => {
     if (req.user) {
         return res.redirect("/");
     }
-    res.render("account/login", {
-        title: "Login",
-    });
+    User.countDocuments({}, (err: NativeError, count: number)=>{
+        if (err){
+            req.flash("errors", {msg:err.message})
+            return res.redirect("/");
+        }
+        if(count == 0){
+            return res.redirect("/adduser")
+        }else{
+            res.render("account/login", {
+                title: "Login",
+            });
+        }
+    })
+    
 };
 
 /**
@@ -53,6 +65,30 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
     })(req, res, next);
 };
 
+export const postLoginBearer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    await check("email", "Email is not valid").isEmail().run(req);
+    await check("password", "Password cannot be blank").isLength({min: 1}).run(req);
+    await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        res.json(errors.array());
+    }
+
+    passport.authenticate("local", (err: Error, user: UserDocument, info: IVerifyOptions) => {
+        if (err) { return next(err); }
+        if (!user) {
+            req.flash("errors", {msg: info.message});
+            return res.redirect("/login");
+        }
+        req.logIn(user, (err) => {
+            if (err) { return next(err); }
+            req.flash("success", { msg: "Success! You are logged in." });
+            res.redirect(req.session.returnTo || "/");
+        });
+    })(req, res, next);
+};
 /**
  * Log out.
  * @route GET /logout
@@ -66,13 +102,29 @@ export const logout = (req: Request, res: Response): void => {
  * Signup page.
  * @route GET /signup
  */
-export const getSignup = (req: Request, res: Response): void => {
+export const getSignup = async (req: Request, res: Response): Promise<void> => {
     if (req.user) {
-        return res.redirect("/");
+        if ((req.user as UserDocument).role != "admin"){
+            return res.redirect("/");
+        }
     }
-    res.render("account/signup", {
-        title: "Create Account"
-    });
+    User.countDocuments({}, (err: NativeError, count: number)=>{
+        if (err){
+            req.flash("errors", {msg:err.message})
+            return res.redirect("/");
+        }
+        if(count == 0){
+            res.render("account/signup", {
+                title: "Create Account",
+                setup: true
+            });
+        }else{
+            res.render("account/signup", {
+                title: "Create Account",
+            });
+        }
+        
+    })
 };
 
 /**
@@ -84,24 +136,25 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
     await check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
     await check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
     await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
-
+    await check("role").isIn(roles).run(req)
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
         req.flash("errors", errors.array());
-        return res.redirect("/signup");
+        return res.redirect("/adduser");
     }
 
     const user = new User({
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
+        role: req.body.role
     });
 
     User.findOne({ email: req.body.email }, (err: NativeError, existingUser: UserDocument) => {
         if (err) { return next(err); }
         if (existingUser) {
             req.flash("errors", { msg: "Account with that email address already exists." });
-            return res.redirect("/signup");
+            return res.redirect("/adduser");
         }
         user.save((err) => {
             if (err) { return next(err); }

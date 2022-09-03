@@ -11,6 +11,8 @@ export type UserDocument = mongoose.Document & {
     facebook: string;
     tokens: AuthToken[];
 
+    role: string;
+
     profile: {
         name: string;
         gender: string;
@@ -41,7 +43,9 @@ const userSchema = new mongoose.Schema<UserDocument>(
         twitter: String,
         google: String,
         tokens: Array,
-    
+
+        role: String,
+
         profile: {
             name: String,
             gender: String,

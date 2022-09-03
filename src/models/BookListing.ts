@@ -2,12 +2,15 @@ import mongoose from "mongoose";
 import { BookOwner, BookOwnerDocument } from "./BookOwner";
 import { BookDocument } from "./Book";
 import { generateEAN13 } from "../util/barcode";
+import { UserDocument } from "./User";
 export type BookListingDocument = mongoose.Document & {
     commission: number,
     cost: number,
     bookOwner: BookOwnerDocument,
     book: BookDocument,
+    putOnSaleBy: UserDocument,
     sold: boolean,
+    soldBy: UserDocument,
     created: Date,
     barcode: (id: number) => string;
 };
@@ -16,7 +19,7 @@ const bookListingSchema = new mongoose.Schema<BookOwnerDocument>(
   {
     _id:{
       type: String,
-      default: generateEAN13(13)
+      default: ()=>{return generateEAN13(13)}
     },
     commission: Number,
     cost: Number,
@@ -28,7 +31,18 @@ const bookListingSchema = new mongoose.Schema<BookOwnerDocument>(
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Book'
     },
+    putOnSaleBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     sold: Boolean,
+    soldBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: function(){
+            return this.sold? true : false 
+        }
+    },
     created: Date,
   },
   { timestamps: true }
