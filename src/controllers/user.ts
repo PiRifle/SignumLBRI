@@ -65,7 +65,7 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
     })(req, res, next);
 };
 
-export const postLoginBearer = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const postLoginApp = async (req: Request, res: Response, next: NextFunction) => {
     await check("email", "Email is not valid").isEmail().run(req);
     await check("password", "Password cannot be blank").isLength({min: 1}).run(req);
     await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -73,21 +73,29 @@ export const postLoginBearer = async (req: Request, res: Response, next: NextFun
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        res.json(errors.array());
+        return res.status(400).json(errors.array());
     }
-
-    passport.authenticate("local", (err: Error, user: UserDocument, info: IVerifyOptions) => {
-        if (err) { return next(err); }
+    console.log(req.body)
+    passport.authenticate(
+      "local",
+      (err: Error, user: UserDocument, info: IVerifyOptions) => {
+        if (err) {
+          return next(err);
+        }
         if (!user) {
-            req.flash("errors", {msg: info.message});
-            return res.redirect("/login");
+          return res.status(400).json({ msg: info.message });
+          
         }
         req.logIn(user, (err) => {
-            if (err) { return next(err); }
-            req.flash("success", { msg: "Success! You are logged in." });
-            res.redirect(req.session.returnTo || "/");
+          if (err) {
+            return res.status(400).json({ msg: err });
+            // return next(err);
+          }
+          return res.json({msg: "logged_in"}).end()
         });
-    })(req, res, next);
+      }
+    )(req, res, next);
+
 };
 /**
  * Log out.
@@ -436,3 +444,7 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
         res.redirect("/forgot");
     });
 };
+
+export const getPing = (req: Request, res: Response) => {
+    res.json({msg:"ping"})
+}

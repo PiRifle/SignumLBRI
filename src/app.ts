@@ -9,6 +9,7 @@ import path from "path";
 import mongoose from "mongoose";
 import passport from "passport";
 import bluebird from "bluebird";
+import {showPDF} from "./util/generatePDF"
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
 // Controllers (route handlers)
@@ -127,10 +128,15 @@ app.post("/book/:itemID/sell", passportConfig.isAuthenticated, passportConfig.is
 
 
 const applicationRoutes = express.Router()
-applicationRoutes.post("/login", userController.postLogin)
-applicationRoutes.get("/list", passportConfig.isAuthenticated, bookController.getBooks)
-applicationRoutes.post("/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.postSellBook)
-applicationRoutes.post("/:itemID/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.sellBook);
+applicationRoutes.post("/login", userController.postLoginApp)
+applicationRoutes.get("/ping", userController.getPing);
+applicationRoutes.get("/fromisbn", passportConfig.isAuthenticated, bookController.getFillBookData)
+applicationRoutes.get("/list", passportConfig.isAuthenticatedApp, bookController.getBooks)
+applicationRoutes.post("/sell", passportConfig.isAuthenticatedApp, passportConfig.isSeller, bookController.postSellBookApp)
+applicationRoutes.get("/find", passportConfig.isAuthenticatedApp, passportConfig.isSeller, bookController.getFindListingApp)
+applicationRoutes.post("/:itemID/sell", passportConfig.isAuthenticatedApp, passportConfig.isSeller, bookController.sellBookApp);
     
 app.use("/app", applicationRoutes)
+
+app.get("/showHTML", showPDF)
 export default app;

@@ -12,14 +12,15 @@ export type BookListingDocument = mongoose.Document & {
     sold: boolean,
     soldBy: UserDocument,
     created: Date,
-    barcode: (id: number) => string;
+    // barcode: (id: number) => string;
+    barcode: string
 };
 
 const bookListingSchema = new mongoose.Schema<BookOwnerDocument>(
   {
     _id:{
       type: String,
-      default: ()=>{return generateEAN13(13)}
+      default: ()=>{return generateEAN13(12)}
     },
     commission: Number,
     cost: Number,
@@ -47,9 +48,9 @@ const bookListingSchema = new mongoose.Schema<BookOwnerDocument>(
   },
   { timestamps: true }
 );
-bookListingSchema.methods.barcode = () => {
-throw "not implemented yet"
-}
+// bookListingSchema.methods.barcode = () => {
+// throw "not implemented yet"
+// }
 export const BookListing = mongoose.model<BookListingDocument>(
   "BookListing",
   bookListingSchema

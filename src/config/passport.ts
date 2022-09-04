@@ -1,6 +1,7 @@
 import passport from "passport";
 import passportLocal from "passport-local";
 import passportFacebook from "passport-facebook";
+import passportBearer from "passport-http-bearer"
 import { find } from "lodash";
 
 // import { User, UserType } from '../models/User';
@@ -10,6 +11,7 @@ import { NativeError } from "mongoose";
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
+const BearerStrategy = passportBearer.Strategy;
 
 passport.serializeUser<any, any>((req, user, done) => {
     done(undefined, user);
@@ -38,7 +40,23 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
         });
     });
 }));
-
+passport.use(
+  new BearerStrategy(
+    function(token, done) {
+      User.findOne({
+        token: token
+      }, function(err:NativeError, user: UserDocument) {
+        if (err) {
+          return done(err);
+        }
+        if (!user) {
+          return done(null, false);
+        }
+        return done(null, user);
+      });
+    }
+  )
+);
 
 /**
  * OAuth Strategy Overview
@@ -54,7 +72,6 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
  *       - If there is, return an error message.
  *       - Else create a new account.
  */
-
 
 /**
  * Sign in with Facebook.
@@ -125,7 +142,16 @@ export const isAuthenticated = (req: Request, res: Response, next: NextFunction)
     }
     res.redirect("/login");
 };
-
+export const isAuthenticatedApp = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(403).json({msg: "not_logged_in"})
+};
 export const isSeller = (req: Request, res: Response, next: NextFunction) => {
     const user = (req.user as UserDocument)
     if (user.role == "admin" || user.role == "seller") {
@@ -133,6 +159,15 @@ export const isSeller = (req: Request, res: Response, next: NextFunction) => {
         // req.user()
     }
     res.redirect("/login");
+};
+
+export const isSellerApp = (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user as UserDocument;
+  if (user.role == "admin" || user.role == "seller") {
+    return next();
+    // req.user()
+  }
+  res.status(403).json({ msg: "not_authorized" });
 };
 /**
  * Authorization Required middleware.

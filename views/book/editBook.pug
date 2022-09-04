@@ -52,7 +52,7 @@ block content
                 h5
                     b= item.book.authors.join(", ")
                 h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
-                div ISBN: #{item._id}
+                div ID: #{item._id}
                 div.my-auto
                     .d-flex.flex-row
                         span.my-auto.mr-3.text-success= item.sold ? "Sprzedana" : "cena"

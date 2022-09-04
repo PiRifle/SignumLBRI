@@ -72,9 +72,9 @@ block content
                                     div.col
                                         center
                                             a(href=`/book/${item._id}`).btn.btn-primary.mt-2 Zarządzaj
-                                        if edit
-                                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
-                                                button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
+                                        //- if edit
+                                                //- button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
+                                                //- button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
                                         if edit
                                             if !item.sold && (user.role == "seller" || user.role == "admin")
                                                 center
