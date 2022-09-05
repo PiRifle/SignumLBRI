@@ -16,8 +16,9 @@ if (process.env.NODE_ENV === "development") {
 
 
 const ad = new dnssd.Advertisement(dnssd.tcp("http"), Number(app.get("port")), {
-  name: "SignumLBRI-server",
+    name: "SignumLBRI-server",
 });
+
 const server = app.listen(app.get("port"), () => {
     ad.start();
     console.log(

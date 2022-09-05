@@ -11,22 +11,31 @@ html(lang='')
         //- script print()
 
     body
-        each item in bookListings
-            .row.border-bottom.border-secondary.p-3
-                .col-.m-auto(style="width: 2cm; margin-left: -8mm !important")
-                    a.navbar-brand(style="transform: rotate(-90deg)")
-                        i.fa.fa-book
-                        span.ml-1 SignumLBRI
-                        p.font-weight-light(style="font-size: 10px; text-align: right; margin-top: -8px") by PRFL
-                //- div.m-auto(style="margin-right: 10mm; overflow: visible;width: 0px; height: 0px ")
-                //-     div.font-weight-bold(style="transform: rotate(-90deg); white-space:nowrap; text-align: center") Cena: #{Number(item.cost+item.commission)}
-                .col-(style="width: 10px")
-                    svg.m-auto(viewBox="0 0 100 100" style="height: 100%")
-                        text(x="50%" y="10%" dominant-baseline="middle" font-size="3mm" text-anchor="middle" font-weight="bold" transform="translate(0, 100) rotate(270)") Cena: #{Number(item.cost+item.commission)}
-                .col
-                    #{item.barcode}
-                .col
-                    p 
-                        b=item.book.title
-                        span.ml-3=item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
-                    p imię: #{item.bookOwner.name} #{item.bookOwner.surname}
+        .ui
+            include ../../views/partials/header
+
+            .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3
+                button(onclick="print()").btn.btn-primary Wydrukuj #{bookListings.length}
+                block ../../views/content
+
+            include ../../views/partials/footer
+        .printMe
+            each item in bookListings
+                .row.border-bottom.border-secondary.p-3
+                    .col-.m-auto(style="width: 2cm; margin-left: -8mm !important")
+                        a.navbar-brand(style="transform: rotate(-90deg)")
+                            i.fa.fa-book
+                            span.ml-1 SignumLBRI
+                            p.font-weight-light(style="font-size: 10px; text-align: right; margin-top: -8px") by PRFL
+                    //- div.m-auto(style="margin-right: 10mm; overflow: visible;width: 0px; height: 0px ")
+                    //-     div.font-weight-bold(style="transform: rotate(-90deg); white-space:nowrap; text-align: center") Cena: #{Number(item.cost+item.commission)}
+                    .col-(style="width: 10px")
+                        svg.m-auto(viewBox="0 0 100 100" style="height: 100%")
+                            text(x="50%" y="10%" dominant-baseline="middle" font-size="3mm" text-anchor="middle" font-weight="bold" transform="translate(0, 100) rotate(270)") Cena: #{Number(item.cost+item.commission)}
+                    .col
+                        #{item.barcode}
+                    .col
+                        p 
+                            b=item.book.title
+                            span.ml-3=item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                        p imię: #{item.bookOwner.name} #{item.bookOwner.surname}
