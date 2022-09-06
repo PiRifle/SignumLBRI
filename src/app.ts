@@ -138,5 +138,7 @@ applicationRoutes.post("/:itemID/sell", passportConfig.isAuthenticatedApp, passp
     
 app.use("/app", applicationRoutes)
 
-app.get("/showHTML", showPDF)
+app.get("/print", showPDF)
+app.get("/print/fetch", showPDF);
+
 export default app;

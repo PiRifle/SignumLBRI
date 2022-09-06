@@ -1,7 +1,4 @@
 import { compileFile } from "pug";
-import axios from "axios";
-import FormData from "form-data";
-import fs from "fs"
 import {Request, Response} from "express"
 import { BookListing, BookListingDocument } from "../models/BookListing";
 import { NativeError } from "mongoose";
@@ -16,6 +13,6 @@ export const showPDF = async (req: Request, res: Response)=>{
       return value;
     });
     // console.log(bookListings);
-    const bookDocument = compileFile("views/book/bookPrintDocument.pug");
+    const bookDocument = compileFile("views/book/bookIdentifier.pug");
     res.send(bookDocument({ bookListings: bookListings }));
 }

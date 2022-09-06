@@ -195,7 +195,7 @@ export async function getFindListing(req: Request, res: Response) {
       req.flash("errors", errors.array());
       return res.redirect("/");
   }
-  var itemId = (req.query.itemID as string).slice(0,12)
+  var itemId = req.query.itemID
   var bookListings = await BookListing.find({_id: itemId}, "-__v -createdAt -updatedAt")
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt");
