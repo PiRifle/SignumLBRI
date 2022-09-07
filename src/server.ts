@@ -1,17 +1,15 @@
 import errorHandler from "errorhandler";
 import app from "./app";
 import nodemailer from "nodemailer";
-import Mail from "nodemailer/lib/mailer";
 
 /**
  * Error Handler. Provides full stack
  */
-let transporter: Mail;
 if (process.env.NODE_ENV === "development") {
     app.use(errorHandler());
     
     nodemailer.createTestAccount().then((testAccount) => {
-    transporter = nodemailer.createTransport({
+    nodemailer.createTransport({
       host: "smtp.ethereal.email",
       port: 587,
       secure: false, // true for 465, false for other ports

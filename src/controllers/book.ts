@@ -1,13 +1,13 @@
 import { fetchBook } from "../util/findBook";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { Book, BookDocument } from "../models/Book";
 import { NativeError } from "mongoose";
 import { check, validationResult } from "express-validator";
-import { BookOwner } from "../models/BookOwner";
-import { BookOwnerDocument } from "../models/BookOwner";
-import { BookListing, BookListingDocument } from "../models/BookListing";
-import { UserDocument } from "../models/User";
-export async function getFillBookData(req: Request, res: Response) {
+import { Buyer } from "../models/Buyer";
+import { BuyerDocument } from "../models/Buyer";
+import { BookListing} from "../models/BookListing";
+import { User, UserDocument } from "../models/User";
+export async function getFillBookData(req: Request, res: Response): Promise<Response<never>> {
   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -23,30 +23,39 @@ export async function getFillBookData(req: Request, res: Response) {
       res.json(bookData);
     } else {
       const bookData = await fetchBook(isbn);
-      if (!bookData) return res.status(404).end();
-      const book = new Book({
-        title: bookData.title,
-        publisher: bookData.publisher,
-        authors: bookData.authors,
-        pubDate: bookData.pubDate,
-        isbn: bookData.isbn,
-        image: bookData.image,
-        msrp: bookData.msrp,
-      });
+      let book: BookDocument; 
+      if (bookData){
+        book = new Book({
+          title: bookData.title,
+          publisher: bookData.publisher,
+          authors: bookData.authors,
+          pubDate: bookData.pubDate,
+          isbn: bookData.isbn,
+          image: bookData.image,
+          msrp: bookData.msrp,
+        });
+      }else{
+        book = new Book({
+          isbn: isbn,
+        });
+      }
       book.save((err) => {
         console.log(err);
       });
+      if (!bookData){
+        return res.status(404).end();
+      } 
       res.json(bookData);
     }
   });
   // res.json()
 }
-export async function getSellBook(req: Request, res: Response) {
+export async function getSellBook(req: Request, res: Response): Promise<void> {
   res.render("book/sell", {
     title: "Sprzedaj Książkę",
   });
 }
-export async function getBooks(req: Request, res: Response) {
+export async function getBooks(req: Request, res: Response): Promise<void> {
     const bookListings = await BookListing.find({}, "-__v -createdAt -updatedAt")
       .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
       .populate("book", "-_id -__v -createdAt -updatedAt")
@@ -55,7 +64,7 @@ export async function getBooks(req: Request, res: Response) {
     res.json(bookListings);
 }
 
-export async function postSellBookApp(req: Request, res: Response) {
+export async function postSellBookApp(req: Request, res: Response): Promise<Response<never>> {
   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
   await check("name").exists().run(req);
   await check("surname").exists().run(req);
@@ -84,11 +93,11 @@ export async function postSellBookApp(req: Request, res: Response) {
         });
         book.save();
       }
-      BookOwner.findOne(
+      Buyer.findOne(
         { phone: sellingData.phone },
-        (err: NativeError, user: BookOwnerDocument) => {
+        (err: NativeError, user: BuyerDocument) => {
           if (!user) {
-            user = new BookOwner({
+            user = new Buyer({
               name: sellingData.name,
               surname: sellingData.surname,
               phone: sellingData.phone,
@@ -118,24 +127,28 @@ export async function postSellBookApp(req: Request, res: Response) {
     }
   );
 }
-
-export async function postSellBook(req: Request, res: Response) {
-  await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
-  await check("name").exists().run(req);
-  await check("surname").exists().run(req);
-  await check("email").exists().run(req);
-  await check("phone").exists().run(req);
-  await check("isbn").exists().run(req);
-  await check("title").exists().run(req);
-  await check("cost").exists().run(req);
+export async function postSellBook(
+  req: Request,
+  res: Response
+): Promise<unknown> {  
+  await check("isbn", "kod ISBN nie jest ważny").isLength({ min: 13 }).isNumeric().run(req);
+  await check("title", "Nie podano tytułu książki").exists().run(req);
+  await check("publisher", "Nie podano wydawcy książki").exists().run(req);
+  await check("cost", "Nie podano ceny lub złą wartość").exists().isNumeric().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    req.flash("errors", errors.array());
+    return res.redirect("/");
   }
   const sellingData = req.body;
+
   Book.findOne(
     { isbn: req.body.isbn },
-    async (err: NativeError, book: BookDocument) => {
+    (err: NativeError, book: BookDocument) => {
+      if (err) {
+        req.flash("errors", {msg: err});
+        return res.redirect("/");
+      }
       if (!book) {
         book = new Book({
           title: sellingData.title,
@@ -147,48 +160,130 @@ export async function postSellBook(req: Request, res: Response) {
           msrp: sellingData.msrp || 0,
         });
         book.save();
+      } else if (book.$isEmpty("title")) {
+        book.update({
+          title: sellingData.title,
+          publisher: sellingData.publisher || "",
+          authors: sellingData.authors.split(",") || [""],
+          pubDate: sellingData.pubDate || "",
+          isbn: sellingData.isbn,
+          image: sellingData.image || "",
+          msrp: sellingData.msrp || 0,
+        });
       }
-      BookOwner.findOne(
-        { phone: sellingData.phone },
-        (err: NativeError, user: BookOwnerDocument) => {
-          if (!user) {
-            user = new BookOwner({
-              name: sellingData.name,
-              surname: sellingData.surname,
-              phone: sellingData.phone,
-              email: sellingData.email,
-            });
-            user.save();
-          }
-          const bookListing = new BookListing({
-            book: book.id,
-            bookOwner: user.id,
-            commission: Number(sellingData.commission),
-            cost: Number(sellingData.cost),
-            putOnSaleBy: req.user
-          });
-          bookListing.save((err)=>{
-            if(err){
-                console.log(err);
-                req.flash("errors", {
-                    msg: err
-                });
-                return res.redirect("/");
-            }else{ 
-                req.flash("success", {
-                    msg: "Dodano zlecenie do bazy!",
-                  });
-                return res.redirect("/");
-            }
-          });
-
+      const cost = sellingData.cost;
+      const comission = cost * 0.07;
+      const finalCommission =
+        cost + (comission % 5) == 0
+          ? cost + comission
+          : 5 - ((cost + comission) % 5) + comission;
+      const listing = new BookListing({
+        commission: finalCommission,
+        cost: sellingData.cost,
+        bookOwner: req.user,
+        book: book,
+        status: "registered",
+      });
+      listing.save((err: NativeError, BookListingDocument)=>{
+        if (err){
+          req.flash("errors", { msg: err });
+          return res.redirect("/");
         }
-      );
+        req.flash("success", {msg: "Dodano książkę!"});
+        return res.redirect("/");
+      });
+
     }
   );
 }
+const getPrintLabel = (req: Request, res: Response) => {
+    res.render("label/manage", {
+      title: "Sprzedaj Książkę",
+    });
+};
+// export async function postSellBook(req: Request, res: Response): Promise<Response<never>> {
+//   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
+//   await check("name").exists().run(req);
+//   await check("surname").exists().run(req);
+//   await check("email").exists().run(req);
+//   await check("phone").exists().run(req);
+//   await check("isbn").exists().run(req);
+//   await check("title").exists().run(req);
+//   await check("cost").exists().run(req);
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(400).json({ errors: errors.array() });
+//   }
+//   const sellingData = req.body;
+//   Book.findOne(
+//     { isbn: req.body.isbn },
+//     async (err: NativeError, book: BookDocument) => {
+//       if (!book) {
+//         book = new Book({
+//           title: sellingData.title,
+//           publisher: sellingData.publisher || "",
+//           authors: sellingData.authors.split(",") || [""],
+//           pubDate: sellingData.pubDate || "",
+//           isbn: sellingData.isbn,
+//           image: sellingData.image || "",
+//           msrp: sellingData.msrp || 0,
+//         });
+//         book.save();
+//       }else if(book.$isEmpty("title")){
+//         book.update({
+//           title: sellingData.title,
+//           publisher: sellingData.publisher || "",
+//           authors: sellingData.authors.split(",") || [""],
+//           pubDate: sellingData.pubDate || "",
+//           isbn: sellingData.isbn,
+//           image: sellingData.image || "",
+//           msrp: sellingData.msrp || 0,
+//         });
+//       }
+//       User.findOne({email: sellingData.email}, (err: NativeError, user: UserDocument)=>{
+//         if (!user) {}
+//       });
+//       // Buyer.findOne(
+//       //   { phone: sellingData.phone },
+//       //   (err: NativeError, user: BuyerDocument) => {
+//       //     if (!user) {
+//       //       user = new Buyer({
+//       //         name: sellingData.name,
+//       //         surname: sellingData.surname,
+//       //         phone: sellingData.phone,
+//       //         email: sellingData.email,
+//       //       });
+//       //       user.save();
+//       //     }
+//       //     const bookListing = new BookListing({
+//       //       book: book.id,
+//       //       bookOwner: user.id,
+//       //       commission: Number(sellingData.commission),
+//       //       cost: Number(sellingData.cost),
+//       //       putOnSaleBy: req.user
+//       //     });
+//       //     bookListing.save((err)=>{
+//       //       if(err){
+//       //           console.log(err);
+//       //           req.flash("errors", {
+//       //               msg: err
+//       //           });
+//       //           return res.redirect("/");
+//       //       }else{ 
+//       //           req.flash("success", {
+//       //               msg: "Dodano zlecenie do bazy!",
+//       //             });
+//       //           return res.redirect("/");
+//       //       }
+//       //     });
 
-export async function getFindListing(req: Request, res: Response) {
+//       //   }
+//       // );
+//     }
+//   );
+// }
+
+export async function getFindListing(req: Request, res: Response): Promise<void> {
   await check("itemID").exists().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -201,7 +296,7 @@ export async function getFindListing(req: Request, res: Response) {
     .populate("book", "-_id -__v -createdAt -updatedAt");
   res.render("book/showBooks", { bookListings: bookListings, edit: true });
 }
-export async function getFindListingApp(req: Request, res: Response) {
+export async function getFindListingApp(req: Request, res: Response): Promise<void> {
   await check("itemID").exists().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -216,7 +311,7 @@ export async function getFindListingApp(req: Request, res: Response) {
     .populate("book", "-_id -__v -createdAt -updatedAt");
     res.json(bookListings);
 }
-export async function getBookRegistry(req: Request, res: Response, next: NextFunction){
+export async function getBookRegistry(req: Request, res: Response): Promise<void>{
 
   const bookListings = await BookListing.find({}, "-__v -createdAt -updatedAt")
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
@@ -226,9 +321,8 @@ export async function getBookRegistry(req: Request, res: Response, next: NextFun
 // export async function postBook
 export async function editBook(
   req: Request,
-  res: Response,
-  next: NextFunction
-) {
+  res: Response
+): Promise<void> {
   await check("itemID").isLength({ min: 12 }).isNumeric().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -249,8 +343,7 @@ export async function editBook(
 export async function sellBook(
   req: Request,
   res: Response,
-  next: NextFunction
-) {
+): Promise<void>  {
     await check("itemID").isLength({ min: 12 }).isNumeric().run(req);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -263,7 +356,7 @@ export async function sellBook(
     )
       .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
       .populate("book", "-_id -__v -createdAt -updatedAt");
-    bookListings.sold = true;
+    bookListings.status = "sold";
     bookListings.soldBy = (req.user as UserDocument);
     bookListings.save((err)=>{
         if(err){
@@ -283,8 +376,7 @@ export async function sellBook(
 export async function sellBookApp(
   req: Request,
   res: Response,
-  next: NextFunction
-) {
+): Promise<Response<never>> {
   await check("itemID").isLength({ min: 12 }).isNumeric().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -296,7 +388,7 @@ export async function sellBookApp(
   )
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt");
-  bookListings.sold = true;
+  bookListings.status = "sold";
   bookListings.soldBy = req.user as UserDocument;
   bookListings.save((err) => {
     if (err) {

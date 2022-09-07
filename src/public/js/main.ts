@@ -23,7 +23,12 @@ $(document).ready(function() {
 
 });
 async function castData(){
-  let bookDataFetch = await fetch(`/book/fromisbn?isbn=${$("input[name='isbn']").val()}`);
+  $('.dataLoad').removeClass("d-none")
+  let bookDataFetch = await fetch(
+    `/book/fromisbn?isbn=${$("input[name='isbn']").val()}`,
+    { credentials: "same-origin" }
+  );
+  $(".dataLoad").parent().addClass("d-none");
   if(bookDataFetch.status == 200){
     let bookData: {
       title: string;
@@ -34,11 +39,17 @@ async function castData(){
       image: string;
       msrp: number;
     } = await bookDataFetch.json();
-    $('input[name = "publisher"]').val(bookData.publisher);
-    $('input[name = "authors"]').val(bookData.authors.join(", "));
-    $('input[name = "pubDate"]').val(bookData.pubDate);
-    $('input[name = "title"]').val(bookData.title);
-    $('img.bookCover').attr("src", bookData.image);
+    $('input[name = "publisher"]').val(bookData.publisher).removeClass("d-none");
+    $('input[name = "authors"]').val(bookData.authors.join(", ")).removeClass("d-none");
+    $('input[name = "pubDate"]').val(bookData.pubDate).removeClass("d-none");
+    $('input[name = "title"]').val(bookData.title).removeClass("d-none");
+    $("img.bookCover").attr("src", bookData.image).removeClass("d-none");
+  }else{
+    console.log('aaa')
+    $('input[name = "publisher"]').removeClass("d-none");
+    $('input[name = "authors"]').removeClass("d-none");
+    $('input[name = "pubDate"]').removeClass("d-none");
+    $('input[name = "title"]').removeClass("d-none");
   }
 }
 

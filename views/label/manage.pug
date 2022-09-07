@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+    h2 Zarządzaj Zakładkami 
+    center 
+        if listings 
+            form(method="get") 
+                table
+                    thead 
+                        td Drukuj
+                        td Tytuł
+                        td Cena
+                    tbody 
+                        each listing in listings
+                            tr 
+                                td
+                                    input(type="checkbox", name="")
+                                td listing.book.title
+                                td listing.cost 
+                                
+        else 
+            
+            h6 Trochę tu pusto...
+            a(href="/book/add").btn.btn-primary Dodaj pierwszą książkę
+                

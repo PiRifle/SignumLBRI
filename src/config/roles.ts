@@ -4,4 +4,4 @@ export const roles = [
     // "buyer",
     "admin",
     "viewer"
-]
+];

@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { UserDocument } from "../models/User";
 
 /**
@@ -10,7 +10,7 @@ import { UserDocument } from "../models/User";
 //         title: "Home"
 //     });
 // };
-export const index = (req: Request, res: Response) => {
+export const index = (req: Request, res: Response): void => {
     if ((req.user as UserDocument).role !="student"){
         res.render("homeStaff", {
             title: "Home",

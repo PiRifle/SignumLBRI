@@ -1,27 +1,32 @@
 extends ../layout
 
 block content
+    h2 Dodaj Książkę
     form(action="", method="post").register_book
 
         .col.mr-auto 
-            div.d-flex.flex-row
-                input(type="text", name="name", placeholder="Imię", required).form-control.mr-2.d-inline-flex
-                input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ml-2.d-inline-flex
-            input(type="email", name="email", placeholder="E-Mail" required).form-control.mt-2
-            input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control.mt-2
+            //- div.d-flex.flex-row
+            //-     input(type="text", name="name", placeholder="Imię", required).form-control.mr-2.d-inline-flex
+            //-     input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ml-2.d-inline-flex
+            //- input(type="email", name="email", placeholder="E-Mail" required).form-control.mt-2
+            //- input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control.mt-2
                                         //- div(style="width: 50%; height: 100vh; background-color: black")
             div.d-flex.flex-row.mt-5
-                img(style="width: 200px").bookCover
-                .col.m-0.p-0.pl-3
+                img(style="width: 200px").bookCover.mx-3.d-none
+                .col.m-0.p-0
+                    label(for="isbn") Podaj kod ISBN (Kod Kreskowy z tyłu książki)
                     input(type="text", name="isbn", placeholder="ISBN" required).form-control.mt-2
-                    input(type="text", name="title", placeholder="Nazwa Książki" required).form-control.mt-2
-                    input(type="text", name="publisher", placeholder="Wydawca").form-control.mt-2
-                    input(type="text", name="authors", placeholder="Autorzy").form-control.mt-2
-                    input(type="text", name="pubDate", placeholder="Data Publikacji").form-control.mt-2
+                    .container.d-flex.flex-row.flex-align-center.mt-2
+                        div(role="status").m-auto.dataLoad.spinner-border.d-none
+                            span.sr-only Ładuję...
+                    input(type="text", name="title", placeholder="Nazwa Książki" required).form-control.mt-2.d-none
+                    input(type="text", name="publisher", placeholder="Wydawca" required).form-control.mt-2.d-none
+                    input(type="text", name="authors", placeholder="Autorzy").form-control.mt-2.d-none
+                    input(type="text", name="pubDate", placeholder="Data Publikacji").form-control.mt-2.d-none
                     //- i(type="text", name="msrp", placeholder="ISBN").form-control
             div.d-flex.flex-row.mt-5
-                input(type="text", name="cost", placeholder="Cena", required).form-control.mr-2.d-inline-flex
-                input(type="text", name="commission", placeholder="Prowizja").form-control.ml-2.d-inline-flex
+                input(type="text", name="cost", placeholder="Cena", required).form-control.d-inline-flex
+                //- input(type="text", name="commission", placeholder="Prowizja").form-control.ml-2.d-inline-flex
 
             .col.mt-5
                 center

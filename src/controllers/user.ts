@@ -9,7 +9,7 @@ import { WriteError } from "mongodb";
 import { body, check, validationResult } from "express-validator";
 import "../config/passport";
 import { CallbackError, NativeError } from "mongoose";
-import { roles } from "../config/roles";
+import { Token } from "nodemailer/lib/xoauth2";
 /**
  * Login page.
  * @route GET /login
@@ -64,7 +64,7 @@ export const postLogin = async (req: Request, res: Response, next: NextFunction)
     })(req, res, next);
 };
 
-export const postLoginApp = async (req: Request, res: Response, next: NextFunction) => {
+export const postLoginApp = async (req: Request, res: Response, next: NextFunction): Promise<Response<never, Record<string, undefined>>> => {
     await check("email", "Email is not valid").isEmail().run(req);
     await check("password", "Password cannot be blank").isLength({min: 1}).run(req);
     await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -155,7 +155,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
     // if(!req.user) {await check("phone", "phone is invalid").isMobilePhone("pl-PL").run(req)}
     await check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
     await check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
-    if (req.body.role in roles) req.body.role = "student";
+    if (!req.body.role) req.body.role = "student";
         
     const errors = validationResult(req);
 
@@ -174,20 +174,20 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
       },
       role: req.body.role,
     });
-    console.log(user)
+    console.log(user);
     User.findOne({ email: req.body.email }, (err: NativeError, existingUser: UserDocument) => {
         if (err) { return next(err); }
         if (existingUser) {
             req.flash("errors", { msg: "Account with that email address already exists." });
             return res.redirect("/");
         }
-        console.log(user)
+        console.log(user);
         async.waterfall(
           [
             function createRandomToken(
-                done: (err: Error, token: string, user:any) => void
+                done: (err: Error, token: string, user:UserDocument) => void
             ) {
-            console.log(user)
+            console.log(user);
               crypto.randomBytes(16, (err, buf) => {
                 const token = buf.toString("hex");
                 done(err, token, user);
@@ -202,23 +202,23 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                 user: UserDocument
               ) => void
             ) {
-                console.log(token, user, done)
+                console.log(token, user, done);
                   if (!user) {
                     req.flash("errors", {
                       msg: "Account with that email address does not exist.",
                     });
                     return res.redirect("/");
                   }
-                  (user as any).accountVerifyToken = token;
-                  user.save((err: any, user) => {
-                    console.log(user)
+                  user.accountVerifyToken = (token as unknown as string);
+                  user.save((err: Error, user) => {
+                    console.log(user);
                     done(err, token, user);
                 }
               );
             },
             function sendVerifyEmail(
-                token: any, user: UserDocument,
-              done: (err: Error, user: any) => void
+                token: Token, user: UserDocument,
+              done: (err: Error, user: UserDocument) => void
             ) {
               // const transporter = nodemailer.createTransport({
               //     service: "SendGrid",
@@ -248,7 +248,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
           Please click on the following link, or paste this into your browser to complete the process:\n\n
           http://${req.headers.host}/verify/${token}\n\n`,
               };
-              const info = transporter.sendMail(
+              transporter.sendMail(
                   mailOptions,
                   (err, info) => {
                       console.log(
@@ -264,10 +264,10 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                    });
 
             },
-            function saveUser(user: any, done: (err: any) => any){
-                console.log(user)
+            function saveUser(user: UserDocument, done: (err: Error) => void){
+                console.log(user);
                 if(err) return done(err);
-                user.save((err:any ) => {
+                user.save((err:Error ) => {
                     if (err) { return done(err); }
     
                 // req.logIn(user, (err) => {
@@ -382,24 +382,24 @@ export const postDeleteAccount = (req: Request, res: Response, next: NextFunctio
     });
 };
 
-/**
- * Unlink OAuth provider.
- * @route GET /account/unlink/:provider
- */
-export const getOauthUnlink = (req: Request, res: Response, next: NextFunction): void => {
-    const provider = req.params.provider;
-    const user = req.user as UserDocument;
-    User.findById(user.id, (err: NativeError, user: any) => {
-        if (err) { return next(err); }
-        user[provider] = undefined;
-        user.tokens = user.tokens.filter((token: AuthToken) => token.kind !== provider);
-        user.save((err: WriteError) => {
-            if (err) { return next(err); }
-            req.flash("info", { msg: `${provider} account has been unlinked.` });
-            res.redirect("/account");
-        });
-    });
-};
+// /**
+//  * Unlink OAuth provider.
+//  * @route GET /account/unlink/:provider
+//  */
+// export const getOauthUnlink = (req: Request, res: Response, next: NextFunction): void => {
+//     const provider = req.params.provider;
+//     const user = req.user as UserDocument;
+//     User.findById(user.id, (err: NativeError, user: UserDocument) => {
+//         if (err) { return next(err); }
+//         user[provider] = undefined;
+//         user.tokens = user.tokens.filter((token: AuthToken) => token.kind !== provider);
+//         user.save((err: WriteError) => {
+//             if (err) { return next(err); }
+//             req.flash("info", { msg: `${provider} account has been unlinked.` });
+//             res.redirect("/account");
+//         });
+//     });
+// };
 
 /**
  * Reset Password page.
@@ -435,10 +435,10 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
     }
 
     async.waterfall([
-        function resetPassword(done: (err: any, user: UserDocument) => void) {
+        function updateVerify(done: (err: Error, user: UserDocument) => void) {
             User
                 .findOne({ accountVerifyToken: req.params.token })
-                .exec((err, user: any) => {
+                .exec((err, user: UserDocument) => {
                     if (err) { return next(err); }
                     if (!user) {
                         req.flash("errors", { msg: "Account token is invalid or has expired." });
@@ -446,7 +446,7 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
                     }
                     
                     user.accountVerifyToken = undefined;
-                    user.save((err: WriteError) => {
+                    user.save((err: Error) => {
                         if (err) { return next(err); }
                         req.logIn(user, (err) => {
                             done(err, user);
@@ -454,7 +454,7 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
                     });
                 });
         },
-        async function sendResetPasswordEmail(user: UserDocument, done: (err: Error) => void) {
+        async function sendVerifyAccountEmail(user: UserDocument, done: (err: Error) => void) {
             // const transporter = nodemailer.createTransport({
             //     service: "SendGrid",
             //     auth: {
@@ -480,7 +480,7 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
                 subject: "Your password has been changed",
                 text: `Hello,\n\nThis is a confirmation that the account ${user.email} has just been verified.\n`
             };
-            const info = await transporter.sendMail(mailOptions, (err, info) => {
+            await transporter.sendMail(mailOptions, (err, info) => {
               console.log(
                 "Preview URL: %s",
                 nodemailer.getTestMessageUrl(info)
@@ -496,6 +496,8 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
         res.redirect("/");
     });
 };
+
+
 
 /**
  * Process the reset password request.
@@ -513,20 +515,20 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
     }
 
     async.waterfall([
-        function resetPassword(done: (err: any, user: UserDocument) => void) {
+        function resetPassword(done: (err: Error, user: UserDocument) => void) {
             User
-                .findOne({ passwordResetToken: req.params.token })
+                .findOne({ passwordResetToken: req.params.token, accountVerifyToken: {$in:[null, ""]}})
                 .where("passwordResetExpires").gt(Date.now())
-                .exec((err, user: any) => {
+                .exec((err, user: UserDocument) => {
                     if (err) { return next(err); }
                     if (!user) {
-                        req.flash("errors", { msg: "Password reset token is invalid or has expired." });
+                        req.flash("errors", { msg: "Password reset token is invalid, has expired or your account isn't verified." });
                         return res.redirect("back");
                     }
                     user.password = req.body.password;
                     user.passwordResetToken = undefined;
                     user.passwordResetExpires = undefined;
-                    user.save((err: WriteError) => {
+                    user.save((err: Error) => {
                         if (err) { return next(err); }
                         req.logIn(user, (err) => {
                             done(err, user);
@@ -560,7 +562,7 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                 subject: "Your password has been changed",
                 text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
             };
-            const info = await transporter.sendMail(mailOptions, (err, info) => {
+            await transporter.sendMail(mailOptions, (err, info) => {
               console.log(
                 "Preview URL: %s",
                 nodemailer.getTestMessageUrl(info)
@@ -613,15 +615,15 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
             });
         },
         function setRandomToken(token: AuthToken, done: (err: NativeError | WriteError, token?: AuthToken, user?: UserDocument) => void) {
-            User.findOne({ email: req.body.email }, (err: NativeError, user: any) => {
+            User.findOne({ email: req.body.email }, (err: NativeError, user: UserDocument) => {
                 if (err) { return done(err); }
                 if (!user) {
                     req.flash("errors", { msg: "Account with that email address does not exist." });
                     return res.redirect("/forgot");
                 }
-                user.passwordResetToken = token;
-                user.passwordResetExpires = Date.now() + 3600000; // 1 hour
-                user.save((err: WriteError) => {
+                user.passwordResetToken = (token as unknown as string);
+                user.passwordResetExpires = (Date.now() + 3600000 as unknown as Date); // 1 hour
+                user.save((err: Error) => {
                     done(err, token, user);
                 });
             });
@@ -668,6 +670,66 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
     });
 };
 
-export const getPing = (req: Request, res: Response) => {
+export const getResendVerify = (req: Request, res: Response): void => {
+  if (req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+  res.render("account/forgot", {
+    title: "Forgot Password",
+    resend: true
+  });
+};
+export const postResendVerify = async (req: Request, res: Response): Promise<void> => {
+  // const transporter = nodemailer.createTransport({
+  //     service: "SendGrid",
+  //     auth: {
+  //         user: process.env.SENDGRID_USER,
+  //         pass: process.env.SENDGRID_PASSWORD
+  //     }
+  // });
+    await check("email", "Please enter a valid email address.")
+    .isEmail()
+    .run(req);
+    await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/resendverify");
+    }
+
+
+  nodemailer.createTestAccount().then((testAccount) => {
+    const user = req.user as UserDocument;
+    // create reusable transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: testAccount.user, // generated ethereal user
+        pass: testAccount.pass, // generated ethereal password
+      },
+    });
+    const mailOptions = {
+      to: user.email,
+      from: "express-ts@starter.com",
+      subject: "Verify your account",
+      text: `
+    Please click on the following link, or paste this into your browser to complete the process:\n\n
+    http://${req.headers.host}/verify/${user.accountVerifyToken}\n\n`,
+    };
+    transporter.sendMail(mailOptions, (err, info) => {
+      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+      req.flash("success", {
+        msg: "Success! Activation Email sent!",
+      });
+      return res.redirect("/");
+    });
+  });
+};
+export const getPing = (req: Request, res: Response): void => {
     res.json({msg:"ping"});
 };
+

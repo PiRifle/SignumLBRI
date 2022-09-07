@@ -4,3 +4,26 @@ block content
     center 
         h1 Witaj
     h3 Twoje Książki
+    br
+    br
+    center 
+        if bookListings
+            table 
+                thead 
+                    td Tytuł
+                    td Wydawca 
+                    td Cena 
+                    td Status
+                tbody 
+                    each bookListing in bookListings
+                        tr 
+                            td= bookListing.book.title 
+                            td= bookListing.book.publisher 
+                            td= bookListing.cost 
+                            td= bookListing.status
+            a(href="/book/add").btn.btn-primary Dodaj następną książkę
+
+        else 
+            h6 Trochę tu pusto...
+            a(href="/book/add").btn.btn-primary Dodaj pierwszą książkę
+                

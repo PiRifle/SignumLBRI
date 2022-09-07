@@ -52,9 +52,9 @@ block content
                             img(style="width: 120px", src=item.book.image)
                         .col.m-0.p-0.pl-3
                             .d-flex.flex-row 
-                                h5.mr-1= item.bookOwner.name
-                                h5= item.bookOwner.surname 
-                            h5= item.bookOwner.phone
+                                h5.mr-1= item.bookOwner.profile.name
+                                h5= item.bookOwner.profile.surname 
+                            h5= item.bookOwner.profile.phone
                             div= item.bookOwner.email
                             br
                             .d-flex.flex-row

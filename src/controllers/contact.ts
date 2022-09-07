@@ -21,7 +21,7 @@ nodemailer.createTestAccount().then((testAccount)=>{
  * Contact form page.
  * @route GET /contact
  */
-export const getContact = (req: Request, res: Response) => {
+export const getContact = (_req: Request, res: Response): void => {
     res.render("contact", {
         title: "Contact"
     });
@@ -31,7 +31,7 @@ export const getContact = (req: Request, res: Response) => {
  * Send a contact form via Nodemailer.
  * @route POST /contact
  */
-export const postContact = async (req: Request, res: Response) => {
+export const postContact = async (req: Request, res: Response): Promise<void> => {
     await check("name", "Name cannot be blank").not().isEmpty().run(req);
     await check("email", "Email is not valid").isEmail().run(req);
     await check("message", "Message cannot be blank").not().isEmpty().run(req);
