@@ -47,20 +47,20 @@ export async function getSellBook(req: Request, res: Response) {
   });
 }
 export async function getBooks(req: Request, res: Response) {
-    var bookListings = await BookListing.find({}, "-__v -createdAt -updatedAt")
+    const bookListings = await BookListing.find({}, "-__v -createdAt -updatedAt")
       .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
       .populate("book", "-_id -__v -createdAt -updatedAt")
       .populate("putOnSaleBy", "name email")
-      .populate("soldBy", "name email")
-    res.json(bookListings)
+      .populate("soldBy", "name email");
+    res.json(bookListings);
 }
 
 export async function postSellBookApp(req: Request, res: Response) {
   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
   await check("name").exists().run(req);
   await check("surname").exists().run(req);
-  await check("email").exists().run(req);
-  await check("phone").exists().run(req);
+  await check("email", "Email is not valid").isEmail().run(req);
+  await check("phone").isMobilePhone("pl-PL").run(req);
   await check("isbn").exists().run(req);
   await check("title").exists().run(req);
   await check("cost").exists().run(req);
@@ -68,7 +68,7 @@ export async function postSellBookApp(req: Request, res: Response) {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  var sellingData = req.body;
+  const sellingData = req.body;
   Book.findOne(
     { isbn: req.body.isbn },
     async (err: NativeError, book: BookDocument) => {
@@ -110,7 +110,7 @@ export async function postSellBookApp(req: Request, res: Response) {
                 msg: err,
               });
             } else {
-              return res.json({msg: "added_item_to_db"})
+              return res.json({msg: "added_item_to_db"});
             }
           });
         }
@@ -132,7 +132,7 @@ export async function postSellBook(req: Request, res: Response) {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  var sellingData = req.body;
+  const sellingData = req.body;
   Book.findOne(
     { isbn: req.body.isbn },
     async (err: NativeError, book: BookDocument) => {
@@ -166,21 +166,21 @@ export async function postSellBook(req: Request, res: Response) {
             commission: Number(sellingData.commission),
             cost: Number(sellingData.cost),
             putOnSaleBy: req.user
-          })
+          });
           bookListing.save((err)=>{
             if(err){
-                console.log(err)
+                console.log(err);
                 req.flash("errors", {
                     msg: err
                 });
-                return res.redirect("/")
+                return res.redirect("/");
             }else{ 
                 req.flash("success", {
-                    msg: `Dodano zlecenie do bazy!`,
+                    msg: "Dodano zlecenie do bazy!",
                   });
-                return res.redirect("/")
+                return res.redirect("/");
             }
-          })
+          });
 
         }
       );
@@ -195,8 +195,8 @@ export async function getFindListing(req: Request, res: Response) {
       req.flash("errors", errors.array());
       return res.redirect("/");
   }
-  var itemId = req.query.itemID
-  var bookListings = await BookListing.find({_id: itemId}, "-__v -createdAt -updatedAt")
+  const itemId = req.query.itemID;
+  const bookListings = await BookListing.find({_id: itemId}, "-__v -createdAt -updatedAt")
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt");
   res.render("book/showBooks", { bookListings: bookListings, edit: true });
@@ -208,7 +208,7 @@ export async function getFindListingApp(req: Request, res: Response) {
     req.flash("errors", errors.array());
     return res.redirect("/");
   }
-  var bookListings = await BookListing.find(
+  const bookListings = await BookListing.find(
     { _id: req.query.itemID },
     "-__v -createdAt -updatedAt"
   )
@@ -218,10 +218,10 @@ export async function getFindListingApp(req: Request, res: Response) {
 }
 export async function getBookRegistry(req: Request, res: Response, next: NextFunction){
 
-  var bookListings = await BookListing.find({}, "-__v -createdAt -updatedAt")
+  const bookListings = await BookListing.find({}, "-__v -createdAt -updatedAt")
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt");
-  res.render("book/showBooks", {bookListings: bookListings})
+  res.render("book/showBooks", {bookListings: bookListings});
 }
 // export async function postBook
 export async function editBook(
@@ -235,14 +235,14 @@ export async function editBook(
     req.flash("errors", errors.array());
     return res.redirect("/");
   }
-  var bookListings = await BookListing.findOne(
+  const bookListings = await BookListing.findOne(
     { _id: req.params.itemID },
     "-__v -createdAt -updatedAt"
   )
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt")
     .populate("putOnSaleBy")
-    .populate("soldBy")
+    .populate("soldBy");
     res.render("book/editBook", { item: bookListings, edit: true });
 }
 
@@ -257,17 +257,17 @@ export async function sellBook(
         req.flash("errors", errors.array());
         return res.redirect("/");
     }
-    var bookListings = await BookListing.findOne(
+    const bookListings = await BookListing.findOne(
       { _id: req.params.itemID },
       "-__v -createdAt -updatedAt"
     )
       .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
       .populate("book", "-_id -__v -createdAt -updatedAt");
-    bookListings.sold = true
-    bookListings.soldBy = (req.user as UserDocument)
+    bookListings.sold = true;
+    bookListings.soldBy = (req.user as UserDocument);
     bookListings.save((err)=>{
         if(err){
-            console.log(err)
+            console.log(err);
             req.flash("errors", {
                 msg: err
             });
@@ -276,7 +276,7 @@ export async function sellBook(
             req.flash("success", {msg:"Udało się! Sprzedanio książkę!"});
             return res.redirect("/book/"+req.params.itemID);
         }
-    })
+    });
     
 
 }
@@ -290,7 +290,7 @@ export async function sellBookApp(
   if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
   }
-  var bookListings = await BookListing.findOne(
+  const bookListings = await BookListing.findOne(
     { _id: req.params.itemID },
     "-__v -createdAt -updatedAt"
   )

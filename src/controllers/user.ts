@@ -10,7 +10,6 @@ import { body, check, validationResult } from "express-validator";
 import "../config/passport";
 import { CallbackError, NativeError } from "mongoose";
 import { roles } from "../config/roles";
-import { userInfo } from "os";
 /**
  * Login page.
  * @route GET /login
@@ -21,17 +20,17 @@ export const getLogin = (req: Request, res: Response): void => {
     }
     User.countDocuments({}, (err: NativeError, count: number)=>{
         if (err){
-            req.flash("errors", {msg:err.message})
+            req.flash("errors", {msg:err.message});
             return res.redirect("/");
         }
         if(count == 0){
-            return res.redirect("/adduser")
+            return res.redirect("/setup");
         }else{
             res.render("account/login", {
                 title: "Login",
             });
         }
-    })
+    });
     
 };
 
@@ -75,7 +74,7 @@ export const postLoginApp = async (req: Request, res: Response, next: NextFuncti
     if (!errors.isEmpty()) {
         return res.status(400).json(errors.array());
     }
-    console.log(req.body)
+    console.log(req.body);
     passport.authenticate(
       "local",
       (err: Error, user: UserDocument, info: IVerifyOptions) => {
@@ -91,7 +90,7 @@ export const postLoginApp = async (req: Request, res: Response, next: NextFuncti
             return res.status(400).json({ msg: err });
             // return next(err);
           }
-          return res.json({msg: "logged_in"}).end()
+          return res.json({msg: "logged_in"}).end();
         });
       }
     )(req, res, next);
@@ -110,29 +109,39 @@ export const logout = (req: Request, res: Response): void => {
  * Signup page.
  * @route GET /signup
  */
+export const getSetUp = async (req: Request, res: Response): Promise<void> => {
+  if (req.user) {
+    if ((req.user as UserDocument).role != "admin") {
+      return res.redirect("/");
+    }
+  }
+  User.countDocuments({}, (err: NativeError, count: number) => {
+    if (err) {
+      req.flash("errors", { msg: err.message });
+      return res.redirect("/");
+    }
+    if (count == 0) {
+      res.render("account/signup", {
+        title: "Create Account",
+        setup: true,
+      });
+    } else {
+      res.render("account/signup", {
+        title: "Create Account",
+      });
+    }
+  });
+};
+
 export const getSignup = async (req: Request, res: Response): Promise<void> => {
     if (req.user) {
-        if ((req.user as UserDocument).role != "admin"){
-            return res.redirect("/");
-        }
+        return res.redirect("/");
     }
-    User.countDocuments({}, (err: NativeError, count: number)=>{
-        if (err){
-            req.flash("errors", {msg:err.message})
-            return res.redirect("/");
-        }
-        if(count == 0){
-            res.render("account/signup", {
-                title: "Create Account",
-                setup: true
-            });
-        }else{
-            res.render("account/signup", {
-                title: "Create Account",
-            });
-        }
-        
-    })
+    res.render("account/signup", {
+        title: "Create Account",
+        signup: true
+    });
+
 };
 
 /**
@@ -141,39 +150,142 @@ export const getSignup = async (req: Request, res: Response): Promise<void> => {
  */
 export const postSignup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     await check("email", "Email is not valid").isEmail().run(req);
+    await check("name").exists().run(req);
+    await check("surname").exists().run(req);
+    if(!req.user) await check("phone").isMobilePhone("pl-PL").run(req);
     await check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
+
+
     await check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
     await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
-    await check("role").isIn(roles).run(req)
+    if (req.body.role in roles) req.body.role = "student";
+        
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
         req.flash("errors", errors.array());
-        return res.redirect("/adduser");
+        return res.redirect("/");
     }
 
-    const user = new User({
-        email: req.body.email,
-        password: req.body.password,
-        role: req.body.role
+    const user: any = new User({
+      email: req.body.email,
+      password: req.body.password,
+      profile: {
+          name: req.body.name,
+          surname: req.body.surname,
+          phone: req.body.phone,
+      },
+      role: req.body.role,
     });
 
     User.findOne({ email: req.body.email }, (err: NativeError, existingUser: UserDocument) => {
         if (err) { return next(err); }
         if (existingUser) {
             req.flash("errors", { msg: "Account with that email address already exists." });
-            return res.redirect("/adduser");
+            return res.redirect("/");
         }
-        user.save((err) => {
-            if (err) { return next(err); }
-            req.logIn(user, (err) => {
-                if (err) {
-                    return next(err);
+        async.waterfall(
+          [
+            function createRandomToken(
+              done: (err: Error, token: string, user:any) => void
+            ) {
+              crypto.randomBytes(16, (err, buf) => {
+                const token = buf.toString("hex");
+                done(err, token, user);
+              });
+            },
+            function setRandomToken(
+              token: AuthToken,
+              done: (
+                err: NativeError | WriteError,
+                token?: AuthToken,
+                user?: UserDocument
+              ) => void
+            ) {
+                  if (!user) {
+                    req.flash("errors", {
+                      msg: "Account with that email address does not exist.",
+                    });
+                    return res.redirect("/forgot");
+                  }
+                  user.accountVerifyToken = token;
+                  user.save((err: WriteError) => {
+                    done(err, token, user);
                 }
-                res.redirect("/");
+              );
+            },
+            async function sendVerifyEmail(
+              user: UserDocument, token: any,
+              done: (err: Error,) => void
+            ) {
+              // const transporter = nodemailer.createTransport({
+              //     service: "SendGrid",
+              //     auth: {
+              //         user: process.env.SENDGRID_USER,
+              //         pass: process.env.SENDGRID_PASSWORD
+              //     }
+              // });
+              const testAccount = await nodemailer.createTestAccount();
+
+              // create reusable transporter object using the default SMTP transport
+              const transporter = nodemailer.createTransport({
+                host: "smtp.ethereal.email",
+                port: 587,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                  user: testAccount.user, // generated ethereal user
+                  pass: testAccount.pass, // generated ethereal password
+                },
+              });
+              const mailOptions = {
+                to: user.email,
+                from: "express-ts@starter.com",
+                subject: "Verify your account",
+                text: `
+          Please click on the following link, or paste this into your browser to complete the process:\n\n
+          http://${req.headers.host}/verify/${token}\n\n`,
+              };
+              const info = transporter.sendMail(
+                  mailOptions,
+                  (err, info) => {
+                      console.log(
+                          "Preview URL: %s",
+                          nodemailer.getTestMessageUrl(info)
+                      );
+                      req.flash("success", {
+                          msg: "Success! Your password has been changed.",
+                      });
+                      done(err);
+                  }
+              );
+            },
+            function saveUser(err: any, done: (arg0: any) => any){
+                if(err) return done(err);
+                user.save((err:any ) => {
+                    if (err) { return done(err); }
+    
+                // req.logIn(user, (err) => {
+                // if (err) {
+                //     return next(err);
+                //     }
+                // });
+                });
+                done(err);
+            }
+          ],
+          (err) => {
+            if (err) {
+              return next(err);
+            }
+            req.flash("success", {
+              msg: "Zarejestrowałeś się! Sprawdź skrzynkę mailową aby zweryfikować maila",
             });
-        });
+            res.redirect("/");
+          }
+        );
+        
     });
+
 };
 
 /**
@@ -343,13 +455,25 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                     });
                 });
         },
-        function sendResetPasswordEmail(user: UserDocument, done: (err: Error) => void) {
+        async function sendResetPasswordEmail(user: UserDocument, done: (err: Error) => void) {
+            // const transporter = nodemailer.createTransport({
+            //     service: "SendGrid",
+            //     auth: {
+            //         user: process.env.SENDGRID_USER,
+            //         pass: process.env.SENDGRID_PASSWORD
+            //     }
+            // });
+            const testAccount = await nodemailer.createTestAccount();
+
+            // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
-                service: "SendGrid",
-                auth: {
-                    user: process.env.SENDGRID_USER,
-                    pass: process.env.SENDGRID_PASSWORD
-                }
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: testAccount.user, // generated ethereal user
+                pass: testAccount.pass, // generated ethereal password
+            },
             });
             const mailOptions = {
                 to: user.email,
@@ -357,9 +481,15 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                 subject: "Your password has been changed",
                 text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
             };
-            transporter.sendMail(mailOptions, (err) => {
-                req.flash("success", { msg: "Success! Your password has been changed." });
-                done(err);
+            const info = await transporter.sendMail(mailOptions, (err, info) => {
+              console.log(
+                "Preview URL: %s",
+                nodemailer.getTestMessageUrl(info)
+              );
+              req.flash("success", {
+                msg: "Success! Your password has been changed.",
+              });
+              done(err);
             });
         }
     ], (err) => {
@@ -417,13 +547,18 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
                 });
             });
         },
-        function sendForgotPasswordEmail(token: AuthToken, user: UserDocument, done: (err: Error) => void) {
+        async function sendForgotPasswordEmail(token: AuthToken, user: UserDocument, done: (err: Error) => void) {
+            const testAccount = await nodemailer.createTestAccount();
+
+            // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
-                service: "SendGrid",
-                auth: {
-                    user: process.env.SENDGRID_USER,
-                    pass: process.env.SENDGRID_PASSWORD
-                }
+              host: "smtp.ethereal.email",
+              port: 587,
+              secure: false, // true for 465, false for other ports
+              auth: {
+                user: testAccount.user, // generated ethereal user
+                pass: testAccount.pass, // generated ethereal password
+              },
             });
             const mailOptions = {
                 to: user.email,
@@ -434,10 +569,19 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
           http://${req.headers.host}/reset/${token}\n\n
           If you did not request this, please ignore this email and your password will remain unchanged.\n`
             };
-            transporter.sendMail(mailOptions, (err) => {
+            transporter.sendMail(mailOptions, (err, info) => {
+                console.log(
+                  "Preview URL: %s",
+                  nodemailer.getTestMessageUrl(info)
+                );
                 req.flash("info", { msg: `An e-mail has been sent to ${user.email} with further instructions.` });
                 done(err);
             });
+            // console.log("Message sent: %s", info.messageId);
+            // // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+            // // Preview only available when sending through an Ethereal account
+            
         }
     ], (err) => {
         if (err) { return next(err); }
@@ -446,5 +590,5 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
 };
 
 export const getPing = (req: Request, res: Response) => {
-    res.json({msg:"ping"})
-}
+    res.json({msg:"ping"});
+};

@@ -1,13 +1,20 @@
 import nodemailer from "nodemailer";
 import { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
+import Mail from "nodemailer/lib/mailer";
 
-const transporter = nodemailer.createTransport({
-    service: "SendGrid",
-    auth: {
-        user: process.env.SENDGRID_USER,
-        pass: process.env.SENDGRID_PASSWORD
-    }
+
+let transporter: Mail;
+nodemailer.createTestAccount().then((testAccount)=>{
+    transporter = nodemailer.createTransport({
+     host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: testAccount.user, // generated ethereal user
+            pass: testAccount.pass, // generated ethereal password
+        },
+    });
 });
 
 /**

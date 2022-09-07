@@ -2,36 +2,52 @@ extends ../layout
 
 block content
   .page-header
-    if setup
-      h3 Witaj!
-      p Stwórz konto administratora aby móc korzystać z programu!
+    if !signup
+      if setup
+        h3 Witaj!
+        p Stwórz konto administratora aby móc korzystać z programu!
+      else 
+        h3 Dodaj Konto!
+        p Stwórz nowe konto użytkownika i rozszerz swój zespół :)
     else 
-      h3 Dodaj Konto!
-      p Stwórz nowe konto użytkownika i rozszerz swój zespół :)
-
+        h3 Witaj!
+        p Stwórz konto użytkownika aby móc sprzedać swoje książki
     hr
   form.form-horizontal(id='signup-form', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
+    .form-group.row.justify-content-md-center 
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Imię i Nazwisko
+      .col-sm-7
+        div.d-flex.flex-row
+            input(type="text", name="name", placeholder="Imię", required, autofocus).form-control.mr-2.d-inline-flex
+            input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ml-2.d-inline-flex
     .form-group.row.justify-content-md-center
       label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
       .col-sm-7
-        input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus, required)
+        input(type="email", name="email", placeholder="E-Mail" required).form-control
     .form-group.row.justify-content-md-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='password') Password
-      .col-sm-7
-        input.form-control(type='password', name='password', id='password', placeholder='Password', required)
+      if !setup
+        label.col-sm-3.col-form-label.text-right.font-weight-bold(for='phone') Numer Telefonu
+        .col-sm-7
+          input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control
     .form-group.row.justify-content-md-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='confirmPassword') Confirm Password
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='password') Hasło
       .col-sm-7
-        input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password', required)
+        input.form-control(type='password', name='password', id='password', placeholder='Hasło', required)
     .form-group.row.justify-content-md-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='role') Role
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='confirmPassword') Powtórz Hasło
       .col-sm-7
-        select.form-control(name='role', id='role', placeholder='Choose Role', required)
-          if !setup
-            option seller 
-            option viewer
-          option admin 
+        input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Powtórz Hasło', required)
+    if !signup
+      .form-group.row.justify-content-md-center
+        label.col-sm-3.col-form-label.text-right.font-weight-bold(for='role') Rola
+        .col-sm-7
+          select.form-control(name='role', id='role', placeholder='Choose Role', required)
+            if !setup
+              option seller 
+              option viewer
+              option student
+            option admin 
     .form-group.row.justify-content-md-center
       .offset-sm-3.col-sm-7
         button.btn.btn-success(type='submit')
