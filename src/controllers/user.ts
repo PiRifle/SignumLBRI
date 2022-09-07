@@ -150,14 +150,11 @@ export const getSignup = async (req: Request, res: Response): Promise<void> => {
  */
 export const postSignup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     await check("email", "Email is not valid").isEmail().run(req);
-    await check("name").exists().run(req);
-    await check("surname").exists().run(req);
-    if(!req.user) await check("phone").isMobilePhone("pl-PL").run(req);
+    await check("name", "name not valid").exists().run(req);
+    await check("surname", "surname not valid").exists().run(req);
+    // if(!req.user) {await check("phone", "phone is invalid").isMobilePhone("pl-PL").run(req)}
     await check("password", "Password must be at least 4 characters long").isLength({ min: 4 }).run(req);
-
-
     await check("confirmPassword", "Passwords do not match").equals(req.body.password).run(req);
-    await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
     if (req.body.role in roles) req.body.role = "student";
         
     const errors = validationResult(req);
@@ -167,7 +164,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
         return res.redirect("/");
     }
 
-    const user: any = new User({
+    const user = new User({
       email: req.body.email,
       password: req.body.password,
       profile: {
@@ -177,18 +174,20 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
       },
       role: req.body.role,
     });
-
+    console.log(user)
     User.findOne({ email: req.body.email }, (err: NativeError, existingUser: UserDocument) => {
         if (err) { return next(err); }
         if (existingUser) {
             req.flash("errors", { msg: "Account with that email address already exists." });
             return res.redirect("/");
         }
+        console.log(user)
         async.waterfall(
           [
             function createRandomToken(
-              done: (err: Error, token: string, user:any) => void
+                done: (err: Error, token: string, user:any) => void
             ) {
+            console.log(user)
               crypto.randomBytes(16, (err, buf) => {
                 const token = buf.toString("hex");
                 done(err, token, user);
@@ -196,27 +195,30 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
             },
             function setRandomToken(
               token: AuthToken,
+              user: UserDocument,
               done: (
                 err: NativeError | WriteError,
-                token?: AuthToken,
-                user?: UserDocument
+                token: AuthToken,
+                user: UserDocument
               ) => void
             ) {
+                console.log(token, user, done)
                   if (!user) {
                     req.flash("errors", {
                       msg: "Account with that email address does not exist.",
                     });
-                    return res.redirect("/forgot");
+                    return res.redirect("/");
                   }
-                  user.accountVerifyToken = token;
-                  user.save((err: WriteError) => {
+                  (user as any).accountVerifyToken = token;
+                  user.save((err: any, user) => {
+                    console.log(user)
                     done(err, token, user);
                 }
               );
             },
-            async function sendVerifyEmail(
-              user: UserDocument, token: any,
-              done: (err: Error,) => void
+            function sendVerifyEmail(
+                token: any, user: UserDocument,
+              done: (err: Error, user: any) => void
             ) {
               // const transporter = nodemailer.createTransport({
               //     service: "SendGrid",
@@ -225,7 +227,8 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
               //         pass: process.env.SENDGRID_PASSWORD
               //     }
               // });
-              const testAccount = await nodemailer.createTestAccount();
+              nodemailer.createTestAccount().then(testAccount=>{
+
 
               // create reusable transporter object using the default SMTP transport
               const transporter = nodemailer.createTransport({
@@ -255,11 +258,14 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                       req.flash("success", {
                           msg: "Success! Your password has been changed.",
                       });
-                      done(err);
+                      done(err, user);
                   }
-              );
+              );       
+                   });
+
             },
-            function saveUser(err: any, done: (arg0: any) => any){
+            function saveUser(user: any, done: (err: any) => any){
+                console.log(user)
                 if(err) return done(err);
                 user.save((err:any ) => {
                     if (err) { return done(err); }
@@ -416,6 +422,79 @@ export const getReset = (req: Request, res: Response, next: NextFunction): void 
                 title: "Password Reset"
             });
         });
+};
+
+export const getVerify = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    await check("token", "No token provided").exists().run(req);
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        req.flash("errors", errors.array());
+        return res.redirect("back");
+    }
+
+    async.waterfall([
+        function resetPassword(done: (err: any, user: UserDocument) => void) {
+            User
+                .findOne({ accountVerifyToken: req.params.token })
+                .exec((err, user: any) => {
+                    if (err) { return next(err); }
+                    if (!user) {
+                        req.flash("errors", { msg: "Account token is invalid or has expired." });
+                        return res.redirect("back");
+                    }
+                    
+                    user.accountVerifyToken = undefined;
+                    user.save((err: WriteError) => {
+                        if (err) { return next(err); }
+                        req.logIn(user, (err) => {
+                            done(err, user);
+                        });
+                    });
+                });
+        },
+        async function sendResetPasswordEmail(user: UserDocument, done: (err: Error) => void) {
+            // const transporter = nodemailer.createTransport({
+            //     service: "SendGrid",
+            //     auth: {
+            //         user: process.env.SENDGRID_USER,
+            //         pass: process.env.SENDGRID_PASSWORD
+            //     }
+            // });
+            const testAccount = await nodemailer.createTestAccount();
+
+            // create reusable transporter object using the default SMTP transport
+            const transporter = nodemailer.createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: testAccount.user, // generated ethereal user
+                pass: testAccount.pass, // generated ethereal password
+            },
+            });
+            const mailOptions = {
+                to: user.email,
+                from: "express-ts@starter.com",
+                subject: "Your password has been changed",
+                text: `Hello,\n\nThis is a confirmation that the account ${user.email} has just been verified.\n`
+            };
+            const info = await transporter.sendMail(mailOptions, (err, info) => {
+              console.log(
+                "Preview URL: %s",
+                nodemailer.getTestMessageUrl(info)
+              );
+              req.flash("success", {
+                msg: "Success! Your password has been changed.",
+              });
+              done(err);
+            });
+        }
+    ], (err) => {
+        if (err) { return next(err); }
+        res.redirect("/");
+    });
 };
 
 /**

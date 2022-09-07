@@ -95,6 +95,7 @@ app.get("/forgot", userController.getForgot);
 app.post("/forgot", userController.postForgot);
 app.get("/reset/:token", userController.getReset);
 app.post("/reset/:token", userController.postReset);
+app.get("/verify/:token", userController.getVerify)
 app.get("/setup", userController.getSetUp);
 app.post("/setup", userController.postSignup);
 app.get("/signup", userController.getSignup);
