@@ -145,13 +145,14 @@ app.get("/account/unlink/:provider", passportConfig.isAuthenticated);
 //     res.redirect(req.session.returnTo || "/");
 // });
 
-// app.get("/find", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.getFindListing);
 // app.get("/book/registry", passportConfig.isAuthenticated, bookController.getBookRegistry);
 // app.get("/book/list", passportConfig.isAuthenticated, bookController.getBooks);
 // app.get("/book/sell", passportConfig.isAuthenticated, bookController.getSellBook);
 // app.post("/book/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.postSellBook);
 // app.get("/book/:itemID", passportConfig.isAuthenticated, bookController.editBook);
 // app.post("/book/:itemID/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.sellBook);
+app.get("/find", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.getFindListing);
+
 
 app.get(
   "/book/add",
@@ -162,7 +163,7 @@ app.post(
   "/book/add",
   passportConfig.isAuthenticated,
   bookController.postSellBook
-);
+  );
 app.get(
   "/book/fromisbn",
   passportConfig.isAuthenticated,
@@ -172,7 +173,19 @@ app.get(
   "/book/:id/manage",
   passportConfig.isAuthenticated,
   bookController.getManageBook
-)
+);
+app.post(
+  "/book/:id/accept",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.acceptBook
+);
+app.post(
+  "/book/:id/sell",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.sellBook
+);
 app.get(
     "/label",
     passportConfig.isAuthenticated,
@@ -182,13 +195,14 @@ app.get(
   "/label/print",
   passportConfig.isAuthenticated,
   bookController.getPrintLabel
-)
+);
 app.get(
-  '/label/print/success',
+  "/label/print/success",
   passportConfig.isAuthenticated,
-  bookController.redirectPrintSuccess)
-app.get('/label/registerprints', passportConfig.isAuthenticated, bookController.getRegisterPrint)
-app.get('/label/:id', passportConfig.isAuthenticated, bookController.redirectPrint)
+  bookController.redirectPrintSuccess);
+app.get("/label/registerprints", passportConfig.isAuthenticated, bookController.getRegisterPrint);
+app.get("/label/:id", passportConfig.isAuthenticated, bookController.redirectPrint);
+
 // const applicationRoutes = express.Router()
 // applicationRoutes.post("/login", userController.postLoginApp)
 // applicationRoutes.get("/ping", userController.getPing);
@@ -200,7 +214,7 @@ app.get('/label/:id', passportConfig.isAuthenticated, bookController.redirectPri
 
 // app.use("/app", applicationRoutes)
 
-app.get("/print", showPDF);
-app.get("/print/fetch", showPDF);
+// app.get("/print", showPDF);
+// app.get("/print/fetch", showPDF);
 
 export default app;

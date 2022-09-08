@@ -22,6 +22,28 @@ block content
     |    </div>
     |  </div>
     |</div>
+    |<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    |  <div class="modal-dialog" role="document">
+    |    <div class="modal-content">
+    |      <div class="modal-header">
+    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    |          <span aria-hidden="true">&times;</span>
+    |        </button>
+    |      </div>
+    |      <div class="modal-body">
+    |        ...
+    |      </div>
+    |      <div class="modal-footer">
+    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+
+    form(action=`${acceptString}`, method="post")
+        button(type="submit").btn.btn-success Przyjmij
+
+    |      </div>
+    |    </div>
+    |  </div>
+    |</div>
     |<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     |  <div class="modal-dialog" role="document">
     |    <div class="modal-content">
@@ -71,14 +93,17 @@ block content
                                 div.d-flex.flex-col
                                     div.col
                                         center
-                                            a(href=`/book/${item._id}`).btn.btn-primary.mt-2 Zarządzaj
+                                            a(href=`/book/${item._id}/manage`).btn.btn-primary.mt-2 Zarządzaj
                                         //- if edit
                                                 //- button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
                                                 //- button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
                                         if edit
                                             if !item.sold && (user.role == "seller" || user.role == "admin")
                                                 center
-                                                    button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
+                                                    if item.status == "registered" || item.status == "printed_label"
+                                                        button(data-toggle="modal" data-target="#acceptModal").btn.btn-warning.mt-2 Przyjmij
+                                                    else
+                                                        button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
                                             if user.role == "admin"
                                                 center
                                                     button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.mt-2 Usuń

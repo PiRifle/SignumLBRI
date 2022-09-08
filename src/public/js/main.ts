@@ -29,7 +29,9 @@ async function castData(){
     `/book/fromisbn?isbn=${$("input[name='isbn']").val()}`,
     { credentials: "same-origin" }
   );
+  $(".dataLoad").addClass("d-none");
   $(".dataLoad").parent().addClass("d-none");
+
   if(bookDataFetch.status == 200){
     let bookData: {
       title: string;

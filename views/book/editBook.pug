@@ -16,7 +16,7 @@ block content
         |      </div>
         |      <div class="modal-footer">
         |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-        |        <form action='!{item.id}/sell', method="post">
+        |        <form action='sell', method="post">
         |           <button type="submit" class="btn btn-success">Sprzedaj</button>
         |        </form>
         |    </div>
@@ -58,19 +58,22 @@ block content
                     .d-flex.flex-row
                         h3.mt-auto.mr-4
                             b= item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                        if edit
-                            if user.role == "admin"
-                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
-                            if !item.sold && (user.role == "seller" || user.role == "admin")
-                                button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
                 .d-flex.flex-row 
                     h4.mr-1= item.bookOwner.name
                     h4= item.bookOwner.surname 
                 h6 Status: #{item.status}
-            .col-lg-2.m-0.p-0.pl-3
-                .row 
-                    a(href=`/label/${item._id}/`).btn.btn-success.m-1 Wydrukuj etykietę
-                    a(href=`/label/${item._id}/`).btn.btn-danger.m-1 Anuluj
+            .col-lg-3.m-0.p-0.pl-3
+                .col
+                    center
+                        if item.status != "sold" || item.status != "accepted"
+                            a(href=`/label/${item._id}/`).btn.btn-success.m-1 Wydrukuj etykietę
+                        if edit
+                            if user.role == "admin"
+                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-1 Usuń
+                            if item.status != "sold" && (user.role == "seller" || user.role == "admin")
+                                button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
+                        else
+                            a(href=`/label/${item._id}/`).btn.btn-danger.m-1 Anuluj
 
                             
 
