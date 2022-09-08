@@ -3,6 +3,11 @@ import { BuyerDocument } from "./Buyer";
 import { BookDocument } from "./Book";
 import { generateEAN13 } from "../util/barcode";
 import { UserDocument } from "./User";
+import { stringify } from "querystring";
+export type LabelDocument= mongoose.Document & {
+  barcode: string,
+  print : boolean,
+}
 export type BookListingDocument = mongoose.Document & {
     commission: number,
     cost: number,
@@ -16,8 +21,15 @@ export type BookListingDocument = mongoose.Document & {
     whenBought: Date,
     // barcode: (id: number) => string;
     status:string,
-    barcode: string
+    label: LabelDocument
 };
+
+const labelSchema = new mongoose.Schema<LabelDocument>(
+  {
+    barcode: String,
+    print: Boolean,
+  }
+)
 
 const bookListingSchema = new mongoose.Schema<BuyerDocument>(
   {
@@ -54,6 +66,11 @@ const bookListingSchema = new mongoose.Schema<BuyerDocument>(
     whenSold: Date,
 
     whenBought: Date,
+    
+    label: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Label",
+    },
 
     status: String,
   },
@@ -61,8 +78,10 @@ const bookListingSchema = new mongoose.Schema<BuyerDocument>(
 );
 // bookListingSchema.methods.barcode = () => {
 // throw "not implemented yet"
+export const Label = mongoose.model<LabelDocument>("Label", labelSchema);
 // }
 export const BookListing = mongoose.model<BookListingDocument>(
   "BookListing",
   bookListingSchema
 );
+

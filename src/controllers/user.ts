@@ -174,14 +174,12 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
       },
       role: req.body.role,
     });
-    console.log(user);
     User.findOne({ email: req.body.email }, (err: NativeError, existingUser: UserDocument) => {
         if (err) { return next(err); }
         if (existingUser) {
             req.flash("errors", { msg: "Account with that email address already exists." });
             return res.redirect("/");
         }
-        console.log(user);
         async.waterfall(
           [
             function createRandomToken(
@@ -202,7 +200,6 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                 user: UserDocument
               ) => void
             ) {
-                console.log(token, user, done);
                   if (!user) {
                     req.flash("errors", {
                       msg: "Account with that email address does not exist.",
@@ -211,7 +208,6 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                   }
                   user.accountVerifyToken = (token as unknown as string);
                   user.save((err: Error, user) => {
-                    console.log(user);
                     done(err, token, user);
                 }
               );

@@ -1,0 +1,39 @@
+doctype html
+html(lang='')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        title #{title} - SignumLBRI
+        meta(name='description', content='')
+        meta(name='theme-color' content='#4DA5F4')
+        link(rel='stylesheet', href='/css/print.css')        
+    body
+        .ui
+            .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3
+                center
+                    button(onclick="print()").btn.btn-primary Wydrukuj #{listings.length} etykiet ponownie
+
+        .printMe
+            each item in listings
+                .row.border-bottom.border-secondary.p-3
+                    .col-.m-auto(style="width: 2cm; margin-left: -8mm !important;")
+                        a.navbar-brand(style="transform: rotate(-90deg); display: inline-block")
+                            i.fa.fa-book
+                            span.ml-1 SignumLBRI
+                            p.font-weight-light(style="font-size: 10px; text-align: right; margin-top: -8px") by PRFL
+                    //- div.m-auto(style="margin-right: 10mm; overflow: visible;width: 0px; height: 0px ")
+                    //-     div.font-weight-bold(style="transform: rotate(-90deg); white-space:nowrap; text-align: center") Cena: #{Number(item.cost+item.commission)}
+                    .col-(style="width: 10px")
+                        svg.m-auto(viewBox="0 0 100 100" style="height: 100%")
+                            text(x="50%" y="10%" dominant-baseline="middle" font-size="3mm" text-anchor="middle" font-weight="bold" transform="translate(0, 100) rotate(270)") Cena: #{Math.ceil(Number(item.cost+item.commission))}
+                    .col !{item.label.barcode}
+                    .col
+                        p 
+                            b=item.book.title
+                            span.ml-3=item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                        p imię: #{item.bookOwner.profile.name} #{item.bookOwner.profile.surname}
+
+        script(src='/js/lib/jquery-3.1.1.min.js')
+        script(src='/js/lib/bootstrap.min.js')
+        script(src="/js/print.js") 

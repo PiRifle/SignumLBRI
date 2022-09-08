@@ -8,19 +8,26 @@ block content
     br
     center 
         if bookListings
-            table 
+            table.table
                 thead 
                     td Tytuł
                     td Wydawca 
                     td Cena 
                     td Status
+                    td 
                 tbody 
                     each bookListing in bookListings
                         tr 
-                            td= bookListing.book.title 
-                            td= bookListing.book.publisher 
-                            td= bookListing.cost 
-                            td= bookListing.status
+                            td
+                                p.m-auto= bookListing.book.title 
+                            td
+                                p.m-auto= bookListing.book.publisher 
+                            td
+                                p.m-auto= bookListing.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                            td
+                                p.m-auto= bookListing.status
+                            td
+                                a(href=`/book/${bookListing._id}/manage`).btn.btn-success Zarządzaj
             a(href="/book/add").btn.btn-primary Dodaj następną książkę
 
         else 

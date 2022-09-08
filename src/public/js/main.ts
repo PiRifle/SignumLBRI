@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
   $("input[name='itemID']").focus()
   $(window).on("keydown", function (event: { keyCode: number; preventDefault: () => void; }) {
     if (event.keyCode == 13) {

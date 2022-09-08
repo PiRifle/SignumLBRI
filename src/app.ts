@@ -169,11 +169,26 @@ app.get(
   bookController.getFillBookData
 );
 app.get(
+  "/book/:id/manage",
+  passportConfig.isAuthenticated,
+  bookController.getManageBook
+)
+app.get(
     "/label",
     passportConfig.isAuthenticated,
-    bookController.getPrintLabel
+    bookController.getPrintSetup
 );
-
+app.get(
+  "/label/print",
+  passportConfig.isAuthenticated,
+  bookController.getPrintLabel
+)
+app.get(
+  '/label/print/success',
+  passportConfig.isAuthenticated,
+  bookController.redirectPrintSuccess)
+app.get('/label/registerprints', passportConfig.isAuthenticated, bookController.getRegisterPrint)
+app.get('/label/:id', passportConfig.isAuthenticated, bookController.redirectPrint)
 // const applicationRoutes = express.Router()
 // applicationRoutes.post("/login", userController.postLoginApp)
 // applicationRoutes.get("/ping", userController.getPing);

@@ -1,12 +1,15 @@
 import { fetchBook } from "../util/findBook";
-import { Request, Response } from "express";
+import e, { NextFunction, Request, Response } from "express";
 import { Book, BookDocument } from "../models/Book";
 import { NativeError } from "mongoose";
 import { check, validationResult } from "express-validator";
 import { Buyer } from "../models/Buyer";
 import { BuyerDocument } from "../models/Buyer";
-import { BookListing} from "../models/BookListing";
+import { BookListing, BookListingDocument, Label, LabelDocument} from "../models/BookListing";
 import { User, UserDocument } from "../models/User";
+import { Next } from "koa";
+import { userInfo } from "os";
+import { generateBarcode } from "../util/barcode";
 export async function getFillBookData(req: Request, res: Response): Promise<Response<never>> {
   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
   const errors = validationResult(req);
@@ -112,6 +115,7 @@ export async function postSellBookApp(req: Request, res: Response): Promise<Resp
             cost: Number(sellingData.cost),
             putOnSaleBy: req.user,
           });
+          
           bookListing.save((err) => {
             if (err) {
               console.log(err);
@@ -129,7 +133,8 @@ export async function postSellBookApp(req: Request, res: Response): Promise<Resp
 }
 export async function postSellBook(
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<unknown> {  
   await check("isbn", "kod ISBN nie jest ważny").isLength({ min: 13 }).isNumeric().run(req);
   await check("title", "Nie podano tytułu książki").exists().run(req);
@@ -141,13 +146,13 @@ export async function postSellBook(
     return res.redirect("/");
   }
   const sellingData = req.body;
-
+  console.log(sellingData);
+  
   Book.findOne(
     { isbn: req.body.isbn },
     (err: NativeError, book: BookDocument) => {
       if (err) {
-        req.flash("errors", {msg: err});
-        return res.redirect("/");
+        next(err)
       }
       if (!book) {
         book = new Book({
@@ -159,17 +164,19 @@ export async function postSellBook(
           image: sellingData.image || "",
           msrp: sellingData.msrp || 0,
         });
-        book.save();
-      } else if (book.$isEmpty("title")) {
-        book.update({
-          title: sellingData.title,
-          publisher: sellingData.publisher || "",
-          authors: sellingData.authors.split(",") || [""],
-          pubDate: sellingData.pubDate || "",
-          isbn: sellingData.isbn,
-          image: sellingData.image || "",
-          msrp: sellingData.msrp || 0,
-        });
+        book.save((err: Error)=>{
+          next(err)
+        })
+      } else if (!book.title) {
+        book.title = sellingData.title;
+        book.publisher = sellingData.publisher || "";
+        book.authors = sellingData.authors.split(",") || [""];
+        book.pubDate = sellingData.pubDate || "";
+        book.isbn = sellingData.isbn;
+        book.msrp = sellingData.msrp || 0;
+        book.save((err: Error)=>{
+          next(res)
+        })
       }
       const cost = sellingData.cost;
       const comission = cost * 0.07;
@@ -184,23 +191,124 @@ export async function postSellBook(
         book: book,
         status: "registered",
       });
-      listing.save((err: NativeError, BookListingDocument)=>{
-        if (err){
-          req.flash("errors", { msg: err });
-          return res.redirect("/");
+      const label = new Label({
+        barcode: generateBarcode(listing._id),
+        sold: false
+      })
+      label.save((err, label)=>{
+        if(err){
+          next(err)
         }
-        req.flash("success", {msg: "Dodano książkę!"});
-        return res.redirect("/");
-      });
-
+        listing.label = label
+        listing.save((err: NativeError, BookListingDocument)=>{
+          if (err){
+            next(err)
+          }
+          req.flash("success", {msg: "Dodano książkę!"});
+          return res.redirect("/");
+        });
+      })
     }
   );
 }
-const getPrintLabel = (req: Request, res: Response) => {
+export const getManageBook = (req: Request, res: Response) => {
+  check("id", "Nie podano identyfikatora książki").exists().run(req);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
+  }
+  BookListing.findOne({_id: req.params.id}).populate("book").exec((err: NativeError, listing: BookListingDocument)=>{
+    if(err){
+      req.flash("errors", {msg: err});
+      return res.redirect("/");
+    }
+    res.render("book/editBook", {item: listing})
+  })
+}
+export const getPrintSetup = (req: Request, res: Response) => {
+  BookListing.find({bookOwner: req.user}).populate("book").populate({path: 'label'}).exec((err: NativeError, listings: BookListingDocument[])=>{
+    if(err){
+      req.flash("errors", {msg: err});
+      return res.redirect("/");
+    }
+    listings.sort(function(a, b) { return (a.label.print ? 1 : 0) - (b.label.print ? 1 : 0); });
+
     res.render("label/manage", {
-      title: "Sprzedaj Książkę",
+      title: "Wydrukuj Etykietę",
+      listings: listings,
+      selectedLabel: req.query.selectedLabel
     });
+  })
 };
+
+export const redirectPrintSuccess = (req: Request, res: Response) => {
+  req.flash("success", {msg: "włóż zakładki do książek i oddaj książkę do punktu sprzedaży w elektryczniaku"})
+  res.redirect('/')
+}
+export const getPrintLabel = (req: Request, res: Response) => {
+  for (var id in Object.keys(req.query)){
+    check(id).exists().isNumeric().isLength({min:13}).run(req)
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
+  }
+  
+  BookListing.find({bookOwner: req.user}).where({_id: Object.keys(req.query)}).populate("label").populate("book").populate("bookOwner").exec((err: NativeError, listings)=>{
+    res.render("label/bookIdentifier", {
+      listings: listings
+    })
+  })
+}
+
+export const redirectPrint = (req: Request, res: Response)=>{
+  check("id").exists().isNumeric().isLength({min:13}).run(req)
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
+  }
+  res.redirect("/label?selectedLabel="+req.params.id)
+}
+export const getRegisterPrint = async (req: Request, res: Response)=>{
+  
+  for (var id in Object.keys(req.query)){
+    check(id).exists().isNumeric().isLength({min:13}).run(req)
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
+
+  }
+    BookListing.find({ bookOwner: req.user }).where({_id: Object.keys(req.query)}).populate("label").exec((err, listings)=>{
+    if (err){
+      req.flash("errors", errors.array());
+      return res.redirect("/");
+    }
+    listings.forEach((listing)=>{
+      
+      listing.status = "printed_label"
+      listing.label.print = true;
+      listing.label.save((err: NativeError, label)=>{
+        console.log(label)
+        if (err) {
+          req.flash("errors", errors.array());
+          return res.redirect("/");
+        }
+      })
+      listing.save((err: NativeError)=>{
+        if (err) {
+          req.flash("errors", errors.array());
+          return res.redirect("/");
+        }
+      })
+      res.status(200).end()
+    })
+    })
+}
 // export async function postSellBook(req: Request, res: Response): Promise<Response<never>> {
 //   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
 //   await check("name").exists().run(req);

@@ -7,6 +7,11 @@
 .printMe{
     display: none;
 }
+.ui{
+    display: block;
+    margin: 0;
+    padding: 0;
+}
 @media only screen{
     html {
         position: relative;
@@ -30,6 +35,9 @@
 }
 
 @media print {
+    div.col > svg{
+        height: 30mm;
+    }
     body{
         width: 21cm;
         height: 29.7cm;
