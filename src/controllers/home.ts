@@ -14,7 +14,7 @@ import { UserDocument } from "../models/User";
 export const index = async (req: Request, res: Response): Promise<void> => {
     if ((req.user as UserDocument).role !="student"){
         res.render("homeStaff", {
-            title: "Home",
+          title: "Home",
         });
     }else{
         const bookListings = await BookListing.find({bookOwner: req.user}).populate("book", "-image").catch((err: Error)=>{
@@ -23,7 +23,7 @@ export const index = async (req: Request, res: Response): Promise<void> => {
         });
         res.render("home", {
             title: "Home",
-            bookListings: bookListings ? (bookListings.length > 0 ? bookListings : undefined) : undefined
+            bookListings: bookListings ? (bookListings.length > 0 ? bookListings : undefined) : undefined,
           });
 
     }

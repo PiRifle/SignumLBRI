@@ -9,12 +9,13 @@ import path from "path";
 import mongoose from "mongoose";
 import passport from "passport";
 import bluebird from "bluebird";
-import { showPDF } from "./util/generatePDF";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
-
+import MobileDetect from "mobile-detect";
 // Controllers (route handlers)
+import * as performanceController from "./controllers/performance";
 import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
+import * as adminController from "./controllers/admin";
 // import * as apiController from "./controllers/api";
 // import * as contactController from "./controllers/contact";
 import * as bookController from "./controllers/book";
@@ -31,9 +32,6 @@ mongoose.Promise = bluebird;
 
 mongoose
   .connect(mongoUrl, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
   })
   .then(() => {
     /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
@@ -74,6 +72,10 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
+app.use((req, res, next)=>{
+  res.locals.device = new MobileDetect(req.headers["user-agent"]);
+  next();
+});
 app.use((req, res, next) => {
   // After successful login, redirect back to the intended page
   if (
@@ -93,7 +95,7 @@ app.use((req, res, next) => {
 app.use(
   express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
 );
-
+app.use(performanceController.registerPerformance);
 /**
  * Primary app routes.
  */
@@ -170,6 +172,12 @@ app.get(
   bookController.getFillBookData
 );
 app.get(
+  "/book/registry",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.getBookRegistry
+);
+app.get(
   "/book/:id/manage",
   passportConfig.isAuthenticated,
   bookController.getManageBook
@@ -203,6 +211,9 @@ app.get(
 app.get("/label/registerprints", passportConfig.isAuthenticated, bookController.getRegisterPrint);
 app.get("/label/:id", passportConfig.isAuthenticated, bookController.redirectPrint);
 
+
+
+app.get("/admin/", passportConfig.isAuthenticated, passportConfig.isAdmin, adminController.main);
 // const applicationRoutes = express.Router()
 // applicationRoutes.post("/login", userController.postLoginApp)
 // applicationRoutes.get("/ping", userController.getPing);

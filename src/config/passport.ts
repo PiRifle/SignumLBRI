@@ -1,17 +1,17 @@
 import passport from "passport";
 import passportLocal from "passport-local";
 // import passportFacebook from "passport-facebook";
-import passportBearer from "passport-http-bearer";
+// import passportBearer from "passport-http-bearer
 import { find } from "lodash";
 
 // import { User, UserType } from '../models/User';
 import { User, UserDocument } from "../models/User";
 import { Request, Response, NextFunction } from "express";
-import { NativeError } from "mongoose";
+import { Error } from "mongoose";
 
 const LocalStrategy = passportLocal.Strategy;
 // const FacebookStrategy = passportFacebook.Strategy;
-const BearerStrategy = passportBearer.Strategy;
+// const BearerStrategy = passportBearer.Strategy;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 passport.serializeUser<any, any>((req, user, done) => {
@@ -160,6 +160,18 @@ export const isSeller = (req: Request, res: Response, next: NextFunction): void 
         // req.user()
     }
     res.redirect("/login");
+};
+export const isAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const user = req.user as UserDocument;
+  if (user.role == "admin") {
+    return next();
+    // req.user()
+  }
+  res.redirect("/login");
 };
 
 export const isSellerApp = (req: Request, res: Response, next: NextFunction): void => {

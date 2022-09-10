@@ -32,7 +32,9 @@ block content
                     input(type="text", name="pubDate", placeholder="Data Publikacji").form-control.mt-2.d-none
                     //- i(type="text", name="msrp", placeholder="ISBN").form-control
             div.d-flex.flex-row.mt-5
-                input(type="text", name="cost", placeholder="Cena", required).form-control.d-inline-flex
+                .d-none 
+                    input(type="text", name="cost" required)#currencyFormated
+                input(type="text", placeholder="Cena", required).form-control.d-inline-flex#currency
                 //- input(type="text", name="commission", placeholder="Prowizja").form-control.ml-2.d-inline-flex
 
             .col.mt-5

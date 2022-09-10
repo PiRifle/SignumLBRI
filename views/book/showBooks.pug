@@ -1,78 +1,84 @@
 extends ../layout
 
 block content
-    |<div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    |  <div class="modal-dialog" role="document">
-    |    <div class="modal-content">
-    |      <div class="modal-header">
-    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-    |          <span aria-hidden="true">&times;</span>
-    |        </button>
-    |      </div>
-    |      <div class="modal-body">
-    |        ...
-    |      </div>
-    |      <div class="modal-footer">
-    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-    |        <form action=`${bookListings[0].id}/sell`, method="post">
-    |           <button type="submit" class="btn btn-success">Sprzedaj</button>
-    |        </form>
-    |      </div>
-    |    </div>
-    |  </div>
-    |</div>
-    |<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    |  <div class="modal-dialog" role="document">
-    |    <div class="modal-content">
-    |      <div class="modal-header">
-    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-    |          <span aria-hidden="true">&times;</span>
-    |        </button>
-    |      </div>
-    |      <div class="modal-body">
-    |        ...
-    |      </div>
-    |      <div class="modal-footer">
-    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+    if bookListings.length == 1
+        |<div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        |  <div class="modal-dialog" role="document">
+        |    <div class="modal-content">
+        |      <div class="modal-header">
+        |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |          <span aria-hidden="true">&times;</span>
+        |        </button>
+        |      </div>
+        |      <div class="modal-body">
+        |        ...
+        |      </div>
+        |      <div class="modal-footer">
+        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        form(action="sell", method="post")
+            button(type="submit").btn.btn-success Sprzedaj
+        |      </div>
+        |    </div>
+        |  </div>
+        |</div>
+        |<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        |  <div class="modal-dialog" role="document">
+        |    <div class="modal-content">
+        |      <div class="modal-header">
+        |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |          <span aria-hidden="true">&times;</span>
+        |        </button>
+        |      </div>
+        |      <div class="modal-body">
+        |        ...
+        |      </div>
+        |      <div class="modal-footer">
+        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
 
-    form(action=`${acceptString}`, method="post")
-        button(type="submit").btn.btn-success Przyjmij
+        form(action="accept", method="post")
+            button(type="submit").btn.btn-success Przyjmij
 
-    |      </div>
-    |    </div>
-    |  </div>
-    |</div>
-    |<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    |  <div class="modal-dialog" role="document">
-    |    <div class="modal-content">
-    |      <div class="modal-header">
-    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-    |          <span aria-hidden="true">&times;</span>
-    |        </button>
-    |      </div>
-    |      <div class="modal-body">
-    |        ...
-    |      </div>
-    |      <div class="modal-footer">
-    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-    |        <button type="button" class="btn btn-danger">Usuń</button>
-    |      </div>
-    |    </div>
-    |  </div>
-    |</div>
+        |      </div>
+        |    </div>
+        |  </div>
+        |</div>
+        |<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        |  <div class="modal-dialog" role="document">
+        |    <div class="modal-content">
+        |      <div class="modal-header">
+        |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |          <span aria-hidden="true">&times;</span>
+        |        </button>
+        |      </div>
+        |      <div class="modal-body">
+        |        ...
+        |      </div>
+        |      <div class="modal-footer">
+        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        form(action="delete", method="post")
+            button(type="submit").btn.btn-danger Usuń
+        |      </div>
+        |    </div>
+        |  </div>
+        |</div>
 
-    .col.mr-auto
+    .col
         h2 Rejestr Książek 
-        ul
+        if paging
+            form(method="get").d-inline
+                button(type="submit" name="page" value=paging.prevPage disabled=paging.prevPage ? false : true).btn.btn-primary <
+                button(type="submit" name="page" value=paging.nextPage disabled=paging.nextPage ? false : true).btn.btn-primary >
+            p.ml-3.d-inline Strona !{paging.page}/!{paging.totalPages}
+        div
             each item in bookListings
-                div.border.m-3.p-4
-                    div.d-flex.flex-row
-                        div
+                div.border.m-1.p-4
+                    div.d-flex.flex-row.flex-wrap
+                        .col-.my-auto
                             img(style="width: 120px", src=item.book.image)
-                        .col.m-0.p-0.pl-3
+                        .col.m-auto
                             .d-flex.flex-row 
                                 h5.mr-1= item.bookOwner.profile.name
                                 h5= item.bookOwner.profile.surname 
@@ -80,9 +86,10 @@ block content
                             div= item.bookOwner.email
                             br
                             .d-flex.flex-row
-                                span.my-auto.mr-3.text-success= item.sold ? "Sprzedana" : "cena"
-                                h5.my-auto= (item.commission+item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                        .col.m-0.p-0.pl-3
+                                h5.my-auto Cena: 
+                                h5.my-auto.ml-1= (item.commission+item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                                h6.my-auto.ml-4= item.status
+                        .col.m-auto.p-2
                             h6 
                                 b= item.book.title
                             div.font-weight-light= item.book.authors.join(", ")
@@ -98,9 +105,9 @@ block content
                                                 //- button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
                                                 //- button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
                                         if edit
-                                            if !item.sold && (user.role == "seller" || user.role == "admin")
+                                            if item.status != "sold" && (user.role == "seller" || user.role == "admin")
                                                 center
-                                                    if item.status == "registered" || item.status == "printed_label"
+                                                    if (item.status == "registered" || item.status == "printed_label")
                                                         button(data-toggle="modal" data-target="#acceptModal").btn.btn-warning.mt-2 Przyjmij
                                                     else
                                                         button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj

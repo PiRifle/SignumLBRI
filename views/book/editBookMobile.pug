@@ -49,13 +49,31 @@ block content
         |      </div>
         |      <div class="modal-footer">
         |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-        form(action="accept", method="post") 
+        form(action=`${acceptString}`, method="post")
             button(type="submit").btn.btn-success Przyjmij
-            
-        //- form(action=`${acceptString}`, method="post")
-        //-     button(type="submit").btn.btn-success Przyjmij
 
         |      </div>
+        |    </div>
+        |  </div>
+        |</div>
+        |<div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        |  <div class="modal-dialog" role="document">
+        |    <div class="modal-content">
+        |      <div class="modal-header">
+        |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |          <span aria-hidden="true">&times;</span>
+        |        </button>
+        |      </div>
+        |      <div class="modal-body">
+        |        ...
+        |      </div>
+        |      <div class="modal-footer">
+        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        |        <form action='sell', method="post">
+        |           <button type="submit" class="btn btn-success">Sprzedaj</button>
+        |        </form>
+        |    </div>
         |    </div>
         |  </div>
         |</div>
@@ -73,20 +91,21 @@ block content
         |      </div>
         |      <div class="modal-footer">
         |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-        form(action="delete", method="post")
-            button(type="submit").btn.btn-danger Usuń
+        |        <button type="button" class="btn btn-danger">Usuń</button>
         |      </div>
         |    </div>
         |  </div>
         |</div>
 
     .col.mr-auto
-        h2.mb-5 Książka 
-            b #{item.book.title}
-        div.d-flex.flex-row
-            div
-                img(style="width: 200px", src=item.book.image)
-            .col.m-0.p-0.pl-3
+        div.d-flex.flex-column
+            div(style="height: 30px; box-shadow: 0px 10px 20px white")
+            .container(style="width: 100%; z-index: -1;  top: 10%").position-sticky
+                img(style="width: 100%;", src=item.book.image)
+            .p-auto.bg-white
+                div(style="height: 30px; box-shadow: 0px -10px 30px white")
+                h3 Książka 
+                    b #{item.book.title}
                 h5
                     b= item.book.authors.join(", ")
                 h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
@@ -95,23 +114,26 @@ block content
                     .d-flex.flex-row
                         h3.mt-auto.mr-4
                             b= item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                    h6
+                        b= item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                        span.ml-2 marży
                 .d-flex.flex-row 
                     h4.mr-1= item.bookOwner.name
                     h4= item.bookOwner.surname 
                 h6 Status: #{item.status}
-            .col-lg-3.m-0.p-0.pl-3
+            .m-0.p-0.pl-3
                 .col
                     center
-                        if item.status != "sold" || item.status != "accepted"
+                        if (item.status != "sold" && item.status != "accepted")
                             a(href=`/label/${item._id}/`).btn.btn-success.m-1 Wydrukuj etykietę
                         if edit
-                            if user.role == "admin"
-                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-1 Usuń
                             if (user.role == "seller" || user.role == "admin")
                                 if (item.status == "registered" || item.status == "printed_label")
                                     button(data-toggle="modal" data-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
                                 else if item.status != "sold"
                                     button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
+                            if user.role == "admin"
+                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-1 Usuń
                         else
                             a(href=`/label/${item._id}/`).btn.btn-danger.m-1 Anuluj
 

@@ -1,0 +1,161 @@
+doctype html
+html(lang='')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title #{title} - SignumLBRI
+    meta(name='description', content='')
+    meta(name='theme-color' content='#4DA5F4')
+    link(rel='stylesheet', href='/css/admin.css')
+    title #{title} - SignumLBRI
+
+  body
+    include partials/header
+    .container-fluid
+      .row
+        include partials/sidebar
+        main.col-md-9.ml-sm-auto.col-lg-10.px-md-4
+          .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
+            h1.h2 Dashboard
+            .btn-toolbar.mb-2.mb-md-0
+              .btn-group.mr-2
+                button.btn.btn-sm.btn-outline-secondary(type='button') Share
+                button.btn.btn-sm.btn-outline-secondary(type='button') Export
+              button.btn.btn-sm.btn-outline-secondary.dropdown-toggle(type='button')
+                span.align-text-bottom(data-feather='calendar')
+                |             This week
+          canvas#myChart.my-4.w-100(width='900' height='380')
+          h2 Section title
+          .table-responsive
+            table.table.table-striped.table-sm
+              thead
+                tr
+                  th(scope='col') #
+                  th(scope='col') Header
+                  th(scope='col') Header
+                  th(scope='col') Header
+                  th(scope='col') Header
+              tbody
+                tr
+                  td 1,001
+                  td random
+                  td data
+                  td placeholder
+                  td text
+                tr
+                  td 1,002
+                  td placeholder
+                  td irrelevant
+                  td visual
+                  td layout
+                tr
+                  td 1,003
+                  td data
+                  td rich
+                  td dashboard
+                  td tabular
+                tr
+                  td 1,003
+                  td information
+                  td placeholder
+                  td illustrative
+                  td data
+                tr
+                  td 1,004
+                  td text
+                  td random
+                  td layout
+                  td dashboard
+                tr
+                  td 1,005
+                  td dashboard
+                  td irrelevant
+                  td text
+                  td placeholder
+                tr
+                  td 1,006
+                  td dashboard
+                  td illustrative
+                  td rich
+                  td data
+                tr
+                  td 1,007
+                  td placeholder
+                  td tabular
+                  td information
+                  td irrelevant
+                tr
+                  td 1,008
+                  td random
+                  td data
+                  td placeholder
+                  td text
+                tr
+                  td 1,009
+                  td placeholder
+                  td irrelevant
+                  td visual
+                  td layout
+                tr
+                  td 1,010
+                  td data
+                  td rich
+                  td dashboard
+                  td tabular
+                tr
+                  td 1,011
+                  td information
+                  td placeholder
+                  td illustrative
+                  td data
+                tr
+                  td 1,012
+                  td text
+                  td placeholder
+                  td layout
+                  td dashboard
+                tr
+                  td 1,013
+                  td dashboard
+                  td irrelevant
+                  td text
+                  td visual
+                tr
+                  td 1,014
+                  td dashboard
+                  td illustrative
+                  td rich
+                  td data
+                tr
+                  td 1,015
+                  td random
+                  td tabular
+                  td information
+                  td text
+
+    //- include partials//header
+    //- .container-fluid 
+        //- .row 
+            //- include partials/sidebar
+
+
+    //- .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3
+    //-   include partials/flash
+    //-   block content
+
+    //- include admin/footer
+    script(src='/js/lib/jquery-3.1.1.min.js')
+    script(src='/js/lib/bootstrap.min.js')
+    script(src='/js/lib/jquery.maskMoney.min.js')
+    script(src='/js/lib/html5-qrcode.min.js')
+    script(src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous")
+    script(src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous")
+    script(src='/js/admin.js')
+
+    //- script(async defer src="https://buttons.github.io/buttons.js")
+    //- Google Analytics: change UA-38177297-2 to be your site's ID
+    //- script.
+    //-   window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+    //-   ga('create','UA-38177297-2','auto');ga('send','pageview')
+    //- script(src='https://www.google-analytics.com/analytics.js' async defer)

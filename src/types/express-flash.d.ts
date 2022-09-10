@@ -6,6 +6,7 @@
  */
 declare namespace Express {
     export interface Request {
+
         flash(event: string, message: any): any;
     }
 }
