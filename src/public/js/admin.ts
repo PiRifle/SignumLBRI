@@ -1,13 +1,14 @@
 /* globals Chart:false, feather:false */
 
 (() => {
-  "use strict";
-
+  ("use strict");
+  //@ts-ignore
   feather.replace({ "aria-hidden": "true" });
 
   // Graphs
   const ctx = document.getElementById("myChart");
   // eslint-disable-next-line no-unused-vars
+  //@ts-ignore
   const myChart = new Chart(ctx, {
     type: "line",
     data: {

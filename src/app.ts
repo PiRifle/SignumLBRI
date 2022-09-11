@@ -1,4 +1,4 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import compression from "compression"; // compresses requests
 import session from "express-session";
 import bodyParser from "body-parser";
@@ -48,8 +48,8 @@ app.set("port", process.env.PORT || 3000);
 app.set("views", path.join(__dirname, "../views"));
 app.set("view engine", "pug");
 app.use(compression());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json() as RequestHandler);
+app.use(bodyParser.urlencoded({ extended: true }) as RequestHandler);
 app.use(
   session({
     resave: true,
@@ -57,9 +57,6 @@ app.use(
     secret: SESSION_SECRET,
     store: new MongoStore({
       mongoUrl,
-      mongoOptions: {
-        autoReconnect: true,
-      },
     }),
   })
 );

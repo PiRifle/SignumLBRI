@@ -8,7 +8,7 @@ import { IVerifyOptions } from "passport-local";
 import { WriteError } from "mongodb";
 import { body, check, validationResult } from "express-validator";
 import "../config/passport";
-import { CallbackError, NativeError } from "mongoose";
+import { CallbackError, Error } from "mongoose";
 import { Token } from "nodemailer/lib/xoauth2";
 /**
  * Login page.
@@ -74,7 +74,6 @@ export const postLoginApp = async (req: Request, res: Response, next: NextFuncti
     if (!errors.isEmpty()) {
         return res.status(400).json(errors.array());
     }
-    console.log(req.body);
     passport.authenticate(
       "local",
       (err: Error, user: UserDocument, info: IVerifyOptions) => {
@@ -101,7 +100,7 @@ export const postLoginApp = async (req: Request, res: Response, next: NextFuncti
  * @route GET /logout
  */
 export const logout = (req: Request, res: Response): void => {
-    req.logout();
+    req.logout(()=>{return null;},);
     res.redirect("/");
 };
 
@@ -185,7 +184,6 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
             function createRandomToken(
                 done: (err: Error, token: string, user:UserDocument) => void
             ) {
-            console.log(user);
               crypto.randomBytes(16, (err, buf) => {
                 const token = buf.toString("hex");
                 done(err, token, user);
@@ -261,7 +259,6 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
 
             },
             function saveUser(user: UserDocument, done: (err: Error) => void){
-                console.log(user);
                 if(err) return done(err);
                 user.save((err:Error ) => {
                     if (err) { return done(err); }
@@ -372,7 +369,7 @@ export const postDeleteAccount = (req: Request, res: Response, next: NextFunctio
     const user = req.user as UserDocument;
     User.remove({ _id: user.id }, (err) => {
         if (err) { return next(err); }
-        req.logout();
+        req.logout(()=>{return null;});
         req.flash("info", { msg: "Your account has been deleted." });
         res.redirect("/");
     });

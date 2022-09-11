@@ -13,17 +13,17 @@ block content
             |        </button>
             |      </div>
             |      <div class="modal-body">
-            .form-group.row.justify-content-md-center
+            .input-group.mb-3.row.justify-content-md-center
                 label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Imię i Nazwisko
                 .col-sm-7
                     div.d-flex.flex-row
-                        input(type="text", name="name", placeholder="Imię", required, autofocus).form-control.mr-2.d-inline
-                        input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ml-2.d-inline
-            .form-group.row.justify-content-md-center.my-4
+                        input(type="text", name="name", placeholder="Imię", required, autofocus).form-control.me-2.d-inline
+                        input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ms-2.d-inline
+            .input-group.mb-3.row.justify-content-md-center.my-4
                 label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
                 .col-sm-7
                     input(type="email", name="email", placeholder="E-Mail" required).form-control
-            .form-group.row.justify-content-md-center.my-4
+            .input-group.mb-3.row.justify-content-md-center.my-4
                 label.col-sm-3.col-form-label.text-right.font-weight-bold(for='phone') Numer Telefonu
                 .col-sm-7
                     input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control
@@ -97,7 +97,7 @@ block content
         |  </div>
         |</div>
 
-    .col.mr-auto
+    .col.me-auto
         div.d-flex.flex-column
             div(style="height: 30px; box-shadow: 0px 10px 20px white")
             .container(style="width: 100%; z-index: -1;  top: 10%").position-sticky
@@ -112,13 +112,13 @@ block content
                 div ID: #{item._id}
                 div.my-auto
                     .d-flex.flex-row
-                        h3.mt-auto.mr-4
+                        h3.mt-auto.me-4
                             b= item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
                     h6
                         b= item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                        span.ml-2 marży
+                        span.ms-2 marży
                 .d-flex.flex-row 
-                    h4.mr-1= item.bookOwner.name
+                    h4.me-1= item.bookOwner.name
                     h4= item.bookOwner.surname 
                 h6 Status: #{item.status}
             .m-0.p-0.pl-3

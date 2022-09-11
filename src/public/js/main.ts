@@ -14,7 +14,7 @@ if (
   isMobile = true;
 }
 
-var reader: Html5Qrcode;
+var reader: any;
 function onScanSuccess(decodedText: string, decodedResult: any) {
   // handle the scanned code as you like, for example:
   if(reader){
@@ -24,6 +24,7 @@ function onScanSuccess(decodedText: string, decodedResult: any) {
   $('form[action="/find"]').trigger("submit")
   
 }
+//@ts-ignore
 const formatsToSupport = [Html5QrcodeSupportedFormats.EAN_13];
 let config = {
   fps: 10,
@@ -32,51 +33,59 @@ let config = {
   // supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
 };
 if(isMobile){
-  reader = new Html5Qrcode("reader")
+  //@ts-ignore
+  reader = new Html5Qrcode("reader");
 }
 
 $(document).ready(function () {
-const timeStart = Date.now()
-$("a").on("click", (event)=>{
-  const navigateToHREF = new URL(location.origin + event.target.getAttribute("href"));
-  if(navigateToHREF.origin == location.origin){
-    let params = new URLSearchParams(navigateToHREF.search);
-    params.set("performance", (Date.now() - timeStart).toString());
-    navigateToHREF.search = params.toString()
-    // console.log(navigateToHREF.toString());
-    $(event.target).attr("href", navigateToHREF.toString())
-  }
-  // event.preventDefault()
-  // return false
-})
-  $("form").on("submit", (event) => {
-  console.log("submitted");
-  var element = document.createElement("input");
-  element.setAttribute("name", "performance")
-  element.setAttribute("value", (Date.now() - timeStart).toString());
-  element.classList.add("d-none")
-  event.target.append(element);
-
-  // return false;
-  // event.preventDefault()
-  // debugger
-});
-$("#currency").maskMoney();
-$("#currency").on("change", (change)=>{
-  $("#currencyFormated").val($("#currency").maskMoney("unmasked")[0])
-
-})
-  $("button.scan-barcode").on("click", (target) => {
-    if(reader){
-      if(reader.getState() == Html5QrcodeScannerState.NOT_STARTED){
-        $("#reader").parent().removeClass("d-none")
-        reader.start({ facingMode: "environment" }, config, onScanSuccess, ()=>{})
-    }else{
-      reader.stop();
-      $("#reader").parent().addClass("d-none");
+  const timeStart = Date.now();
+  $("a").on("click", (event) => {
+    const navigateToHREF = new URL(
+      location.origin + event.target.getAttribute("href")
+    );
+    if (navigateToHREF.origin == location.origin) {
+      let params = new URLSearchParams(navigateToHREF.search);
+      params.set("performance", (Date.now() - timeStart).toString());
+      navigateToHREF.search = params.toString();
+      // console.log(navigateToHREF.toString());
+      $(event.target).attr("href", navigateToHREF.toString());
     }
-  }
+    // event.preventDefault()
+    // return false
+  });
+  $("form").on("submit", (event) => {
+    var element = document.createElement("input");
+    element.setAttribute("name", "performance");
+    element.setAttribute("value", (Date.now() - timeStart).toString());
+    element.classList.add("d-none");
+    event.target.append(element);
 
+    // return false;
+    // event.preventDefault()
+    // debugger
+  });
+  //@ts-ignore
+  $("#currency").maskMoney();
+  $("#currency").on("change", (change) => {
+    //@ts-ignore
+    $("#currencyFormated").val($("#currency").maskMoney("unmasked")[0]);
+  });
+  $("button.scan-barcode").on("click", (target) => {
+    if (reader) {
+      //@ts-ignore
+      if (reader.getState() == Html5QrcodeScannerState.NOT_STARTED) {
+        $("#reader").parent().removeClass("d-none");
+        reader.start(
+          { facingMode: "environment" },
+          config,
+          onScanSuccess,
+          () => {}
+        );
+      } else {
+        reader.stop();
+        $("#reader").parent().addClass("d-none");
+      }
+    }
   });
   $("input[name='itemID']").focus();
   $(window).on(
@@ -97,9 +106,7 @@ $("#currency").on("change", (change)=>{
       }
     }
   );
-  // Place JavaScript code here...
   $("input[name='isbn']").on("focusout", (event) => {
-    console.log(event.target);
     castData();
   });
 });

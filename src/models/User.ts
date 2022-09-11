@@ -46,11 +46,6 @@ const userSchema = new mongoose.Schema<UserDocument>(
         accountVerifyToken: String,
 
 
-        facebook: String,
-        twitter: String,
-        google: String,
-        tokens: Array,
-
         role: String,
 
         profile: {

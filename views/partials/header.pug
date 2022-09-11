@@ -5,13 +5,13 @@ if device.mobile() && user && user.role != "student"
         span.input-group-text Wyszukaj Kod Zlecenia
       input(type="text" name="itemID").form-control 
       .input-group-append  
-        button(type="button").mobile.fa.fa-camera.border-0.scan-barcode
+        button(type="button").mobile.fa.fa-camera.border-0.scan-barcode.h-100
 nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
   .container
     a.navbar-brand(href='/')
-      i.fa.fa-book
+      i.fa-solid.fa-bookmark.mx-2
       | SignumLBRI
-    button.navbar-toggler(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+    button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='.navbar-collapse')
       span.navbar-toggler-icon
     if !setup 
       .collapse.navbar-collapse
@@ -40,15 +40,15 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
             li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
               a.nav-link(href='/signup') Zarejestruj się
           else
-            li.nav-item.dropdown(class=(title === 'Account Management') ? 'active' : undefined)
-              a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown')
+            li.nav-item.dropdown#dropdownMenuButton1(class=(title === 'Account Management') ? 'active' : undefined)
+              a.nav-link.dropdown-toggle(data-bs-toggle='dropdown' aria-expanded="false")
                 if user.profile.picture
                   img(src=user.profile.picture, alt=(user.profile.name || user.email || user.id))
                 else
                   img(src=user.gravatar(60), alt=(user.profile.name || user.email || user.id))
                 span= user.profile.name || user.email || user.id
                 i.caret
-              ul.dropdown-menu
+              ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
                 li.nav-item
                   a.nav-link(href='/account') My Account
                 if user.role == "admin"

@@ -71,36 +71,36 @@ block content
             form(method="get").d-inline
                 button(type="submit" name="page" value=paging.prevPage disabled=paging.prevPage ? false : true).btn.btn-primary <
                 button(type="submit" name="page" value=paging.nextPage disabled=paging.nextPage ? false : true).btn.btn-primary >
-            p.ml-3.d-inline Strona !{paging.page}/!{paging.totalPages}
+            p.ms-3.d-inline Strona !{paging.page}/!{paging.totalPages}
         div
             each item in bookListings
                 div.border.m-1.p-4
                     div.d-flex.flex-row.flex-wrap
-                        .col-.my-auto
-                            img(style="width: 120px", src=item.book.image)
+                        .col-.m-auto
+                            img(style="width: 120px", src=item.book.image).m-3
                         .col.m-auto
                             .d-flex.flex-row 
-                                h5.mr-1= item.bookOwner.profile.name
+                                h5.me-1= item.bookOwner.profile.name
                                 h5= item.bookOwner.profile.surname 
                             h5= item.bookOwner.profile.phone
                             div= item.bookOwner.email
                             br
                             .d-flex.flex-row
                                 h5.my-auto Cena: 
-                                h5.my-auto.ml-1= (item.commission+item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                                h6.my-auto.ml-4= item.status
-                        .col.m-auto.p-2
+                                h5.my-auto.ms-1= (item.commission+item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                                h6.my-auto.ms-4= item.status
+                        .col-lg.m-auto.p-2
                             h6 
                                 b= item.book.title
                             div.font-weight-light= item.book.authors.join(", ")
                             div.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                             div ISBN: #{item._id}
-                        .col-sm
+                        .col.mx-auto.my-4
                             div.d-flex.flex-col.justify-content-center
                                 div.d-flex.flex-col
                                     div.col
                                         center
-                                            a(href=`/book/${item._id}/manage`).btn.btn-primary.mt-2 Zarządzaj
+                                            a(href=`/book/${item._id}/manage`).btn.btn-primary.m-auto Zarządzaj
                                         //- if edit
                                                 //- button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
                                                 //- button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj

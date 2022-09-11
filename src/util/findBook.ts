@@ -11,7 +11,7 @@ async function fetchBook(isbn: number): Promise<{title: string, isbn: number, au
     const webpage = await bookRequest.text();
     const searchDOM = new JSDOM(webpage);
     const selectedBook = searchDOM.window.document.querySelector("div.main").querySelectorAll("div.item")[0];
-    console.log(selectedBook);
+    // console.log(selectedBook);
     if(selectedBook != null){
         const offerLink = selectedBook.querySelector("div.name > a").getAttribute("href");
         const bookURL = new URL("https://www.podrecznikowo.pl/"+offerLink);
@@ -28,7 +28,6 @@ async function fetchBook(isbn: number): Promise<{title: string, isbn: number, au
             imgBody = `data:${imgFetch.headers.get("content-type")};base64,${Buffer.from(await imgFetch.arrayBuffer()).toString("base64")}`;
         }
         const info = document.querySelector("div.textbook");
-        console.log(info);
         let authors: string[] = [""];
         let publisher = "";
         let pubDate = 0;
@@ -46,15 +45,15 @@ async function fetchBook(isbn: number): Promise<{title: string, isbn: number, au
         }catch(e){
 
         }
-        console.log({
-            title: info.querySelector("span").textContent,
-            isbn: Number(info.querySelectorAll("span")[2].textContent),
-            authors: authors,
-            publisher: publisher,
-            pubDate: pubDate,
-            msrp: Number(document.querySelector("span[itemprop='price']").textContent.replace(",", ".")),
-            image: imgBody
-        });
+        // console.log({
+        //     title: info.querySelector("span").textContent,
+        //     isbn: Number(info.querySelectorAll("span")[2].textContent),
+        //     authors: authors,
+        //     publisher: publisher,
+        //     pubDate: pubDate,
+        //     msrp: Number(document.querySelector("span[itemprop='price']").textContent.replace(",", ".")),
+        //     image: imgBody
+        // });
         return {
             title: info.querySelector("span").textContent,
             isbn: Number(info.querySelectorAll("span")[2].textContent),

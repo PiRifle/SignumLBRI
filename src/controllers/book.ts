@@ -10,12 +10,11 @@ import { UserDocument } from "../models/User";
 import { generateBarcode } from "../util/barcode";
 
 export async function getFillBookData(req: Request, res: Response): Promise<Response<never>> {
-  await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
+  await check("isbn", "Podano nieprawidłowy kod ISBN").isLength({ min: 13 }).isNumeric().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  console.log("GOT PINGED by " + req.rawHeaders);
   
   const isbn = Number(req.query.isbn);
   Book.findOne({ isbn: isbn }, async (err: Error, book: BookDocument) => {
@@ -67,14 +66,13 @@ export async function getBooks(req: Request, res: Response): Promise<void> {
 }
 
 export async function postSellBookApp(req: Request, res: Response): Promise<Response<never>> {
-  await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
-  await check("name").exists().run(req);
-  await check("surname").exists().run(req);
+  await check("isbn", "Podano nieprawidłowy kod ISBN").isLength({ min: 13 }).isNumeric().run(req);
+  await check("name", "Nie podano imienia").exists().notEmpty().run(req);
+  await check("surname", "Nie podano nazwiska").exists().notEmpty().run(req);
   await check("email", "Email is not valid").isEmail().run(req);
-  await check("phone").isMobilePhone("pl-PL").run(req);
-  await check("isbn").exists().run(req);
-  await check("title").exists().run(req);
-  await check("cost").exists().isNumeric().isCurrency().run(req);
+  await check("phone", "Nie podano numeru telefonu").isMobilePhone("pl-PL").run(req);
+  await check("title", "Nie podano tytułu książki").exists().notEmpty().run(req);
+  await check("cost", "Nie podano ceny").exists().isNumeric().isCurrency().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -228,7 +226,7 @@ export const getManageBook = (req: Request & {user: UserDocument}, res: Response
   }
   BookListing.findOne({_id: req.params.id}).populate("book").exec((err: Error, listing: BookListingDocument)=>{
     if(err){
-      req.flash("errors", {msg: err});
+      req.flash("errors", { msg: JSON.stringify(err) });
       return res.redirect("/");
     } 
     if(res.locals.device.mobile()){
@@ -261,7 +259,7 @@ export const getPrintSetup = (req: Request, res: Response): void => {
     .populate({ path: "label" })
     .exec((err: Error, listings: BookListingDocument[]) => {
       if (err) {
-        req.flash("errors", { msg: err });
+        req.flash("errors", { msg: JSON.stringify(err) });
         return res.redirect("/");
       }
       listings.sort(function (a, b) {
@@ -304,7 +302,11 @@ export const getPrintLabel = (req: Request, res: Response): void => {
 };
 
 export const redirectPrint = (req: Request, res: Response): void => {
-  check("id").exists().isNumeric().isLength({ min: 13 }).run(req);
+  check("id", "Nie podano identyfikatora książki")
+    .exists()
+    .isNumeric()
+    .isLength({ min: 13 })
+    .run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash("errors", errors.array());
@@ -332,8 +334,7 @@ export const getRegisterPrint = async (req: Request, res: Response): Promise<voi
       listings.forEach((listing) => {
         listing.status = "printed_label";
         listing.label.print = true;
-        listing.label.save((err: Error, label) => {
-          console.log(label);
+        listing.label.save((err: Error) => {
           if (err) {
             req.flash("errors", errors.array());
             return res.redirect("/");
@@ -432,7 +433,7 @@ export const getRegisterPrint = async (req: Request, res: Response): Promise<voi
 // }
 
 export async function getFindListing(req: Request, res: Response): Promise<void> {
-  await check("itemID").exists().isNumeric().isLength({min: 13, max: 13}).run(req);
+  await check("itemID", "Nie podano identyfikatora książki").exists().isNumeric().isLength({min: 13, max: 13}).run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
       req.flash("errors", errors.array());
@@ -459,7 +460,7 @@ export async function getFindListing(req: Request, res: Response): Promise<void>
     }
 }
 export async function getFindListingApp(req: Request, res: Response): Promise<void> {
-  await check("itemID").exists().run(req);
+  await check("itemID", "Nie podano identyfikatora książki").exists().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash("errors", errors.array());
@@ -474,7 +475,11 @@ export async function getFindListingApp(req: Request, res: Response): Promise<vo
     res.json(bookListings);
 }
 export async function getBookRegistry(req: Request, res: Response): Promise<void>{
-  await check("page").exists().isNumeric().isInt().run(req);
+  await check("page", "Nie podano strony")
+    .exists()
+    .isNumeric()
+    .isInt()
+    .run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash("errors", errors.array());
@@ -496,7 +501,10 @@ export async function editBook(
   req: Request,
   res: Response
 ): Promise<void> {
-  await check("itemID").isLength({ min: 12 }).isNumeric().run(req);
+  await check("itemID", "Nie podano identyfikatora książki")
+    .isLength({ min: 12 })
+    .isNumeric()
+    .run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     req.flash("errors", errors.array());
@@ -517,11 +525,14 @@ export async function sellBook(
   req: Request,
   res: Response,
 ): Promise<void>  {
-    await check("id").isLength({ min: 13, max: 13 }).isNumeric().run(req);
-    await check("name").exists().run(req);
-    await check("surname").exists().run(req);
-    await check("email", "Email is not valid").isEmail().run(req);
-    await check("phone").isMobilePhone("pl-PL").run(req);
+    await check("id", "Nie podano identyfikatora książki")
+      .isLength({ min: 13, max: 13 })
+      .isNumeric()
+      .run(req);
+    await check("name", "Nie podano imienia").exists().run(req);
+    await check("surname", "Nie podano nazwiska").exists().run(req);
+    await check("email", "Email jest nieprawidłowy").isEmail().run(req);
+    await check("phone", "Numer Telefony jest nieprawidłowy").isMobilePhone("pl-PL").run(req);
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -545,9 +556,7 @@ export async function sellBook(
     bookListings.save((err)=>{
         if(err){
             console.log(err);
-            req.flash("errors", {
-                msg: err
-            });
+            req.flash("errors", { msg: JSON.stringify(err) });
             return res.redirect("/book/" + req.params.id + "/manage");
         }else{ 
             req.flash("success", {msg:"Udało się! Sprzedanio książkę!"});
@@ -561,7 +570,10 @@ export async function sellBookApp(
   req: Request,
   res: Response,
 ): Promise<Response<never>> {
-  await check("itemID").isLength({ min: 12 }).isNumeric().run(req);
+  await check("itemID", "Nie podano identyfikatora książki")
+    .isLength({ min: 12 })
+    .isNumeric()
+    .run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -593,7 +605,7 @@ export const acceptBook = (req: Request, res: Response): void => {
   }
   BookListing.updateOne({ _id: req.params.id }, {status: "accepted", verifiedBy: req.user}).exec((err: Error) => {
       if (err) {
-        req.flash("errors", { msg: err });
+        req.flash("errors", { msg: JSON.stringify(err) });
         return res.redirect("/");
       }
       req.flash("success", { msg: "przyjęto książkę!" });

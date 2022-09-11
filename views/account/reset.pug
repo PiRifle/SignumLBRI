@@ -6,13 +6,13 @@ block content
       legend Reset Password
       hr
       input(type='hidden', name='_csrf', value=_csrf)
-      .form-group
+      .input-group.mb-3
         label.col-form-label.font-weight-bold(for='password') New Password
         input.form-control(type='password', name='password', id='password', placeholder='New password', autofocus, required)
-      .form-group
+      .input-group.mb-3
         label.col-form-label.font-weight-bold(for='confirm') Confirm Password
         input.form-control(type='password', name='confirm', id='confirm', placeholder='Confirm password', required)
-      .form-group
+      .input-group.mb-3
         button.btn.btn-primary.btn-reset(type='submit')
           i.fa.fa-keyboard-o
           | Change Password

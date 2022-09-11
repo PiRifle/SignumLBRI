@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { check, validationResult } from "express-validator";
+import { check } from "express-validator";
 import { UserPerformance } from "../models/Performance";
 
 export async function registerPerformance(
@@ -7,10 +7,10 @@ export async function registerPerformance(
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const result = await check("performance")
+  const result = await check("performance", "Nie podano wartości wydajności")
     .isNumeric({ no_symbols: true })
     .isInt({ min: 0 })
-    .run(req, {dryRun: true});
+    .run(req, { dryRun: true });
 if (!result.isEmpty()){
     return next();
 }

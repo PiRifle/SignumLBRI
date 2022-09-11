@@ -1,7 +1,7 @@
 header.navbar.navbar-dark.sticky-top.bg-dark.flex-md-nowrap.p-0.shadow
     a.navbar-brand.col-md-3.col-lg-2.me-0.px-3.fs-6(href="#")
         center
-            i.fa.fa-book.mr-2
+            i.fa-solid.fa-bookmark.mx-2
             | SignumLBRI
     button.navbar-toggler.position-absolute.d-md-none.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation")
         span.navbar-toggler-icon
@@ -19,7 +19,7 @@ header.navbar.navbar-dark.sticky-top.bg-dark.flex-md-nowrap.p-0.shadow
                         img(src=user.profile.picture, alt=(user.profile.name || user.email || user.id))
                     else
                         img(src=user.gravatar(30), alt=(user.profile.name || user.email || user.id))
-                    span.ml-2= user.profile.name || user.email || user.id                    
+                    span.ms-2= user.profile.name || user.email || user.id                    
             li.nav-item.my-auto.h-100
                 a.nav-link.px-3.my-auto(href='/logout') Logout
     //-     li.nav-item
