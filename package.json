@@ -1,12 +1,12 @@
 {
-    "name": "express-typescript-starter",
+    "name": "signum-lbri",
     "version": "0.1.0",
-    "description": "A starting point for Node.js express apps with TypeScript",
+    "description": "complex bookselling platform for schools",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Microsoft/TypeScript-Node-Starter"
+        "url": "https://github.com/pirifle/SignumLBRI"
     },
-    "author": "Bowden Kelly",
+    "author": "Piotr Czirnia",
     "license": "MIT",
     "scripts": {
         "build-sass": "sass src/public/css/main.scss:dist/public/css/main.css src/public/css/admin.scss:dist/public/css/admin.css src/public/css/print.scss:dist/public/css/print.css",
