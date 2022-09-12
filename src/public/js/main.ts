@@ -38,6 +38,9 @@ if(isMobile){
 }
 
 $(document).ready(function () {
+  $(document).on("input", ".numeric", function () {
+    this.value = this.value.replace(/\D/g, "");
+  });
   const timeStart = Date.now();
   $("a").on("click", (event) => {
     const navigateToHREF = new URL(

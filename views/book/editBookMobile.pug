@@ -8,7 +8,7 @@ block content
             |    <div class="modal-content">
             |      <div class="modal-header">
             |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-            |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             |          <span aria-hidden="true">&times;</span>
             |        </button>
             |      </div>
@@ -29,7 +29,7 @@ block content
                     input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control
             |      </div>
             |      <div class="modal-footer">
-            |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+            |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
             button(type="submit").btn.btn-success sprzedaj
             |      </div>
             |    </div>
@@ -40,7 +40,7 @@ block content
         |    <div class="modal-content">
         |      <div class="modal-header">
         |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
@@ -48,7 +48,7 @@ block content
         |        ...
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
         form(action=`${acceptString}`, method="post")
             button(type="submit").btn.btn-success Przyjmij
 
@@ -61,7 +61,7 @@ block content
         |    <div class="modal-content">
         |      <div class="modal-header">
         |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
@@ -69,7 +69,7 @@ block content
         |        ...
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
         |        <form action='sell', method="post">
         |           <button type="submit" class="btn btn-success">Sprzedaj</button>
         |        </form>
@@ -82,7 +82,7 @@ block content
         |    <div class="modal-content">
         |      <div class="modal-header">
         |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
@@ -90,8 +90,10 @@ block content
         |        ...
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-        |        <button type="button" class="btn btn-danger">Usuń</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        |        <form action='delete', method="post">
+        |           <button type="submit" class="btn btn-danger">Usuń</button>
+        |        </form>
         |      </div>
         |    </div>
         |  </div>
@@ -118,26 +120,31 @@ block content
                         b= item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
                         span.ms-2 marży
                 .d-flex.flex-row 
-                    h4.me-1= item.bookOwner.name
-                    h4= item.bookOwner.surname 
+                    h5.me-1= item.bookOwner.profile.name
+                    h5= item.bookOwner.profile.surname 
+                h5= item.bookOwner.profile.phone
+                div= item.bookOwner.email
+                br
                 h6 Status: #{item.status}
             .m-0.p-0.pl-3
                 .col
                     center
-                        if (item.status != "sold" && item.status != "accepted")
+                        if item.status != "sold" || item.status != "accepted"
                             a(href=`/label/${item._id}/`).btn.btn-success.m-1 Wydrukuj etykietę
                         if edit
-                            if (user.role == "seller" || user.role == "admin")
-                                if (item.status == "registered" || item.status == "printed_label")
-                                    button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
-                                else if item.status != "sold"
-                                    button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
                             if user.role == "admin"
-                                button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-1 Usuń
-                        else
-                            a(href=`/label/${item._id}/`).btn.btn-danger.m-1 Anuluj
+                                if (item.status != "deleted")
+                                    button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-1 Usuń
+                            if (user.role == "seller" || user.role == "admin")
+                                if (item.status != "deleted") && (item.status != "canceled")
+                                    if (item.status == "registered" || item.status == "printed_label")
+                                        button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
+                                    else if (item.status != "sold") 
+                                        button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
+                        else if item.status != "canceled"
+                            button(data-bs-toggle="modal" data-bs-target="#cancelModal").btn.btn-danger.m-1 Anuluj
 
-                            
+                                    
 
                     
                 

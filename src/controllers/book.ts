@@ -1,7 +1,7 @@
 import { fetchBook } from "../util/findBook";
 import { Request, Response } from "express";
 import { Book, BookDocument } from "../models/Book";
-import { Error } from "mongoose";
+import { Error, FilterQuery } from "mongoose";
 import { check, validationResult } from "express-validator";
 import { Buyer } from "../models/Buyer";
 import { BuyerDocument } from "../models/Buyer";
@@ -132,7 +132,7 @@ export async function postSellBook(
   req: Request,
   res: Response
 ): Promise<unknown> {  
-  await check("isbn", "kod ISBN nie jest ważny").isLength({ min: 13, max: 13 }).isNumeric().run(req);
+  await check("isbn", "kod ISBN nie jest ważny").isLength({ min: 13, max: 13 }).isEAN().run(req);
   await check("title", "Nie podano tytułu książki").exists().run(req);
   await check("publisher", "Nie podano wydawcy książki").exists().run(req);
   await check("pubDate", "podano zły rok publikacji").isNumeric().run(req);
@@ -150,7 +150,7 @@ export async function postSellBook(
     (err: Error, book: BookDocument) => {
       new Promise((resolve, reject) => {
         if (err) {
-          reject(err);
+          return reject(err);
         }
         if (!book) {
           book = new Book({
@@ -163,7 +163,9 @@ export async function postSellBook(
             msrp: sellingData.msrp || 0,
           });
           book.save((err: Error) => {
-            reject(err);
+            if(err){
+              return reject(err);
+            }
           });
         } else if (!book.title) {
           book.title = sellingData.title;
@@ -173,7 +175,9 @@ export async function postSellBook(
           book.isbn = sellingData.isbn;
           book.msrp = sellingData.msrp || 0;
           book.save((err: Error) => {
-            reject(err);
+            if(err){
+              return reject(err);
+            }
           });
         }
         const cost = Number(sellingData.cost);
@@ -195,12 +199,12 @@ export async function postSellBook(
         });
         label.save((err, label) => {
           if (err) {
-            reject(err);
+            return reject(err);
           }
           listing.label = label;
           listing.save((err: Error): void => {
             if (err) {
-              reject(err);
+              return reject(err);
             }
             resolve(listing);
           });
@@ -209,6 +213,7 @@ export async function postSellBook(
         req.flash("success", {msg: "Gratulacje dodano książkę"});
         res.redirect("/label?selectedLabel=" + listing._id);
       }).catch((err)=>{
+        console.log(err);
         req.flash("errors", { msg: JSON.stringify(err) });
         res.redirect("/");
 
@@ -224,11 +229,12 @@ export const getManageBook = (req: Request & {user: UserDocument}, res: Response
     req.flash("errors", errors.array());
     return res.redirect("/");
   }
-  BookListing.findOne({_id: req.params.id}).populate("book").exec((err: Error, listing: BookListingDocument)=>{
+  BookListing.findOne({_id: req.params.id}).populate("book").populate("bookOwner").exec((err: Error, listing: BookListingDocument)=>{
     if(err){
       req.flash("errors", { msg: JSON.stringify(err) });
       return res.redirect("/");
     } 
+    
     if(res.locals.device.mobile()){
       return res.render("book/editBookMobile", {
         item: listing,
@@ -331,107 +337,31 @@ export const getRegisterPrint = async (req: Request, res: Response): Promise<voi
         req.flash("errors", errors.array());
         return res.redirect("/");
       }
-      listings.forEach((listing) => {
-        listing.status = "printed_label";
-        listing.whenPrinted = new Date();
-        listing.label.print = true;
-        listing.label.save((err: Error) => {
-          if (err) {
-            req.flash("errors", errors.array());
-            return res.redirect("/");
-          }
-        });
-        listing.save((err: Error) => {
-          if (err) {
-            req.flash("errors", errors.array());
-            return res.redirect("/");
-          }
-        });
-        res.status(200).end();
+      listings.forEach((listing, i) => {
+        if(listing.status != "registered"){
+         
+        }else{
+          listing.status = "printed_label";
+          listing.whenPrinted = new Date();
+          listing.label.print = true;
+          listing.label.save((err: Error) => {
+            if (err) {
+              req.flash("errors", errors.array());
+              return res.status(500);           
+            }
+          });
+          listing.save((err: Error) => {
+            if (err) {
+              req.flash("errors", errors.array());
+              return res.status(500);
+            }
+            if (i+1 == listings.length) return res.status(200);
+          });
+        }
       });
+      res.end();
     });
 };
-// export async function postSellBook(req: Request, res: Response): Promise<Response<never>> {
-//   await check("isbn").isLength({ min: 13 }).isNumeric().run(req);
-//   await check("name").exists().run(req);
-//   await check("surname").exists().run(req);
-//   await check("email").exists().run(req);
-//   await check("phone").exists().run(req);
-//   await check("isbn").exists().run(req);
-//   await check("title").exists().run(req);
-//   await check("cost").exists().run(req);
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(400).json({ errors: errors.array() });
-//   }
-//   const sellingData = req.body;
-//   Book.findOne(
-//     { isbn: req.body.isbn },
-//     async (err: NativeError, book: BookDocument) => {
-//       if (!book) {
-//         book = new Book({
-//           title: sellingData.title,
-//           publisher: sellingData.publisher || "",
-//           authors: sellingData.authors.split(",") || [""],
-//           pubDate: sellingData.pubDate || "",
-//           isbn: sellingData.isbn,
-//           image: sellingData.image || "",
-//           msrp: sellingData.msrp || 0,
-//         });
-//         book.save();
-//       }else if(book.$isEmpty("title")){
-//         book.update({
-//           title: sellingData.title,
-//           publisher: sellingData.publisher || "",
-//           authors: sellingData.authors.split(",") || [""],
-//           pubDate: sellingData.pubDate || "",
-//           isbn: sellingData.isbn,
-//           image: sellingData.image || "",
-//           msrp: sellingData.msrp || 0,
-//         });
-//       }
-//       User.findOne({email: sellingData.email}, (err: NativeError, user: UserDocument)=>{
-//         if (!user) {}
-//       });
-//       // Buyer.findOne(
-//       //   { phone: sellingData.phone },
-//       //   (err: NativeError, user: BuyerDocument) => {
-//       //     if (!user) {
-//       //       user = new Buyer({
-//       //         name: sellingData.name,
-//       //         surname: sellingData.surname,
-//       //         phone: sellingData.phone,
-//       //         email: sellingData.email,
-//       //       });
-//       //       user.save();
-//       //     }
-//       //     const bookListing = new BookListing({
-//       //       book: book.id,
-//       //       bookOwner: user.id,
-//       //       commission: Number(sellingData.commission),
-//       //       cost: Number(sellingData.cost),
-//       //       putOnSaleBy: req.user
-//       //     });
-//       //     bookListing.save((err)=>{
-//       //       if(err){
-//       //           console.log(err);
-//       //           req.flash("errors", {
-//       //               msg: err
-//       //           });
-//       //           return res.redirect("/");
-//       //       }else{ 
-//       //           req.flash("success", {
-//       //               msg: "Dodano zlecenie do bazy!",
-//       //             });
-//       //           return res.redirect("/");
-//       //       }
-//       //     });
-
-//       //   }
-//       // );
-//     }
-//   );
-// }
 
 export async function getFindListing(req: Request, res: Response): Promise<void> {
   await check("itemID", "Nie podano identyfikatora książki").exists().isNumeric().isLength({min: 13, max: 13}).run(req);
@@ -441,24 +371,22 @@ export async function getFindListing(req: Request, res: Response): Promise<void>
       return res.redirect("/");
   }
   const itemId = req.query.itemID;
-  const bookListings = await BookListing.find({_id: itemId}, "-__v -createdAt -updatedAt")
-    .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
-    .populate("book", "-_id -__v -createdAt -updatedAt");
-    if(bookListings.length != 0){
-      if(res.locals.device.mobile()){
-        res.redirect(`/book/${bookListings[0]._id}/manage`);
-      }else{
-        res.render("book/showBooks", {
-          bookListings: bookListings,
-          edit: true,
-          acceptString: `${"/book/" + bookListings[0]._id + "/accept"}`,
-          sellString: `${"/book/" + bookListings[0]._id + "/sell"}`,
-        });
-      }
-    }else{
-      req.flash("info", {msg: "Book not found"});
-      res.redirect("/");
-    }
+  res.redirect(`/book/${itemId}/manage`);
+
+  // const bookListings = await BookListing.find({_id: itemId}, "-__v -createdAt -updatedAt")
+  //   .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
+  //   .populate("book", "-_id -__v -createdAt -updatedAt");
+  //   if(bookListings.length != 0){
+  //     if(res.locals.device.mobile()){
+  //       res.redirect(`/book/${bookListings[0]._id}/manage`);
+  //     }else{
+  //               res.redirect(`/book/${bookListings[0]._id}/manage`);
+
+  //     }
+  //   }else{
+  //     req.flash("info", {msg: "Book not found"});
+  //     res.redirect("/");
+  //   }
 }
 export async function getFindListingApp(req: Request, res: Response): Promise<void> {
   await check("itemID", "Nie podano identyfikatora książki").exists().run(req);
@@ -492,7 +420,13 @@ export async function getBookRegistry(req: Request, res: Response): Promise<void
     populate: "book bookOwner",
     limit: 10
   };
-  const bookListings = await BookListing.paginate({}, options);
+  const query: FilterQuery<BookListingDocument> = {};
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  if (req.user.role != "admin"){
+    query.status = {"$nin": ["canceled", "deleted"]};
+  }
+  const bookListings = await BookListing.paginate(query, options);
   // console.log(bookListings);
   
   res.render("book/showBooks", {bookListings: bookListings.docs, paging: bookListings});

@@ -318,6 +318,7 @@ export const postUpdateProfile = async (req: Request, res: Response, next: NextF
         if (err) { return next(err); }
         user.email = req.body.email || "";
         user.profile.name = req.body.name || "";
+        user.profile.surname = req.body.surname || "";
         user.profile.gender = req.body.gender || "";
         user.profile.location = req.body.location || "";
         user.profile.website = req.body.website || "";

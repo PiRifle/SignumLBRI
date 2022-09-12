@@ -23,6 +23,10 @@ block content
       label.col-sm-3.col-form-label.text-right.font-weight-bold(for='name') Name
       .col-sm-7
         input.form-control(type='text', name='name', id='name', value=user.profile.name)
+    .input-group.mb-3.row.justify-content-md-center
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='name') Surname
+      .col-sm-7
+        input.form-control(type='text', name='surname', id='surname', value=user.profile.surname)
     .input-group.mb-3.row.justify-content-md-center.align-items-center
       label.col-sm-3.col-form-label.text-right.font-weight-bold Gender
       .col-sm-7
@@ -86,14 +90,14 @@ block content
           i.fa.fa-trash
           | Delete my account
 
-  .page-header
-    h3 Linked Accounts
-    hr
-  .form-horizontal
-    .input-group.mb-3.row.justify-content-md-center
-      .offset-sm-3.col-sm-7
-        if user.facebook
-          p: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
-        else
-          p: a(href='/auth/facebook') Link your Facebook account
+  //- .page-header
+  //-   h3 Linked Accounts
+  //-   hr
+  //- .form-horizontal
+  //-   .input-group.mb-3.row.justify-content-md-center
+  //-     .offset-sm-3.col-sm-7
+  //-       if user.facebook
+  //-         p: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
+  //-       else
+  //-         p: a(href='/auth/facebook') Link your Facebook account
 

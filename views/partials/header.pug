@@ -3,7 +3,7 @@ if device.mobile() && user && user.role != "student"
     .input-group 
       .input-group-prepend 
         span.input-group-text Wyszukaj Kod Zlecenia
-      input(type="text" name="itemID").form-control 
+      input(type="text" name="itemID").form-control.numeric
       .input-group-append  
         button(type="button").mobile.fa.fa-camera.border-0.scan-barcode.h-100
 nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top

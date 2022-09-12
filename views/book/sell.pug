@@ -15,17 +15,12 @@ block content
                 img(style="width: 200px").bookCover.mx-3.d-none
                 .col.m-0.p-0
                     label(for="isbn") Podaj kod ISBN (Kod Kreskowy z tyłu książki)
-                    input(type="text", name="isbn", placeholder="ISBN" required).form-control.mt-2
+                    input(type="text", name="isbn", placeholder="ISBN" required).form-control.mt-2.numeric
                     .container.d-flex.flex-row.flex-align-center.mt-2
                         //- div(role="status").m-auto.dataLoad.spinner-border
                         //-     span.sr-only Ładuję...
                         .spinner-border.dataLoad.m-auto.d-none(role="status")
                             span.sr-only Ładowanie
-                        //- .lds-ellipsis.d-none.dataLoad
-                        //-     div
-                        //-     div
-                        //-     div
-                        //-     div
 
 
                     input(type="text", name="title", placeholder="Nazwa Książki" required).form-control.mt-2.d-none

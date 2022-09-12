@@ -200,13 +200,13 @@ app.post(
 app.post(
   "/book/:id/cancel",
   passportConfig.isAuthenticated,
-  bookController.sellBook
+  bookController.cancelBook
 );
 app.post(
   "/book/:id/delete",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  bookController.sellBook
+  bookController.deleteBook
 );
 app.get(
     "/label",

@@ -7,7 +7,7 @@ block content
         |    <div class="modal-content">
         |      <div class="modal-header">
         |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
@@ -15,7 +15,7 @@ block content
         |        ...
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
         form(action="sell", method="post")
             button(type="submit").btn.btn-success Sprzedaj
         |      </div>
@@ -27,7 +27,7 @@ block content
         |    <div class="modal-content">
         |      <div class="modal-header">
         |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
@@ -35,7 +35,7 @@ block content
         |        ...
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
 
         form(action="accept", method="post")
             button(type="submit").btn.btn-success Przyjmij
@@ -49,7 +49,7 @@ block content
         |    <div class="modal-content">
         |      <div class="modal-header">
         |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
@@ -57,7 +57,7 @@ block content
         |        ...
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
         form(action="delete", method="post")
             button(type="submit").btn.btn-danger Usuń
         |      </div>
@@ -94,24 +94,21 @@ block content
                                 b= item.book.title
                             div.font-weight-light= item.book.authors.join(", ")
                             div.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
-                            div ISBN: #{item._id}
+                            div ID Zlecenia: #{item._id}
                         .col.mx-auto.my-4
                             div.d-flex.flex-col.justify-content-center
                                 div.d-flex.flex-col
                                     div.col
                                         center
                                             a(href=`/book/${item._id}/manage`).btn.btn-primary.m-auto Zarządzaj
-                                        //- if edit
-                                                //- button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-2 Usuń
-                                                //- button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
                                         if edit
                                             if item.status != "sold" && (user.role == "seller" || user.role == "admin")
                                                 center
                                                     if (item.status == "registered" || item.status == "printed_label")
                                                         button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.mt-2 Przyjmij
-                                                    else
+                                                    else if (item.status != "deleted")
                                                         button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
-                                            if user.role == "admin"
+                                            if user.role == "admin" && item.status != "deleted"
                                                 center
                                                     button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.mt-2 Usuń
                        
