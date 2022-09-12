@@ -102,18 +102,18 @@ block content
                                         center
                                             a(href=`/book/${item._id}/manage`).btn.btn-primary.m-auto Zarządzaj
                                         //- if edit
-                                                //- button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
-                                                //- button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
+                                                //- button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-2 Usuń
+                                                //- button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
                                         if edit
                                             if item.status != "sold" && (user.role == "seller" || user.role == "admin")
                                                 center
                                                     if (item.status == "registered" || item.status == "printed_label")
-                                                        button(data-toggle="modal" data-target="#acceptModal").btn.btn-warning.mt-2 Przyjmij
+                                                        button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.mt-2 Przyjmij
                                                     else
-                                                        button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
+                                                        button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
                                             if user.role == "admin"
                                                 center
-                                                    button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.mt-2 Usuń
+                                                    button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.mt-2 Usuń
                        
 
                                 

@@ -19,11 +19,13 @@ block content
                     .container.d-flex.flex-row.flex-align-center.mt-2
                         //- div(role="status").m-auto.dataLoad.spinner-border
                         //-     span.sr-only Ładuję...
-                        .lds-ellipsis.d-none.dataLoad
-                            div
-                            div
-                            div
-                            div
+                        .spinner-border.dataLoad.m-auto.d-none(role="status")
+                            span.sr-only Ładowanie
+                        //- .lds-ellipsis.d-none.dataLoad
+                        //-     div
+                        //-     div
+                        //-     div
+                        //-     div
 
 
                     input(type="text", name="title", placeholder="Nazwa Książki" required).form-control.mt-2.d-none

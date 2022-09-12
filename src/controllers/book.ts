@@ -187,7 +187,7 @@ export async function postSellBook(
           cost: sellingData.cost,
           bookOwner: req.user,
           book: book,
-          status: "registered",
+          status: "registered"
         });
         const label = new Label({
           barcode: generateBarcode(listing._id),
@@ -275,7 +275,7 @@ export const getPrintSetup = (req: Request, res: Response): void => {
 };
 
 export const redirectPrintSuccess = (req: Request, res: Response): void => {
-  req.flash("success", {msg: "włóż zakładki do książek i oddaj książkę do punktu sprzedaży w elektryczniaku"});
+  req.flash("success", {msg: "włóż etykiety do książek i oddaj książkę do punktu sprzedaży w elektryczniaku"});
   res.redirect("/");
 };
 export const getPrintLabel = (req: Request, res: Response): void => {
@@ -333,6 +333,7 @@ export const getRegisterPrint = async (req: Request, res: Response): Promise<voi
       }
       listings.forEach((listing) => {
         listing.status = "printed_label";
+        listing.whenPrinted = new Date();
         listing.label.print = true;
         listing.label.save((err: Error) => {
           if (err) {
@@ -547,6 +548,7 @@ export async function sellBook(
       .populate("book", "-_id -__v -createdAt -updatedAt");
     bookListings.status = "sold";
     bookListings.soldBy = (req.user as UserDocument);
+    bookListings.whenSold = new Date();
     bookListings.boughtBy = await Buyer.findOneAndUpdate({
       name: req.body.name,
       surname: req.body.surname,
@@ -603,12 +605,86 @@ export const acceptBook = (req: Request, res: Response): void => {
     req.flash("errors", errors.array());
     return res.redirect("/");
   }
-  BookListing.updateOne({ _id: req.params.id }, {status: "accepted", verifiedBy: req.user}).exec((err: Error) => {
-      if (err) {
-        req.flash("errors", { msg: JSON.stringify(err) });
-        return res.redirect("/");
-      }
-      req.flash("success", { msg: "przyjęto książkę!" });
+  BookListing.updateOne(
+    { _id: req.params.id },
+    { status: "accepted", verifiedBy: req.user, whenVerified: new Date() }
+  ).exec((err: Error) => {
+    if (err) {
+      req.flash("errors", { msg: JSON.stringify(err) });
+      return res.redirect("/");
+    }
+    req.flash("success", { msg: "przyjęto książkę!" });
+    return res.redirect("manage");
+  });
+};
+
+export const giveMoney = (req: Request, res: Response): void => {
+  check("id", "Nie podano identyfikatora książki").exists().run(req);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
+  }
+  BookListing.updateOne(
+    { _id: req.params.id },
+    { status: "given_money", givenMoneyBy: req.user, whenGivenMoney: new Date() }
+  ).exec((err: Error) => {
+    if (err) {
+      req.flash("errors", { msg: JSON.stringify(err) });
+      return res.redirect("/");
+    }
+    req.flash("success", { msg: "Oddano pieniądze!" });
+    return res.redirect("manage");
+  });
+};
+export const cancelBook = (req: Request, res: Response): void => {
+  check("id", "Nie podano identyfikatora książki").exists().run(req);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
+  }
+  BookListing.findOne(
+    { _id: req.params.id },
+  ).exec((err: Error, listing: BookListingDocument) => {
+    if (err) {
+      req.flash("errors", { msg: JSON.stringify(err) });
+      return res.redirect("/");
+    }
+    if ((listing.status == "printed_label") || (listing.status == "registered")){
+      listing.whenCanceled = new Date();
+      listing.status = "canceled";
+      listing.save();
+      req.flash("success", { msg: "Anulowano książkę" });
       return res.redirect("manage");
-    });
+    }else{
+      req.flash("errors", { msg: "Nie można anulować już ksiażki" });
+      return res.redirect("manage");
+    }
+    
+  });
+};
+
+export const deleteBook = (req: Request, res: Response): void => {
+  check("id", "Nie podano identyfikatora książki").exists().run(req);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
+  }
+  BookListing.updateOne(
+    { _id: req.params.id },
+    {
+      status: "deleted",
+      deletedBy: req.user,
+      whenDeleted: new Date(),
+    }
+  ).exec((err: Error) => {
+    if (err) {
+      req.flash("errors", { msg: JSON.stringify(err) });
+      return res.redirect("/");
+    }
+    req.flash("success", { msg: "Usunięto ksiażkę" });
+    return res.redirect("manage");
+  });
 };

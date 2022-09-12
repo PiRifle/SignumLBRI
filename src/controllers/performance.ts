@@ -17,6 +17,10 @@ if (!result.isEmpty()){
 
   if (req.user) {
     if (req.body.performance) {
+      
+      if(typeof req.body.performance == typeof []){
+        req.body.performance = (req.body.performance as number[]).at(-1);
+      }
       UserPerformance.create({
         user: req.user,
         time: req.body.performance,

@@ -1,20 +1,22 @@
 import nodemailer from "nodemailer";
 import { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
-import Mail from "nodemailer/lib/mailer";
+import { MAIL_HOST, MAIL_SHOWMAIL } from "../util/secrets";
+import { MAIL_USER } from "../util/secrets";
+import { MAIL_PASSWORD } from "../util/secrets";
 
 
-let transporter: Mail;
-nodemailer.createTestAccount().then((testAccount)=>{
-    transporter = nodemailer.createTransport({
-     host: "smtp.ethereal.email",
+
+// nodemailer.createTestAccount().then((testAccount)=>{
+    const transporter = nodemailer.createTransport({
+     host: MAIL_HOST,
         port: 587,
         secure: false, // true for 465, false for other ports
         auth: {
-            user: testAccount.user, // generated ethereal user
-            pass: testAccount.pass, // generated ethereal password
+            user: MAIL_USER, // generated ethereal user
+            pass: MAIL_PASSWORD // generated ethereal password
         },
-    });
+    // });
 });
 
 /**
@@ -44,7 +46,7 @@ export const postContact = async (req: Request, res: Response): Promise<void> =>
     }
 
     const mailOptions = {
-        to: "your@email.com",
+        to: MAIL_SHOWMAIL,
         from: `${req.body.name} <${req.body.email}>`,
         subject: "Contact Form",
         text: req.body.message

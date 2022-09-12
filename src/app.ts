@@ -108,8 +108,8 @@ app.get("/reset/:token", userController.getReset);
 app.post("/reset/:token", userController.postReset);
 app.get("/verify/:token", userController.getVerify);
 app.get("/resendverify", userController.getResendVerify);
-app.get("/setup", userController.getSetUp);
-app.post("/setup", userController.postSignup);
+app.get("/setup", passportConfig.isAdmin, userController.getSetUp);
+app.post("/setup", passportConfig.isAdmin, userController.postSignup);
 app.get("/signup", userController.getSignup);
 app.post("/signup", userController.postSignup);
 app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
@@ -189,6 +189,23 @@ app.post(
   "/book/:id/sell",
   passportConfig.isAuthenticated,
   passportConfig.isSeller,
+  bookController.sellBook
+);
+app.post(
+  "/book/:id/givemoney",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.giveMoney,
+);
+app.post(
+  "/book/:id/cancel",
+  passportConfig.isAuthenticated,
+  bookController.sellBook
+);
+app.post(
+  "/book/:id/delete",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
   bookController.sellBook
 );
 app.get(

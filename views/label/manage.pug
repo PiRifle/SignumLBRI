@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-    h2 Zarządzaj Zakładkami 
+    h2 Zarządzaj Etykietami
     center 
         if listings 
             form(method="get", action="/label/print") 
@@ -25,7 +25,8 @@ block content
                                 td= listing.book.publisher
                                 td= listing.cost
                                 td= listing.label.print ? 'Tak' : "Nie"
-                input(type="submit").btn.btn-primary
+                input(type="submit" value="Wydrukuj").btn.btn-primary.m-1
+                a(href="/book/add" ).btn.btn-success.m-1 Dodaj następną książkę
                                 
         else 
             

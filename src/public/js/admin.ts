@@ -1,6 +1,5 @@
 /* globals Chart:false, feather:false */
-
-(() => {
+$(document).ready(()=>{
   ("use strict");
   //@ts-ignore
   feather.replace({ "aria-hidden": "true" });
@@ -47,4 +46,7 @@
       },
     },
   });
-})();
+
+
+})
+

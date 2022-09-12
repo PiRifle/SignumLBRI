@@ -10,6 +10,8 @@ import { body, check, validationResult } from "express-validator";
 import "../config/passport";
 import { CallbackError, Error } from "mongoose";
 import { Token } from "nodemailer/lib/xoauth2";
+import { MAIL_HOST, MAIL_PASSWORD, MAIL_SHOWMAIL, MAIL_USER } from "../util/secrets";
+
 /**
  * Login page.
  * @route GET /login
@@ -221,22 +223,21 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
               //         pass: process.env.SENDGRID_PASSWORD
               //     }
               // });
-              nodemailer.createTestAccount().then(testAccount=>{
 
 
               // create reusable transporter object using the default SMTP transport
               const transporter = nodemailer.createTransport({
-                host: "smtp.ethereal.email",
+                host: MAIL_HOST,
                 port: 587,
                 secure: false, // true for 465, false for other ports
                 auth: {
-                  user: testAccount.user, // generated ethereal user
-                  pass: testAccount.pass, // generated ethereal password
+                  user: MAIL_USER, // generated ethereal user
+                  pass: MAIL_PASSWORD, // generated ethereal password
                 },
               });
               const mailOptions = {
                 to: user.email,
-                from: "express-ts@starter.com",
+                from: MAIL_SHOWMAIL,
                 subject: "Verify your account",
                 text: `
           Please click on the following link, or paste this into your browser to complete the process:\n\n
@@ -250,12 +251,12 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
                           nodemailer.getTestMessageUrl(info)
                       );
                       req.flash("success", {
-                          msg: "Success! Your password has been changed.",
+                          msg: "Stworzono konto",
                       });
                       done(err, user);
                   }
               );       
-                   });
+
 
             },
             function saveUser(user: UserDocument, done: (err: Error) => void){
@@ -455,21 +456,20 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
             //         pass: process.env.SENDGRID_PASSWORD
             //     }
             // });
-            const testAccount = await nodemailer.createTestAccount();
 
             // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
+            host: MAIL_HOST,
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
-                user: testAccount.user, // generated ethereal user
-                pass: testAccount.pass, // generated ethereal password
+                user: MAIL_USER, // generated ethereal user
+                pass: MAIL_PASSWORD, // generated ethereal password
             },
             });
             const mailOptions = {
                 to: user.email,
-                from: "express-ts@starter.com",
+                from: MAIL_SHOWMAIL,
                 subject: "Your password has been changed",
                 text: `Hello,\n\nThis is a confirmation that the account ${user.email} has just been verified.\n`
             };
@@ -537,21 +537,21 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
             //         pass: process.env.SENDGRID_PASSWORD
             //     }
             // });
-            const testAccount = await nodemailer.createTestAccount();
+            // const testAccount = await nodemailer.createTestAccount();
 
             // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
+            host: MAIL_HOST,
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
-                user: testAccount.user, // generated ethereal user
-                pass: testAccount.pass, // generated ethereal password
+                user: MAIL_USER, // generated ethereal user
+                pass: MAIL_PASSWORD, // generated ethereal password
             },
             });
             const mailOptions = {
                 to: user.email,
-                from: "express-ts@starter.com",
+                from: MAIL_SHOWMAIL,
                 subject: "Your password has been changed",
                 text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
             };
@@ -622,21 +622,21 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
             });
         },
         async function sendForgotPasswordEmail(token: AuthToken, user: UserDocument, done: (err: Error) => void) {
-            const testAccount = await nodemailer.createTestAccount();
+            // const testAccount = await nodemailer.createTestAccount();
 
             // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
-              host: "smtp.ethereal.email",
+              host: MAIL_HOST,
               port: 587,
               secure: false, // true for 465, false for other ports
               auth: {
-                user: testAccount.user, // generated ethereal user
-                pass: testAccount.pass, // generated ethereal password
+                user: MAIL_USER, // generated ethereal user
+                pass: MAIL_PASSWORD, // generated ethereal password
               },
             });
             const mailOptions = {
                 to: user.email,
-                from: "hackathon@starter.com",
+                from: MAIL_SHOWMAIL,
                 subject: "Reset your password on Hackathon Starter",
                 text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
           Please click on the following link, or paste this into your browser to complete the process:\n\n
@@ -693,21 +693,20 @@ export const postResendVerify = async (req: Request, res: Response): Promise<voi
     }
 
 
-  nodemailer.createTestAccount().then((testAccount) => {
     const user = req.user as UserDocument;
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
-      host: "smtp.ethereal.email",
+      host: MAIL_HOST,
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: testAccount.user, // generated ethereal user
-        pass: testAccount.pass, // generated ethereal password
+        user: MAIL_USER, // generated ethereal user
+        pass: MAIL_PASSWORD, // generated ethereal password
       },
     });
     const mailOptions = {
       to: user.email,
-      from: "express-ts@starter.com",
+      from: MAIL_SHOWMAIL,
       subject: "Verify your account",
       text: `
     Please click on the following link, or paste this into your browser to complete the process:\n\n
@@ -720,7 +719,6 @@ export const postResendVerify = async (req: Request, res: Response): Promise<voi
       });
       return res.redirect("/");
     });
-  });
 };
 export const getPing = (req: Request, res: Response): void => {
     res.json({msg:"ping"});

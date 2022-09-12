@@ -129,11 +129,11 @@ block content
                         if edit
                             if (user.role == "seller" || user.role == "admin")
                                 if (item.status == "registered" || item.status == "printed_label")
-                                    button(data-toggle="modal" data-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
+                                    button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
                                 else if item.status != "sold"
-                                    button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
+                                    button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
                             if user.role == "admin"
-                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-1 Usuń
+                                button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-1 Usuń
                         else
                             a(href=`/label/${item._id}/`).btn.btn-danger.m-1 Anuluj
 

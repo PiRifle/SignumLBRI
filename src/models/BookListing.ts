@@ -11,20 +11,24 @@ export type LabelDocument= mongoose.Document & {
   print : boolean,
 }
 export type BookListingDocument = mongoose.Document & {
-    commission: number,
-    cost: number,
-    bookOwner: UserDocument,
-    book: BookDocument,
-    verifiedBy: UserDocument,
-    whenVerified: Date,
-    soldBy: UserDocument,
-    whenSold: Date,
-    boughtBy: BuyerDocument,
-    whenBought: Date,
-    deletedBy: UserDocument,
-    // barcode: (id: number) => string;
-    status:string,
-    label: LabelDocument
+  commission: number;
+  cost: number;
+  bookOwner: UserDocument;
+  book: BookDocument;
+  verifiedBy: UserDocument;
+  whenVerified: Date;
+  soldBy: UserDocument;
+  whenSold: Date;
+  boughtBy: BuyerDocument;
+  givenMoneyBy: UserDocument;
+  whenGivenMoney: Date;
+  whenDeleted: Date;
+  whenPrinted: Date;
+  whenCanceled: Date;
+  deletedBy: UserDocument;
+  // barcode: (id: number) => string;
+  status: "registered" | "printed_label" | "accepted" | "sold" | "given_money" | "canceled" | "deleted";
+  label: LabelDocument;
 };
 
 const labelSchema = new mongoose.Schema<LabelDocument>(
@@ -68,11 +72,23 @@ const bookListingSchema = new mongoose.Schema<BookListingDocument>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    givenMoneyBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    
+    whenPrinted: Date,
+    
     whenVerified: Date,
-
+    
+    whenCanceled: Date,
+    
     whenSold: Date,
-
-    whenBought: Date,
+    
+    whenGivenMoney: Date,
+    
+    whenDeleted: Date,
 
     label: {
       type: mongoose.Schema.Types.ObjectId,

@@ -22,5 +22,6 @@
   },
   "typescript.referencesCodeLens.enabled": true,
   "appService.zipIgnorePattern": [".vscode{,/**}"],
-  "appService.deploySubpath": ""
+  "appService.deploySubpath": "",
+  "compile-hero.disable-compile-files-on-did-save-code": false
 }

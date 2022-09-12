@@ -18,7 +18,12 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
         .dropdown-divider
         ul.nav.navbar-nav
           li.nav-item(class=(title === 'Home') ? 'active' : undefined)
-            a.nav-link(href='/') Home
+            a.nav-link(href='/') Główna
+          if user && user.role == "student"
+            li.nav-item(class=(title === 'Wydrukuj Etykietę') ? 'active' : undefined)
+              a.nav-link(href='/label') Etykiety
+            li.nav-item(class=(title === 'Home') ? 'active' : undefined)
+              a.nav-link(href='/book/add') Dodaj Książkę
           //- li.nav-item(class=(title === 'API Examples') ? 'active' : undefined)
           //-   a.nav-link(href='/api') API Examples
           //- li.nav-item(class=(title === 'Contact') ? 'active' : undefined)
@@ -50,8 +55,10 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
                 i.caret
               ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
                 li.nav-item
-                  a.nav-link(href='/account') My Account
+                  a.nav-link(href='/account') Moje Konto
                 if user.role == "admin"
+                  li.nav-item 
+                    a.nav-link(href="/setup") Dodaj Konto
                 li.dropdown-divider
                 li.nav-item
-                  a.nav-link(href='/logout') Logout
+                  a.nav-link(href='/logout') Wyloguj
