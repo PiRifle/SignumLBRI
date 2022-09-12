@@ -228,8 +228,8 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
               // create reusable transporter object using the default SMTP transport
               const transporter = nodemailer.createTransport({
                 host: MAIL_HOST,
-                port: 587,
-                secure: false, // true for 465, false for other ports
+                port: 465,
+                secure: true, // true for 465, false for other ports
                 auth: {
                   user: MAIL_USER, // generated ethereal user
                   pass: MAIL_PASSWORD, // generated ethereal password
@@ -460,8 +460,8 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
             // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
             host: MAIL_HOST,
-            port: 587,
-            secure: false, // true for 465, false for other ports
+            port: 465,
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: MAIL_USER, // generated ethereal user
                 pass: MAIL_PASSWORD, // generated ethereal password
@@ -542,8 +542,8 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
             // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
             host: MAIL_HOST,
-            port: 587,
-            secure: false, // true for 465, false for other ports
+            port: 465,
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: MAIL_USER, // generated ethereal user
                 pass: MAIL_PASSWORD, // generated ethereal password
@@ -627,8 +627,8 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
             // create reusable transporter object using the default SMTP transport
             const transporter = nodemailer.createTransport({
               host: MAIL_HOST,
-              port: 587,
-              secure: false, // true for 465, false for other ports
+              port: 465,
+              secure: true, // true for 465, false for other ports
               auth: {
                 user: MAIL_USER, // generated ethereal user
                 pass: MAIL_PASSWORD, // generated ethereal password
@@ -697,8 +697,8 @@ export const postResendVerify = async (req: Request, res: Response): Promise<voi
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
       host: MAIL_HOST,
-      port: 587,
-      secure: false, // true for 465, false for other ports
+      port: 465,
+      secure: true, // true for 465, false for other ports
       auth: {
         user: MAIL_USER, // generated ethereal user
         pass: MAIL_PASSWORD, // generated ethereal password

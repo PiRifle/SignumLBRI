@@ -10,8 +10,8 @@ import { MAIL_PASSWORD } from "../util/secrets";
 // nodemailer.createTestAccount().then((testAccount)=>{
     const transporter = nodemailer.createTransport({
      host: MAIL_HOST,
-        port: 587,
-        secure: false, // true for 465, false for other ports
+        port: 465,
+        secure: true, // true for 465, false for other ports
         auth: {
             user: MAIL_USER, // generated ethereal user
             pass: MAIL_PASSWORD // generated ethereal password
