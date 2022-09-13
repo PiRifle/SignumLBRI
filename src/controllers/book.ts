@@ -665,7 +665,7 @@ export const getLibrary = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  if (new Date(Date.now()) <= new Date("2022-09-16")) {
+  if (new Date(Date.now()) <= new Date("2022-09-15")) {
     return res.render("library/books", {
       data: await fetchTopBooks(),
       disableScripts: true,
