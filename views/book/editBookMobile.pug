@@ -112,21 +112,21 @@ block content
                     b= item.book.authors.join(", ")
                 h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                 div ID: #{item._id}
-                div.my-auto
+                div.my-3.border-top.border-bottom.py-2
                     .d-flex.flex-row
                         h3.mt-auto.me-4
-                            b= item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                            b= (item.cost+item.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
                     h6
-                        b= item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                        span.ms-2 marży
-                .d-flex.flex-row 
-                    h5.me-1= item.bookOwner.profile.name
-                    h5= item.bookOwner.profile.surname 
-                h5= item.bookOwner.profile.phone
-                div= item.bookOwner.email
-                br
-                h6 Status: #{item.status}
-            .m-0.p-0.pl-3
+                        div.my-auto Marża: #{item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                        div.my-auto Wydanie Sprzedającemu: #{item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} 
+                    h6 Status: #{item.status}
+                div.my-3.py-2
+                    .d-flex.flex-row 
+                        h5.me-1= item.bookOwner.profile.name
+                        h5= item.bookOwner.profile.surname 
+                    h6= item.bookOwner.profile.phone
+                    h6= item.bookOwner.email
+            .m-0.p-0.pl-3.bg-white
                 .col
                     center
                         if item.status != "sold" || item.status != "accepted"

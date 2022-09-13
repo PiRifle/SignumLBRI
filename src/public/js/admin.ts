@@ -9,16 +9,52 @@ async function getDataset(path: string){
 }
 $(document).ready(()=>{
   ("use strict");
-  
   //@ts-ignore
   feather.replace({ "aria-hidden": "true" });
   // Graphs
+    var timeFormat = "DD/MM/YYYY/HH:mm:ss";
+   var config = {
+     type: "line",
+     options: {
+       responsive: true,
+       title: {
+         display: true,
+         text: "Chart.js Time Scale",
+       },
+       scales: {
+         xAxes: [
+           {
+             type: "time",
+             time: {
+               parser: timeFormat,
+               tooltipFormat: timeFormat,
+               // unit: ""
+             },
+             scaleLabel: {
+               display: true,
+               labelString: "Date",
+             },
+           },
+         ],
+         yAxes: [
+           {
+             scaleLabel: {
+               display: true,
+               labelString: "value",
+             },
+           },
+         ],
+       },
+     },
+   };
   const ctx = document.getElementById("myChart");
   const dataset = $(ctx).attr("datasetSource");
-  var timeFormat = "DD/MM/YYYY";
+  //@ts-ignore
+  var myChart = new Chart(ctx, config);
+
   if (dataset) {
     $('input[name="dates"]')
-    //@ts-ignore
+      //@ts-ignore
       .daterangepicker(
         {
           showDropdowns: true,
@@ -54,55 +90,18 @@ $(document).ready(()=>{
           url.search = new URLSearchParams([
             ["from", new Date(start).toUTCString()],
             ["to", new Date(end).toUTCString()],
+            ["exact", "true"],
           ]).toString();
           getDataset(url.toString()).then((data) => {
-            console.log(data);
-            var config = {
-              type: "line",
-              data: {
-                datasets: data,
-              },
-              options: {
-                responsive: true,
-                title: {
-                  display: true,
-                  text: "Chart.js Time Scale",
-                },
-                scales: {
-                  xAxes: [
-                    {
-                      type: "time",
-                      time: {
-                        parser: timeFormat,
-                        tooltipFormat: "ll",
-                        unit: "month"
-                      },
-                      scaleLabel: {
-                        display: true,
-                        labelString: "Date",
-                      },
-                    },
-                  ],
-                  yAxes: [
-                    {
-                      scaleLabel: {
-                        display: true,
-                        labelString: "value",
-                      },
-                    },
-                  ],
-                },
-              },
-            };
-
-            // eslint-disable-next-line no-unused-vars
             //@ts-ignore
-
-            var myChart = new Chart(ctx, config);
+            console.log(myChart);
+            
+            myChart.data = {datasets: data};
+            //@ts-ignore
+            myChart.update();
           });
         }
-      )
-
+      );
   }
 })
 

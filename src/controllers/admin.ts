@@ -10,8 +10,118 @@ export function main(req: Request, res: Response): void {
   res.render("admin/page/dashboard", { title: "Dashboard" });
 }
 
-export function users(req: Request, res: Response): void {
-  res.render("admin/page/users", { title: "Users" });
+export async function users(req: Request, res: Response): Promise<void> {
+  const stats = await User.aggregate([
+    {
+      $lookup: {
+        from: "booklistings",
+        localField: "_id",
+        foreignField: "bookOwner",
+        as: "listings",
+      },
+    },
+    {
+      $unwind: {
+        path: "$listings",
+      },
+    },
+    {
+      $match: {
+        $nor: [
+          {
+            "listings.status": "canceled",
+          },
+          {
+            "listings.status": "deleted",
+          },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        bookDebt: {
+          $sum: "$listings.cost",
+        },
+        earnings: {
+          $sum: "$listings.commission",
+        },
+        bookCount: {
+          $sum: 1,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        bookDebt: {
+          $sum: "$bookDebt",
+        },
+        earnings: {
+          $sum: "$earnings",
+        },
+        bookAvg: {
+          $avg: "$bookCount",
+        },
+      },
+    },
+  ]);
+  const userData = await User.aggregate([
+    {
+      $lookup: {
+        from: "booklistings",
+        localField: "_id",
+        foreignField: "bookOwner",
+        as: "listings",
+      },
+    },
+    {
+      $unwind: {
+        path: "$listings",
+      },
+    },
+    {
+      $match: {
+        $nor: [
+          {
+            "listings.status": "canceled",
+          },
+          {
+            "listings.status": "deleted",
+          },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        email: {
+          $first: "$email",
+        },
+        profile: {
+          $first: "$profile",
+        },
+        mustGive: {
+          $sum: "$listings.cost",
+        },
+        earnings: {
+          $sum: "$listings.commission",
+        },
+        books: {
+          $sum: 1,
+        },
+      },
+    },
+    {
+      $addFields: {
+        totalCost: {
+          $add: ["$mustGive", "$earnings"],
+        },
+      },
+    },
+  ]);
+  console.log(stats);
+  res.render("admin/page/users", { title: "Users", stats: stats[0], userData: userData});
 }
 
 export function buyers(req: Request, res: Response): void {
@@ -270,9 +380,9 @@ export async function apiBooks(req: Request, res: Response) {
               hour: {
                 $hour: "$dates.date",
               },
-              minute: {
-                $minute: "$dates.date",
-              },
+              // minute: {
+              //   $minute: "$dates.date",
+              // },
             }
           : {
               year: {
@@ -367,11 +477,19 @@ export async function apiBooks(req: Request, res: Response) {
     {
       $addFields: {
         date: {
-          $dateFromParts: {
-            year: "$_id.year",
-            month: "$_id.month",
-            day: "$_id.day",
-          },
+          $dateFromParts: exact
+            ? {
+                year: "$_id.year",
+                month: "$_id.month",
+                day: "$_id.day",
+                hour: "$_id.hour",
+                // minute: "$_id.minute",
+              }
+            : {
+                year: "$_id.year",
+                month: "$_id.month",
+                day: "$_id.day",
+              },
         },
       },
     },
@@ -406,15 +524,14 @@ export async function apiBooks(req: Request, res: Response) {
       if (err) {
         return res.status(500).end();
       }
-      console.log(userStatistics);
-
+      // console.log(userStatistics);
       const dataset: Dataset[] = [];
       dataset.push({
         label: "Books Created",
         data: userStatistics.map((val) => {
           if (val.date) {
             return {
-              x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+              x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
               y: val.created,
             };
           }
@@ -427,7 +544,7 @@ export async function apiBooks(req: Request, res: Response) {
         data: userStatistics.map((val) => {
           return val.date
             ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
                 y: val.printed_label,
               }
             : undefined;
@@ -440,7 +557,7 @@ export async function apiBooks(req: Request, res: Response) {
         data: userStatistics.map((val) => {
           return val.date
             ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
                 y: val.accepted,
               }
             : undefined;
@@ -453,7 +570,7 @@ export async function apiBooks(req: Request, res: Response) {
         data: userStatistics.map((val) => {
           return val.date
             ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
                 y: val.sold,
               }
             : undefined;
@@ -466,7 +583,7 @@ export async function apiBooks(req: Request, res: Response) {
         data: userStatistics.map((val) => {
           return val.date
             ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
                 y: val.given_money,
               }
             : undefined;
@@ -479,7 +596,7 @@ export async function apiBooks(req: Request, res: Response) {
         data: userStatistics.map((val) => {
           return val.date
             ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
                 y: val.canceled,
               }
             : undefined;
@@ -492,13 +609,20 @@ export async function apiBooks(req: Request, res: Response) {
         data: userStatistics.map((val) => {
           return val.date
             ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
                 y: val.deleted,
               }
             : undefined;
         }),
         borderColor: "purple",
         fill: true,
+      });
+      dataset.forEach((data)=>{
+        console.log(data.data, "not sorted");
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        data.data.sort((a, b) => new Date(moment(a.x, "DD/MM/YYYY/HH:mm:ss")) - new Date(moment(b.x, "DD/MM/YYYY/HH:mm:ss")));
+        console.log(data.data, "sorted");
       });
       return res.json(dataset).end();
     }
@@ -585,7 +709,13 @@ export async function apiUsers(req: Request, res: Response) {
     {
       $addFields: {
         date: {
-          $dateFromParts: {
+          $dateFromParts: exact ? {
+            year: "$_id.year",
+            month: "$_id.month",
+            day: "$_id.day",
+            hour: "$_id.hour",
+            minute: "$_id.minute"
+          } : {
             year: "$_id.year",
             month: "$_id.month",
             day: "$_id.day",
@@ -609,16 +739,21 @@ export async function apiUsers(req: Request, res: Response) {
     if (err) {
       return res.status(500).end();
     }
-    console.log(userStatistics);
-
+    // console.log(userStatistics);
+    userStatistics.sort(function (a, b) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      return new Date(b.date) - new Date(a.date);
+    });
     const dataset: Dataset[] = [];
     dataset.push({
       label: "Registered Users",
       data: userStatistics.map((val) => {
         return {
-          x: moment(new Date(val.date)).format("DD/MM/YYYY"),
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
           y: val.count,
         };
+        
       }),
       borderColor: "green",
       fill: false,

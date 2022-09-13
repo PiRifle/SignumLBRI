@@ -111,10 +111,14 @@ block content
                     b= item.book.authors.join(", ")
                 h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                 div ID: #{item._id}
+                div.my-auto Marża: #{item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                div.my-auto Wydanie Sprzedającemu: #{item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                br
+                
                 div.my-auto
                     .d-flex.flex-row
                         h3.mt-auto.me-4
-                            b= item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                            b= (item.cost+item.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
                 .d-flex.flex-row 
                     h5.me-1= item.bookOwner.profile.name
                     h5= item.bookOwner.profile.surname 

@@ -10,4 +10,28 @@ block content
             button.btn.btn-sm.btn-outline-secondary(type='button') Export
             input.form-control(name="dates", readonly="readonly")
       canvas#myChart.my-4.w-100(width='900' height='380' datasetSource="api/users")
-      h2 Section title
+      h2 Statistics 
+      .d-flex.justify-content-evenly.flex-wrap.flex-row
+        div Books per user AVG: #{Math.ceil(stats.bookAvg)}
+        div total Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+        div total Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+      h2 User List
+      table.table
+        thead 
+          th Name
+          th Surname 
+          th Earnings 
+          th Books 
+          th Contact
+          th Debt
+        tbody 
+          each user in userData 
+            tr 
+              td=user.profile.name
+              td=user.profile.surname
+              td=user.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+              td=user.books
+              td
+                div=user.email 
+                div=user.profile.phone 
+              td=user.mustGive.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })

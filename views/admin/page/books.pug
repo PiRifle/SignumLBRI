@@ -26,5 +26,5 @@ block content
                         td=book.publisher
                         td=book.available
                         td=book.sold
-                        td=book.avgCost 
-                        td=book.median
+                        td=book.avgCost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                        td=book.median.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
