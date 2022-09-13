@@ -31,8 +31,7 @@ const mongoUrl = MONGODB_URI;
 mongoose.Promise = bluebird;
 
 mongoose
-  .connect(mongoUrl, {
-  })
+  .connect(mongoUrl, {})
   .then(() => {
     /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
   })
@@ -69,7 +68,7 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
   res.locals.device = new MobileDetect(req.headers["user-agent"]);
   next();
 });
@@ -98,7 +97,8 @@ app.use(performanceController.registerPerformance);
  */
 // app.get("/contact", contactController.getContact);
 // app.post("/contact", contactController.postContact);
-app.get("/", passportConfig.isAuthenticated, homeController.index);
+app.get("/", passportConfig.isAnonymous, homeController.index);
+app.get("/library", bookController.getLibrary);
 app.get("/login", userController.getLogin);
 app.post("/login", userController.postLogin);
 app.get("/logout", passportConfig.isAuthenticated, userController.logout);
@@ -150,8 +150,12 @@ app.get("/account/unlink/:provider", passportConfig.isAuthenticated);
 // app.post("/book/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.postSellBook);
 // app.get("/book/:itemID", passportConfig.isAuthenticated, bookController.editBook);
 // app.post("/book/:itemID/sell", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.sellBook);
-app.get("/find", passportConfig.isAuthenticated, passportConfig.isSeller, bookController.getFindListing);
-
+app.get(
+  "/find",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.getFindListing
+);
 
 app.get(
   "/book/add",
@@ -162,7 +166,7 @@ app.post(
   "/book/add",
   passportConfig.isAuthenticated,
   bookController.postSellBook
-  );
+);
 app.get(
   "/book/fromisbn",
   passportConfig.isAuthenticated,
@@ -195,7 +199,7 @@ app.post(
   "/book/:id/givemoney",
   passportConfig.isAuthenticated,
   passportConfig.isSeller,
-  bookController.giveMoney,
+  bookController.giveMoney
 );
 app.post(
   "/book/:id/cancel",
@@ -208,11 +212,7 @@ app.post(
   passportConfig.isAdmin,
   bookController.deleteBook
 );
-app.get(
-    "/label",
-    passportConfig.isAuthenticated,
-    bookController.getPrintSetup
-);
+app.get("/label", passportConfig.isAuthenticated, bookController.getPrintSetup);
 app.get(
   "/label/print",
   passportConfig.isAuthenticated,
@@ -221,14 +221,52 @@ app.get(
 app.get(
   "/label/print/success",
   passportConfig.isAuthenticated,
-  bookController.redirectPrintSuccess);
-app.get("/label/registerprints", passportConfig.isAuthenticated, bookController.getRegisterPrint);
-app.get("/label/:id", passportConfig.isAuthenticated, bookController.redirectPrint);
+  bookController.redirectPrintSuccess
+);
+app.get(
+  "/label/registerprints",
+  passportConfig.isAuthenticated,
+  bookController.getRegisterPrint
+);
+app.get(
+  "/label/:id",
+  passportConfig.isAuthenticated,
+  bookController.redirectPrint
+);
+const adminApiRoutes = express.Router();
 
 
+adminApiRoutes.get("/users", adminController.apiUsers);
+adminApiRoutes.get("/books", adminController.apiBooks);
 
-app.get("/admin/", passportConfig.isAuthenticated, passportConfig.isAdmin, adminController.main);
-// const applicationRoutes = express.Router()
+
+const adminRoutes = express.Router();
+adminRoutes.get(
+  "/",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  adminController.main
+);
+adminRoutes.get(
+  "/users",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  adminController.users
+);
+adminRoutes.get(
+  "/buyers",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  adminController.buyers
+);
+adminRoutes.get(
+  "/books",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  adminController.books
+);
+adminRoutes.use("/api/", adminApiRoutes);
+
 // applicationRoutes.post("/login", userController.postLoginApp)
 // applicationRoutes.get("/ping", userController.getPing);
 // applicationRoutes.get("/fromisbn", passportConfig.isAuthenticated, bookController.getFillBookData)
@@ -237,7 +275,7 @@ app.get("/admin/", passportConfig.isAuthenticated, passportConfig.isAdmin, admin
 // applicationRoutes.get("/find", passportConfig.isAuthenticatedApp, passportConfig.isSeller, bookController.getFindListingApp)
 // applicationRoutes.post("/:itemID/sell", passportConfig.isAuthenticatedApp, passportConfig.isSeller, bookController.sellBookApp);
 
-// app.use("/app", applicationRoutes)
+app.use("/admin", adminRoutes);
 
 // app.get("/print", showPDF);
 // app.get("/print/fetch", showPDF);

@@ -11,20 +11,27 @@ block content
       a.btn.m-2.btn-secondary(href='/admin', role='button') Analityka
       //- a.btn.m-2.btn-secondary(href='/book/sell', role='button') Zarejestruj Książkę
       a.btn.m-2.btn-secondary(href='/book/registry?page=1', role='button') Rejestr Zleceń
-      table.table
-        thead 
-          th Tytuł
-          th Wydawca
-          th Dostępne
-          th Sprzedane
-        tbody
-          each book in availableBooks
-            tr
-              td=book.title
-              td=book.publisher 
-              td=book.available 
-              td=book.sold
-      a.btn.m-2.btn-secondary(href='/book/registry?page=1', role='button') Rejestr Zleceń
+      if !device.mobile()
+        table.table
+          thead 
+            th Tytuł
+            th Wydawca
+            th Dostępne
+            th Sprzedane
+          tbody
+            each book in availableBooks
+              tr
+                if book.title
+                  td=book.title.length > 80 ? book.title.substring(0, 80 - 3) + "..." : book.title
+                else 
+                  td.text-danger _NO_NAME_WARN
+                if book.publisher
+                  td=book.publisher.length > 40 ? book.publisher.substring(0, 40 - 3) + "..." : book.publisher              
+                else 
+                  td.text-danger _NO_NAME_WARN
+                td=book.available 
+                td=book.sold
+        a.btn.m-2.btn-secondary(href='/book/registry?page=1', role='button') Rejestr Zleceń
 
 
     //- a.btn.btn-secondary(href='#', role='button') 

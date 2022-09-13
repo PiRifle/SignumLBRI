@@ -161,6 +161,16 @@ export const isSeller = (req: Request, res: Response, next: NextFunction): void 
     }
     res.redirect("/login");
 };
+export const isAnonymous = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  if (!req.user) {
+    return res.redirect("/library");
+  }
+  return next();
+};
 export const isAdmin = (
   req: Request,
   res: Response,

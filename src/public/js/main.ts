@@ -42,20 +42,22 @@ $(document).ready(function () {
     this.value = this.value.replace(/\D/g, "");
   });
   const timeStart = Date.now();
-  $("a").on("click", (event) => {
-    const navigateToHREF = new URL(
-      location.origin + event.target.getAttribute("href")
-    );
-    if (navigateToHREF.origin == location.origin) {
-      let params = new URLSearchParams(navigateToHREF.search);
-      params.set("performance", (Date.now() - timeStart).toString());
-      navigateToHREF.search = params.toString();
-      // console.log(navigateToHREF.toString());
-      $(event.target).attr("href", navigateToHREF.toString());
-    }
-    // event.preventDefault()
-    // return false
-  });
+  $("a")
+    .not(".no-override")
+    .on("click", (event) => {
+      const navigateToHREF = new URL(
+        location.origin + event.target.getAttribute("href")
+      );
+      if (navigateToHREF.origin == location.origin) {
+        let params = new URLSearchParams(navigateToHREF.search);
+        params.set("performance", (Date.now() - timeStart).toString());
+        navigateToHREF.search = params.toString();
+        // console.log(navigateToHREF.toString());
+        $(event.target).attr("href", navigateToHREF.toString());
+      }
+      // event.preventDefault()
+      // return false
+    });
   $("form").on("submit", (event) => {
     var element = document.createElement("input");
     element.setAttribute("name", "performance");

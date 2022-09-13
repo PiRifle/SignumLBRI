@@ -7,20 +7,13 @@ header.navbar.navbar-dark.sticky-top.bg-dark.flex-md-nowrap.p-0.shadow
         span.navbar-toggler-icon
     //- input.form-control.form-control-dark.w-100.rounded-0.border-0(type="text" placeholder="Search" aria-label="Search")
     ul.navbar-nav.flex-row
-        if !user
-            li.nav-item(class=(title === 'Login') ? 'active' : undefined)
-                a.nav-link(href='/login') Zaloguj Się
-            li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
-                a.nav-link(href='/signup') Zarejestruj się
-        else
-            li.nav-item.my-auto.h-100
-                a(href='/account').nav-link
-                    if user.profile.picture
-                        img(src=user.profile.picture, alt=(user.profile.name || user.email || user.id))
-                    else
-                        img(src=user.gravatar(30), alt=(user.profile.name || user.email || user.id))
-                    span.ms-2= user.profile.name || user.email || user.id                    
-            li.nav-item.my-auto.h-100
-                a.nav-link.px-3.my-auto(href='/logout') Logout
+        li.nav-item.my-auto.h-100.px-2
+            a(href='/account').nav-link.d-inline
+                if user.profile.picture
+                    img(src=user.profile.picture, alt=(user.profile.name || user.email || user.id))
+                else
+                    img(src=user.gravatar(30), alt=(user.profile.name || user.email || user.id))
+                span.ms-2= user.profile.name || user.email || user.id                    
+            a.nav-link.px-2.my-auto.d-inline(href='/logout') Logout
     //-     li.nav-item
     //-         a.nav-link.px-3(href='/logout') Logout

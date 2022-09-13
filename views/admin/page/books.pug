@@ -1,0 +1,30 @@
+include ../layout
+
+block content 
+    main.col-md-9.ms-sm-auto.col-lg-10.px-md-4
+        .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
+            h1.h2 Books
+            .btn-toolbar.mb-2.mb-md-0
+                .btn-group.me-2
+                    button.btn.btn-sm.btn-outline-secondary(type='button') Share
+                    button.btn.btn-sm.btn-outline-secondary(type='button') Export
+                    input.form-control(name="dates", readonly="readonly")
+        canvas#myChart.my-4.w-100(width='900' height='380' datasetSource="api/books")
+        h2 Section title
+        table.table
+            thead 
+                th Title 
+                th Publisher 
+                th Available
+                th Sold 
+                th Cost Avg 
+                th Cost Median
+            tbody 
+                each book in data 
+                    tr 
+                        td=book.title
+                        td=book.publisher
+                        td=book.available
+                        td=book.sold
+                        td=book.avgCost 
+                        td=book.median

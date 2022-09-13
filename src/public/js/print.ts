@@ -9,7 +9,6 @@ $(document).ready(function() {
                 location.assign("/label/print/success")
             }
         }, 1000)
-        
     };
 
     if (window.matchMedia) {

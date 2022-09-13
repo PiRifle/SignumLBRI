@@ -8,6 +8,7 @@ import { BuyerDocument } from "../models/Buyer";
 import { BookListing, BookListingDocument, Label} from "../models/BookListing";
 import { UserDocument } from "../models/User";
 import { generateBarcode } from "../util/barcode";
+import { fetchTopBooks } from "../util/book";
 
 export async function getFillBookData(req: Request, res: Response): Promise<Response<never>> {
   await check("isbn", "Podano nieprawidłowy kod ISBN").isLength({ min: 13 }).isNumeric().run(req);
@@ -597,6 +598,12 @@ export const cancelBook = (req: Request, res: Response): void => {
     }
     
   });
+};
+
+export const getLibrary = async (req: Request, res: Response): Promise<void> =>{
+ 
+  return res.render("library/books", {data: await fetchTopBooks(), disableScripts: true});
+
 };
 
 export const deleteBook = (req: Request, res: Response): void => {

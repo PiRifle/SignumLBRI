@@ -27,7 +27,8 @@ html(lang='')
     script(src='/js/lib/html5-qrcode.min.js')
 
     //- script(async defer src="https://buttons.github.io/buttons.js")
-    script(src='/js/main.js')
+    if !disableScripts
+      script(src='/js/main.js')
 
     //- Google Analytics: change UA-38177297-2 to be your site's ID
     //- script.

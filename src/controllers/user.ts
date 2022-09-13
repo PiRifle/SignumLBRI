@@ -178,7 +178,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
     User.findOne({ email: req.body.email }, (err: NativeError, existingUser: UserDocument) => {
         if (err) { return next(err); }
         if (existingUser) {
-            req.flash("errors", { msg: "Account with that email address already exists." });
+            req.flash("errors", { msg: "Konto z tym adresem email już istnieje" });
             return res.redirect("/");
         }
         async.waterfall(
@@ -202,7 +202,7 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
             ) {
                   if (!user) {
                     req.flash("errors", {
-                      msg: "Account with that email address does not exist.",
+                      msg: "Konto z tym adresem email nie istnieje",
                     });
                     return res.redirect("/");
                   }
@@ -238,9 +238,10 @@ export const postSignup = async (req: Request, res: Response, next: NextFunction
               const mailOptions = {
                 to: user.email,
                 from: MAIL_SHOWMAIL,
-                subject: "Verify your account",
+                subject: "Zweryfikuj swoje konto",
                 text: `
-          Please click on the following link, or paste this into your browser to complete the process:\n\n
+          Witaj w SignumLBRI\n
+          Kliknij w link poniżej aby dokończyć rejestrację :))\n
           http://${req.headers.host}/verify/${token}\n\n`,
               };
               transporter.sendMail(
@@ -471,8 +472,8 @@ export const getVerify = async (req: Request, res: Response, next: NextFunction)
             const mailOptions = {
                 to: user.email,
                 from: MAIL_SHOWMAIL,
-                subject: "Your password has been changed",
-                text: `Hello,\n\nThis is a confirmation that the account ${user.email} has just been verified.\n`
+                subject: "Twoje konto zostało poprawnie zweryfikowane",
+                text: `Hejka,\n\n Konto ${user.email} właśnie zostało zarejestowane w systemie SignumLBRI.\n`
             };
             await transporter.sendMail(mailOptions, (err, info) => {
               console.log(
@@ -553,8 +554,8 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
             const mailOptions = {
                 to: user.email,
                 from: MAIL_SHOWMAIL,
-                subject: "Your password has been changed",
-                text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
+                subject: "Twoje Hasło zostało zmienione",
+                text: `Hejka,\n\n Właśnie ktoś zmienił hasło na koncie ${user.email}. Jeżeli to nie ty, skontaktuj się z administratorem systemu!\n`
             };
             await transporter.sendMail(mailOptions, (err, info) => {
               console.log(
@@ -562,7 +563,7 @@ export const postReset = async (req: Request, res: Response, next: NextFunction)
                 nodemailer.getTestMessageUrl(info)
               );
               req.flash("success", {
-                msg: "Success! Your password has been changed.",
+                msg: "Gratulacje! Twoje hasło do konta zostało zmienione.",
               });
               done(err);
             });
@@ -612,7 +613,7 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
             User.findOne({ email: req.body.email }, (err: NativeError, user: UserDocument) => {
                 if (err) { return done(err); }
                 if (!user) {
-                    req.flash("errors", { msg: "Account with that email address does not exist." });
+                    req.flash("errors", { msg: "Konto z tym adresem email nie istnieje!" });
                     return res.redirect("/forgot");
                 }
                 user.passwordResetToken = (token as unknown as string);
@@ -638,18 +639,17 @@ export const postForgot = async (req: Request, res: Response, next: NextFunction
             const mailOptions = {
                 to: user.email,
                 from: MAIL_SHOWMAIL,
-                subject: "Reset your password on Hackathon Starter",
-                text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
-          Please click on the following link, or paste this into your browser to complete the process:\n\n
+                subject: "Zresetuj swoje hasło!",
+                text: `Kliknij w link poniżej aby dokończyć proces zmiany hasła!\n\n
           http://${req.headers.host}/reset/${token}\n\n
-          If you did not request this, please ignore this email and your password will remain unchanged.\n`
+          Jeżeli to nie ty, nie ma obaw! Hasło pozostanie niezmienione :))\n`
             };
             transporter.sendMail(mailOptions, (err, info) => {
                 console.log(
                   "Preview URL: %s",
                   nodemailer.getTestMessageUrl(info)
                 );
-                req.flash("info", { msg: `An e-mail has been sent to ${user.email} with further instructions.` });
+                req.flash("info", { msg: `Wysłaliśmy maila na adres ${user.email} z instrukcjami odnośnie zmiany hasła.` });
                 done(err);
             });
             // console.log("Message sent: %s", info.messageId);
@@ -681,7 +681,7 @@ export const postResendVerify = async (req: Request, res: Response): Promise<voi
   //         pass: process.env.SENDGRID_PASSWORD
   //     }
   // });
-    await check("email", "Please enter a valid email address.")
+    await check("email", "Podaj poprawny adres email.")
     .isEmail()
     .run(req);
     await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -708,15 +708,15 @@ export const postResendVerify = async (req: Request, res: Response): Promise<voi
     const mailOptions = {
       to: user.email,
       from: MAIL_SHOWMAIL,
-      subject: "Verify your account",
+      subject: "Zweryfikuj konto",
       text: `
-    Please click on the following link, or paste this into your browser to complete the process:\n\n
+    Kliknij w link poniżej aby zweryfikować swoje konto:\n\n
     http://${req.headers.host}/verify/${user.accountVerifyToken}\n\n`,
     };
     transporter.sendMail(mailOptions, (err, info) => {
       console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
       req.flash("success", {
-        msg: "Success! Activation Email sent!",
+        msg: "Sukces, Mail aktywacyjny został wysłany!",
       });
       return res.redirect("/");
     });
