@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Book, BookDocument } from "../models/Book";
+import { Book } from "../models/Book";
 import { BookListing } from "../models/BookListing";
 import { UserDocument } from "../models/User";
 
