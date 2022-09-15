@@ -22,8 +22,8 @@ block content
             tbody 
                 each book in data 
                     tr 
-                        td=book.title
-                        td=book.publisher
+                        td=book.title.length > 70 ? book.title.substring(0, 70 - 3) + "..." :  book.title
+                        td=book.publisher.length > 40 ? book.publisher.substring(0, 40 - 3) + "..." :  book.publisher
                         td=book.available
                         td=book.sold
                         td=book.avgCost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })

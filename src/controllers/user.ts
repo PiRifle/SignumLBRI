@@ -368,14 +368,23 @@ export const postUpdatePassword = async (req: Request, res: Response, next: Next
  * Delete user account.
  * @route POST /account/delete
  */
+// export const postDeleteAccount = (req: Request, res: Response, next: NextFunction): void => {
+//     const user = req.user as UserDocument;
+//     User.remove({ _id: user.id }, (err) => {
+//         if (err) { return next(err); }
+//         req.logout(()=>{return null;});
+//         req.flash("info", { msg: "Your account has been deleted." });
+//         res.redirect("/");
+//     });
+// };
 export const postDeleteAccount = (req: Request, res: Response, next: NextFunction): void => {
-    const user = req.user as UserDocument;
-    User.remove({ _id: user.id }, (err) => {
-        if (err) { return next(err); }
-        req.logout(()=>{return null;});
-        req.flash("info", { msg: "Your account has been deleted." });
+    // const user = req.user as UserDocument;
+    // User.remove({ _id: user.id }, (err) => {
+        // if (err) { return next(err); }
+        // req.logout(()=>{return null;});
+        req.flash("info", { msg: "Niestety Ta Funkcjonalność nie jest jeszcze działająca" });
         res.redirect("/");
-    });
+    // });
 };
 
 // /**

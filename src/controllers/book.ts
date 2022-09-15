@@ -211,9 +211,9 @@ export async function postSellBook(
       const cost = Number(sellingData.cost);
       const comission = cost * 0.07;
       const finalCommission =
-        cost + (comission % 5) == 0
+        cost + (comission % 2) == 0
           ? cost + comission
-          : 5 - ((cost + comission) % 5) + comission;
+          : 2 - ((cost + comission) % 2) + comission;
       const listing = new BookListing({
         commission: finalCommission,
         cost: sellingData.cost,
@@ -272,7 +272,9 @@ export const getManageBook = (
         req.flash("errors", { msg: "nie znaleziono książki" });
         return res.redirect("/");
       }
-
+      // if(!listing.bookOwner){
+      //   console.log("no bookowner");
+      // }
       if (res.locals.device.mobile()) {
         return res.render("book/editBookMobile", {
           item: listing,
@@ -344,6 +346,9 @@ export const getPrintLabel = (req: Request, res: Response): void => {
     .populate("book")
     .populate("bookOwner")
     .exec((err: Error, listings) => {
+      // if(!listings.bookOwner){
+      //   console.log("no bookowner");
+      // }
       res.render("label/bookIdentifier", {
         listings: listings,
       });
@@ -667,12 +672,14 @@ export const getLibrary = async (
 ): Promise<void> => {
   if (new Date(Date.now()) <= new Date("2022-09-15")) {
     return res.render("library/books", {
+      title: "Biblioteka",
       data: await fetchTopBooks(),
       disableScripts: true,
       disableLogin: env.PREMIERE,
     });
   }
   return res.render("library/books", {
+    title: "Biblioteka",
     data: await fetchTopBooks(),
     disableScripts: true,
   });

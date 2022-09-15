@@ -14,12 +14,12 @@ $(document).ready(()=>{
   // Graphs
     var timeFormat = "DD/MM/YYYY/HH:mm:ss";
    var config = {
-     type: "line",
+     type: "scatter",
      options: {
        responsive: true,
        title: {
          display: true,
-         text: "Chart.js Time Scale",
+         text: "Time",
        },
        scales: {
          xAxes: [
@@ -28,7 +28,7 @@ $(document).ready(()=>{
              time: {
                parser: timeFormat,
                tooltipFormat: timeFormat,
-               // unit: ""
+               unit: "day"
              },
              scaleLabel: {
                display: true,
@@ -38,9 +38,12 @@ $(document).ready(()=>{
          ],
          yAxes: [
            {
+            ticks: {
+                beginAtZero: true
+            },
              scaleLabel: {
                display: true,
-               labelString: "value",
+               labelString: "Operations",
              },
            },
          ],

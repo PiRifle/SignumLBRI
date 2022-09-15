@@ -1,4 +1,4 @@
-import express, { RequestHandler } from "express";
+import express, { RequestHandler, Response, Request } from "express";
 import compression from "compression"; // compresses requests
 import session from "express-session";
 import bodyParser from "body-parser";
@@ -241,6 +241,7 @@ adminApiRoutes.get("/books", adminController.apiBooks);
 
 
 const adminRoutes = express.Router();
+
 adminRoutes.get(
   "/",
   passportConfig.isAuthenticated,
@@ -264,9 +265,41 @@ adminRoutes.get(
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
   adminController.books
+  
 );
 adminRoutes.use("/api/", adminApiRoutes);
-
+adminRoutes.get(
+  "/:userID/",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+(req: Request, res: Response)=>{
+  res.redirect(`/admin/${req.params.userID}/manage`);
+}
+);
+adminRoutes.get(
+  "/:userID/manage",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  adminController.getEditUser
+);
+adminRoutes.post(
+  "/:userID/update",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  adminController.postEditUser
+);
+adminRoutes.post(
+  "/:userID/giveMoney",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  adminController.postGiveMoneyUser
+);
+// adminRoutes.post(
+//   "/:userID/delete",
+//   passportConfig.isAuthenticated,
+//   passportConfig.isAdmin,
+//   adminController.postRemoveUser
+// );
 // applicationRoutes.post("/login", userController.postLoginApp)
 // applicationRoutes.get("/ping", userController.getPing);
 // applicationRoutes.get("/fromisbn", passportConfig.isAuthenticated, bookController.getFillBookData)

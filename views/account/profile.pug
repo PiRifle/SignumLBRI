@@ -77,18 +77,18 @@ block content
           i.fa.fa-lock
           | Change Password
 
-  .page-header
-    h3 Delete Account
-    hr
+  //- .page-header
+  //-   h3 Delete Account
+  //-   hr
 
-  form.form-horizontal(action='/account/delete', method='POST')
-    .input-group.mb-3.row.justify-content-md-center
-      p.offset-sm-3.col-sm-7 You can delete your account, but keep in mind this action is irreversible.
-      input(type='hidden', name='_csrf', value=_csrf)
-      .col-sm-4
-        button.btn.btn-danger(type='submit')
-          i.fa.fa-trash
-          | Delete my account
+  //- form.form-horizontal(action='/account/delete', method='POST')
+  //-   .input-group.mb-3.row.justify-content-md-center
+  //-     p.offset-sm-3.col-sm-7 You can delete your account, but keep in mind this action is irreversible.
+  //-     input(type='hidden', name='_csrf', value=_csrf)
+  //-     .col-sm-4
+  //-       button.btn.btn-danger(type='submit')
+  //-         i.fa.fa-trash
+  //-         | Delete my account
 
   //- .page-header
   //-   h3 Linked Accounts

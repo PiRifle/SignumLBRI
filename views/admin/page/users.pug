@@ -24,14 +24,40 @@ block content
           th Books 
           th Contact
           th Debt
+          th(width="40px") Manage
         tbody 
-          each user in userData 
+          each user in userData
             tr 
-              td=user.profile.name
-              td=user.profile.surname
+              td=user.profile.name.length > 40 ? user.profile.name.substring(0, 40 - 3) + "..." :  user.profile.name
+              td=user.profile.surname.length > 40 ? user.profile.surname.substring(0, 40 - 3) + "..." :  user.profile.surname
               td=user.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
               td=user.books
               td
                 div=user.email 
                 div=user.profile.phone 
               td=user.mustGive.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+              td
+                a.btn.btn-primary(href=user._id+"/manage") Manage
+      h2 Staff List
+      table.table
+        thead 
+          th Name
+          th Surname 
+          th Books Sold
+          th Books Accepted
+          th Books Deleted
+          th Contact
+          th(width="40px") Manage
+        tbody 
+          each user in staff
+            tr 
+              td=user.profile.name.length > 40 ? user.profile.name.substring(0, 40 - 3) + "..." :  user.profile.name
+              td=user.profile.surname.length > 40 ? user.profile.surname.substring(0, 40 - 3) + "..." :  user.profile.surname
+              td=user.soldBooks
+              td=user.verifiedBooks
+              td=user.deletedBooks
+              td
+                div=user.email 
+                div=user.profile.phone 
+              td 
+                a.btn.btn-primary(href=user._id+"/manage") Manage
