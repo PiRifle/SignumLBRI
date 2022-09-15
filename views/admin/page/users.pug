@@ -12,9 +12,10 @@ block content
       canvas#myChart.my-4.w-100(width='900' height='380' datasetSource="api/users")
       h2 Statistics 
       .d-flex.justify-content-evenly.flex-wrap.flex-row
-        div Books per user AVG: #{Math.ceil(stats.bookAvg)}
-        div total Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-        div total Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+        if stats
+          div Books per user AVG: #{Math.ceil(stats.bookAvg)}
+          div total Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div total Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
       h2 User List
       table.table
         thead 

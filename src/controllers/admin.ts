@@ -262,7 +262,7 @@ export async function users(req: Request, res: Response): Promise<void> {
       },
     },
   ]);
-  console.log(stats);
+  // console.log(stats);
   res.render("admin/page/users", {
     title: "Users",
     stats: stats[0],
@@ -821,7 +821,7 @@ export async function apiBooks(req: Request, res: Response) {
         fill: true,
       });
       dataset.forEach((data) => {
-        console.log(data.data, "not sorted");
+        // console.log(data.data, "not sorted");
         data.data.sort(
           (a, b) =>
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -831,7 +831,7 @@ export async function apiBooks(req: Request, res: Response) {
             //@ts-ignore
             new Date(moment(b.x, "DD/MM/YYYY/HH:mm:ss"))
         );
-        console.log(data.data, "sorted");
+        // console.log(data.data, "sorted");
       });
       return res.json(dataset).end();
     }
@@ -1044,7 +1044,7 @@ export const getEditUser = async (req: Request, res: Response) => {
       },
     },
   ]);
-  console.log(JSON.stringify(user));
+  // console.log(JSON.stringify(user));
   user[0].gravatar = function (size: number = 200) {
     if (!this.email) {
       return `https://gravatar.com/avatar/?s=${size}&d=retro`;
