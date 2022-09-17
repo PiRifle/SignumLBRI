@@ -1,0 +1,35 @@
+extends ../layout
+
+block content
+    h2 Zarządzaj Etykietami
+    center 
+        if listings 
+            form(method="get", action="/label/print") 
+                table.table
+                    thead 
+                        td Drukuj
+                        td Tytuł
+                        td Wydawca
+                        td Cena
+                        td Wydrukowane
+                    tbody 
+                        each listing in listings
+                            tr 
+                                td  
+                                    if listing._id==selectedLabel
+                                        input(type="checkbox", name=`${listing._id}`, checked)
+                                    else   
+                                        input(type="checkbox", name=`${listing._id}`)
+
+                                td= listing.book.title
+                                td= listing.book.publisher
+                                td= listing.cost
+                                td= listing.label.print ? 'Tak' : "Nie"
+                input(type="submit" value="Wydrukuj").btn.btn-primary.m-1
+                a(href="/book/add" ).btn.btn-success.m-1 Dodaj następną książkę
+                                
+        else 
+            
+            h6 Trochę tu pusto...
+            a(href="/book/add").btn.btn-primary Dodaj pierwszą książkę
+                

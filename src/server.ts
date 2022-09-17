@@ -1,11 +1,35 @@
 import errorHandler from "errorhandler";
 import app from "./app";
-const dnssd = require("dnssd");
+import nodemailer from "nodemailer";
+
 /**
  * Error Handler. Provides full stack
  */
 if (process.env.NODE_ENV === "development") {
     app.use(errorHandler());
+    
+    nodemailer.createTestAccount().then((testAccount) => {
+    nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: 465,
+      secure: true, // true for 465, false for other ports
+      auth: {
+        user: testAccount.user, // generated ethereal user
+        pass: testAccount.pass, // generated ethereal password
+      },
+    });
+    });
+
+}else{
+//  transporter = nodemailer.createTransport({
+//    host: "smtp.ethereal.email",
+//    port: 465,
+//    secure: true, // true for 465, false for other ports
+//    auth: {
+//      user: testAccount.user, // generated ethereal user
+//      pass: testAccount.pass, // generated ethereal password
+//    },
+//  });
 }
 
 // console.log()
@@ -15,12 +39,7 @@ if (process.env.NODE_ENV === "development") {
  */
 
 
-const ad = new dnssd.Advertisement(dnssd.tcp("http"), Number(app.get("port")), {
-    name: "SignumLBRI-server",
-});
-
 const server = app.listen(app.get("port"), () => {
-    ad.start();
     console.log(
         "  App is running at http://localhost:%d in %s mode",
         app.get("port"),

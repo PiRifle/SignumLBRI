@@ -1,46 +1,66 @@
+if device.mobile() && user && user.role != "student"
+  form(action="/find", method="get")
+    .input-group 
+      .input-group-prepend 
+        span.input-group-text Wyszukaj Kod Zlecenia
+      input(type="text" name="itemID").form-control.numeric
+      .input-group-append  
+        button(type="button").mobile.fa.fa-camera.border-0.scan-barcode.h-100
 nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
   .container
     a.navbar-brand(href='/')
-      i.fa.fa-book
+      i.fa-solid.fa-bookmark.mx-2
       | SignumLBRI
-    button.navbar-toggler(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+    button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='.navbar-collapse')
       span.navbar-toggler-icon
     if !setup 
-      
       .collapse.navbar-collapse
         .dropdown-divider
         ul.nav.navbar-nav
           li.nav-item(class=(title === 'Home') ? 'active' : undefined)
-            a.nav-link(href='/') Home
+            a.nav-link(href='/') Główna
+          if user && user.role == "student"
+            li.nav-item(class=(title === 'Wydrukuj Etykietę') ? 'active' : undefined)
+              a.nav-link(href='/label') Etykiety
+            li.nav-item(class=(title === 'Home') ? 'active' : undefined)
+              a.nav-link(href='/book/add') Dodaj Książkę
+            li.nav-item(class=(title === 'Biblioteka') ? 'active' : undefined)
+              a.nav-link(href='/library') Dostępne Książki
           //- li.nav-item(class=(title === 'API Examples') ? 'active' : undefined)
           //-   a.nav-link(href='/api') API Examples
           //- li.nav-item(class=(title === 'Contact') ? 'active' : undefined)
           //-   a.nav-link(href='/contact') Contact
-        .col
-          form(action="/find", method="get")
-            .input-group 
-              .input-group-prepend 
-                span.input-group-text Wyszukaj Kod Zlecenia
-              input(type="text" name="itemID").form-control 
+        if !device.mobile()
+          .col
+            if user && user.role != "student"
+              form(action="/find", method="get")
+                .input-group 
+                  .input-group-prepend 
+                    span.input-group-text Wyszukaj Kod Zlecenia
+                  input(type="text" name="itemID").form-control 
+
+
         ul.nav.navbar-nav
           if !user
             li.nav-item(class=(title === 'Login') ? 'active' : undefined)
               a.nav-link(href='/login') Zaloguj Się
+            li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
+              a.nav-link(href='/signup') Zarejestruj się
           else
-            li.nav-item.dropdown(class=(title === 'Account Management') ? 'active' : undefined)
-              a.nav-link.dropdown-toggle(href='#', data-toggle='dropdown')
+            li.nav-item.dropdown#dropdownMenuButton1(class=(title === 'Account Management') ? 'active' : undefined)
+              a.nav-link.dropdown-toggle(data-bs-toggle='dropdown' aria-expanded="false")
                 if user.profile.picture
                   img(src=user.profile.picture, alt=(user.profile.name || user.email || user.id))
                 else
                   img(src=user.gravatar(60), alt=(user.profile.name || user.email || user.id))
                 span= user.profile.name || user.email || user.id
                 i.caret
-              ul.dropdown-menu
+              ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
                 li.nav-item
-                  a.nav-link(href='/account') My Account
+                  a.nav-link(href='/account') Moje Konto
                 if user.role == "admin"
-                  li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
-                    a.nav-link(href='/adduser') Dodaj Użytkownika
+                  li.nav-item 
+                    a.nav-link(href="/setup") Dodaj Konto
                 li.dropdown-divider
                 li.nav-item
-                  a.nav-link(href='/logout') Logout
+                  a.nav-link(href='/logout') Wyloguj

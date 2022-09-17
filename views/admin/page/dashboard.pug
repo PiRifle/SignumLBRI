@@ -1,0 +1,19 @@
+include ../layout
+
+block content 
+    main.col-md-9.ms-sm-auto.col-lg-10.px-md-4
+      .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
+        h1.h2 Statistics
+        h2 Time Spent 
+      table.table
+        thead 
+          th Role 
+          th Average Time Spent 
+          th Total Time Spent  
+        tbody 
+          each role in data 
+            if role._id
+              tr
+                td=role._id
+                td #{role.formattedAvg}
+                td #{role.formattedSum}

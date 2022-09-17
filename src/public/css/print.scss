@@ -1,11 +1,33 @@
 
 @import "lib/bootstrap/bootstrap";
-@import "lib/font-awesome/font-awesome";
+@import "lib/font-awesome/fontawesome";
 // @import "themes/default/default";
 // @import "themes/default/variables";
 
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    src: url(/fonts/fa-solid-900.ttf);
+}
+// @font-face {
+//     font-family: 'Font Awesome 6 Free';
+//     font-weight: 900;
+//     src: url(/dist/public/fonts/fa-brands-400.ttf);
+// }
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 400;
+    src: url(/fonts/fa-regular-400.ttf);
+
+}
+
 .printMe{
     display: none;
+}
+.ui{
+    display: block;
+    margin: 0;
+    padding: 0;
 }
 @media only screen{
     html {
@@ -30,6 +52,9 @@
 }
 
 @media print {
+    div.col > svg{
+        height: 30mm;
+    }
     body{
         width: 21cm;
         height: 29.7cm;

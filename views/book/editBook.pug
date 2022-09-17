@@ -1,79 +1,153 @@
 extends ../layout
 
 block content
-    |<div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    if edit
+        form(action="sell", method="post") 
+            |<div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            |  <div class="modal-dialog" role="document">
+            |    <div class="modal-content">
+            |      <div class="modal-header">
+            |        <h5 class="modal-title" id="exampleModalLabel">Sprzedaj Książkę</h5>
+            |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            |          <span aria-hidden="true">&times;</span>
+            |        </button>
+            |      </div>
+            |      <div class="modal-body">
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Imię i Nazwisko
+                .col-sm-7
+                    div.d-flex.flex-row
+                        input(type="text", name="name", placeholder="Imię", required, autofocus).form-control.me-2.d-inline
+                        input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ms-2.d-inline
+            .input-group.mb-3.row.justify-content-md-center.my-4
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
+                .col-sm-7
+                    input(type="email", name="email", placeholder="E-Mail" required).form-control
+            .input-group.mb-3.row.justify-content-md-center.my-4
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='phone') Numer Telefonu
+                .col-sm-7
+                    input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control
+            |      </div>
+            |      <div class="modal-footer">
+            |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+            button(type="submit").btn.btn-success Sprzedaj
+            |      </div>
+            |    </div>
+            |  </div>
+            |</div>
+        |<div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        |  <div class="modal-dialog" role="document">
+        |    <div class="modal-content">
+        |      <div class="modal-header">
+        |        <h5 class="modal-title" id="exampleModalLabel">Przyjmij Książkę</h5>
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+        |          <span aria-hidden="true">&times;</span>
+        |        </button>
+        |      </div>
+        |      <div class="modal-body">
+        |        Czy na pewno chcesz przyjąć książkę
+        |      </div>
+        |      <div class="modal-footer">
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        form(action="accept", method="post") 
+            button(type="submit").btn.btn-success Przyjmij
+            
+        //- form(action=`${acceptString}`, method="post")
+        //-     button(type="submit").btn.btn-success Przyjmij
+
+        |      </div>
+        |    </div>
+        |  </div>
+        |</div>
+        |<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        |  <div class="modal-dialog" role="document">
+        |    <div class="modal-content">
+        |      <div class="modal-header">
+        |        <h5 class="modal-title" id="exampleModalLabel">Usuń Zlecenie</h5>
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+        |          <span aria-hidden="true">&times;</span>
+        |        </button>
+        |      </div>
+        |      <div class="modal-body">
+        |        Czy na pewno chcesz usunąć zlecenie?
+        |      </div>
+        |      <div class="modal-footer">
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        form(action="delete", method="post")
+            button(type="submit").btn.btn-danger Usuń
+        |      </div>
+        |    </div>
+        |  </div>
+        |</div>
+    |<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     |  <div class="modal-dialog" role="document">
     |    <div class="modal-content">
     |      <div class="modal-header">
-    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    |        <h5 class="modal-title" id="exampleModalLabel">Anuluj Zlecenie</h5>
+    |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
     |          <span aria-hidden="true">&times;</span>
     |        </button>
     |      </div>
     |      <div class="modal-body">
-    |        ...
+    |        Czy na pewno chcesz anulować zlecenie?
     |      </div>
     |      <div class="modal-footer">
-    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-    |        <form action='!{item.id}/sell', method="post">
-    |           <button type="submit" class="btn btn-success">Sprzedaj</button>
-    |        </form>
-    |    </div>
-    |    </div>
-    |  </div>
-    |</div>
-    |<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    |  <div class="modal-dialog" role="document">
-    |    <div class="modal-content">
-    |      <div class="modal-header">
-    |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-    |        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-    |          <span aria-hidden="true">&times;</span>
-    |        </button>
-    |      </div>
-    |      <div class="modal-body">
-    |        ...
-    |      </div>
-    |      <div class="modal-footer">
-    |        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-    |        <button type="button" class="btn btn-danger">Usuń</button>
+    |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wróć</button>
+    form(action="cancel", method="post")
+        button(type="submit").btn.btn-danger Anuluj
     |      </div>
     |    </div>
     |  </div>
     |</div>
 
-    .col.mr-auto
+    .col.me-auto
         h2.mb-5 Książka 
             b #{item.book.title}
         div.d-flex.flex-row
             div
-                img(style="width: 200px", src=item.book.image)
+                img(style="width: 200px", src=item.book.image).mx-4
             .col.m-0.p-0.pl-3
                 h5
                     b= item.book.authors.join(", ")
                 h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                 div ID: #{item._id}
+                br
+                if (user.role == "seller" || user.role == "admin")
+                    div.my-auto Marża: #{item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                    div.my-auto Wydanie Sprzedającemu: #{item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                    br
+
                 div.my-auto
                     .d-flex.flex-row
-                        span.my-auto.mr-3.text-success= item.sold ? "Sprzedana" : "cena"
-                        h3.mt-auto.mr-4
-                            b= (item.commission+item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                        if edit
-                            if user.role == "admin"
-                                button(data-toggle="modal" data-target="#deleteModal").btn.btn-danger.m-2 Usuń
-                            if !item.sold && (user.role == "seller" || user.role == "admin")
-                                button(data-toggle="modal" data-target="#sellModal").btn.btn-warning.m-2 Sprzedaj
-            .col.m-0.p-0.pl-3
-                .d-flex.flex-row 
-                    h4.mr-1= item.bookOwner.name
-                    h4= item.bookOwner.surname 
-                h5= item.bookOwner.phone
-                h6= item.bookOwner.email
-                h6= "Wystawił: "+item.putOnSaleBy.email
-                if item.sold
-                    h6= "Sprzedał: "+item.soldBy.email
+                        if (user.role == "seller" || user.role == "admin")
+                            h3.mt-auto.me-4
+                                b= (item.cost+item.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                        else 
+                            .d-flex.flex-row
+                                h3.mt-auto.me-4 Twoja cena: 
+                                    b= (item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                if (user.role == "seller" || user.role == "admin")
 
-                            
+                    .d-flex.flex-row 
+                        h5.me-1= item.bookOwner.profile.name
+                        h5= item.bookOwner.profile.surname 
+                    h5= item.bookOwner.profile.phone
+                    div= item.bookOwner.email
+                    br
+                h6 Status: #{item.status}
+            .col-.d-flex.flex-column
+                if item.status == "registered" || item.status == "printed_label"
+                    a(href=`/label/${item._id}/`).btn.btn-success.m-1 Wydrukuj etykietę
+                if edit
+                    if user.role == "admin"
+                        if (item.status != "deleted")
+                            button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-1 Usuń
+                    if (user.role == "seller" || user.role == "admin")
+                        if (item.status != "deleted") && (item.status != "canceled")
+                            if (item.status == "registered" || item.status == "printed_label")
+                                button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
+                            else if (item.status != "sold") 
+                                button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
+                else if (item.status == "registered") || (item.status == "printed_label")
+                    button(data-bs-toggle="modal" data-bs-target="#cancelModal").btn.btn-danger.m-1 Anuluj
 
-                    
-                

@@ -1,0 +1,64 @@
+include ../layout
+
+block content 
+    main.col-md-9.ms-sm-auto.col-lg-10.px-md-4
+      .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
+        h1.h2 Users
+        .btn-toolbar.mb-2.mb-md-0
+          .btn-group.me-2
+            button.btn.btn-sm.btn-outline-secondary(type='button') Share
+            button.btn.btn-sm.btn-outline-secondary(type='button') Export
+            input.form-control(name="dates", readonly="readonly")
+      canvas#myChart.my-4.w-100(width='900' height='380' datasetSource="api/users")
+      h2 Statistics 
+      .d-flex.justify-content-evenly.flex-wrap.flex-row
+        if stats
+          div Books per user AVG: #{Math.ceil(stats.bookAvg)}
+          div total Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div total Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+      h2 User List
+      table.table
+        thead 
+          th Name
+          th Surname 
+          th Earnings 
+          th Books 
+          th Contact
+          th Debt
+          th(width="40px") Manage
+        tbody 
+          each user in userData
+            tr 
+              td=user.profile.name.length > 40 ? user.profile.name.substring(0, 40 - 3) + "..." :  user.profile.name
+              td=user.profile.surname.length > 40 ? user.profile.surname.substring(0, 40 - 3) + "..." :  user.profile.surname
+              td=user.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+              td=user.books
+              td
+                div=user.email 
+                div=user.profile.phone 
+              td=user.mustGive.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+              td
+                a.btn.btn-primary(href=user._id+"/manage") Manage
+      h2 Staff List
+      table.table
+        thead 
+          th Name
+          th Surname 
+          th Books Sold
+          th Books Accepted
+          th Books Deleted
+          th Contact
+          th(width="40px") Manage
+        tbody 
+          each user in staff
+            tr 
+              td=user.profile.name.length > 40 ? user.profile.name.substring(0, 40 - 3) + "..." :  user.profile.name
+              td=user.profile.surname.length > 40 ? user.profile.surname.substring(0, 40 - 3) + "..." :  user.profile.surname
+              td=user.soldBooks
+              td=user.verifiedBooks
+              td=user.deletedBooks
+              td
+                div=user.email 
+                div=user.profile.phone 
+              td 
+                a.btn.btn-primary(href=user._id+"/manage") Manage

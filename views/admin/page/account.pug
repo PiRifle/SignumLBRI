@@ -1,0 +1,107 @@
+extends ../layout
+
+block content
+    .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3(style="width:80%")
+        div(style="height:30px")
+        .page-header
+            h3 Give Money and Books
+            hr
+        h5 Books
+        table.table 
+            thead 
+                th Title 
+                th Publisher 
+                th Cost 
+                th Status 
+            tbody
+                each item in euser.availableBooks
+                    if item.book[0]
+                        tr
+                            td=item.book[0].title.length > 70 ? item.book[0].title.substring(0, 70 - 3) + "..." : item.book[0].title
+                            td=item.book[0].publisher.length > 40 ? item.book[0].publisher.substring(0, 40 - 3) + "..." :  item.book[0].publisher
+                            td=item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                            td=item.status
+        h5 You need to him #{euser.debt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} from sold books! 
+
+            form.form-horizontal(action='giveMoney', method='POST')
+                input(type="submit", value="Give Money").btn.btn-primary
+
+        .page-header
+            h3 Profile Information
+            hr
+        form.form-horizontal#update(action='update', method='POST')
+            input(type='hidden', name='_csrf', value=_csrf)
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='role') Role
+                .col-sm-7
+                    select.form-control(name='role', id='role', form="update", required)
+                        option(selected=(euser.role=="seller") ? true : false) seller 
+                        option(selected=(euser.role=="student") ? true : false) student
+                        option(selected=(euser.role=="admin") ? true : false) admin                 
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
+                .col-sm-7
+                    input.form-control(type='email', name='email', id='email', value=euser.email)
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='name') Name
+                .col-sm-7
+                    input.form-control(type='text', name='name', id='name', value=euser.profile.name)
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='name') Surname
+                .col-sm-7
+                    input.form-control(type='text', name='surname', id='surname', value=euser.profile.surname)
+            .input-group.mb-3.row.justify-content-md-center.align-items-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold Gender
+                .col-sm-7
+                    .form-check.form-check-inline
+                        input#option-male.form-check-input(type='radio', checked=euser.profile.gender==='male', name='gender', value='male', data-bs-toggle='radio')
+                        label.form-check-label(for="option-male") Male
+                    .form-check.form-check-inline
+                        input#option-female.form-check-input(type='radio', checked=euser.profile.gender==='female', name='gender', value='female', data-bs-toggle='radio')
+                        label.form-check-label(for="option-female") Female
+                    .form-check.form-check-inline
+                        input#option-other.form-check-input(type='radio', checked=euser.profile.gender==='other', name='gender', value='other', data-bs-toggle='radio')
+                        label.form-check-label(for="option-other") Other
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='location') Location
+                .col-sm-7
+                    input.form-control(type='text', name='location', id='location', value=euser.profile.location)
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold(for='website') Website
+                .col-sm-7
+                    input.form-control(type='text', name='website', id='website', value=euser.profile.website)
+            .input-group.mb-3.row.justify-content-md-center
+                label.col-sm-3.col-form-label.text-right.font-weight-bold Gravatar
+                .col-sm-7
+                    img(src=euser.gravatar(), class='profile', width='100', height='100', alt=((euser.profile.name || euser.email || euser.id)))
+            .input-group.mb-3.row.justify-content-md-center
+                .col-sm-4
+                    button.btn.btn.btn-primary(type='submit')
+                        i.fa.fa-pencil
+                        | Update Profile
+
+
+        //- .page-header
+        //-     h3 Delete Account
+        //-     hr
+
+        //- form.form-horizontal(action='delete', method='POST')
+        //-     .input-group.mb-3.row.justify-content-md-center
+        //-         p.offset-sm-3.col-sm-7 You can delete your account, but keep in mind this action is irreversible.
+        //-         input(type='hidden', name='_csrf', value=_csrf)
+        //-         .col-sm-4
+        //-             button.btn.btn-danger(type='submit')
+        //-                 i.fa.fa-trash
+        //-                 | Delete this account
+
+    //- .page-header
+    //-   h3 Linked Accounts
+    //-   hr
+    //- .form-horizontal
+    //-   .input-group.mb-3.row.justify-content-md-center
+    //-     .offset-sm-3.col-sm-7
+    //-       if euser.facebook
+    //-         p: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
+    //-       else
+    //-         p: a(href='/auth/facebook') Link your Facebook account
+

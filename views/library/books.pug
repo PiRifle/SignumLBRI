@@ -1,0 +1,46 @@
+extends ../layout
+block content
+    script(src="/js/lib/jquery.flipTimer.js") 
+    script 
+        |$(document).ready(function() {
+        |$('.flipTimer').flipTimer({ 
+        |direction: 'down', 
+        |date: 'September 15, 2022 08:00:00', 
+        |callback: function() { alert('times up!'); }
+        |});
+        |});
+    if !disableLogin && !user
+        div(style="height: 40px")
+    if !user
+        .position-relative.overflow-hidden.p-3.p-md-5.m-md-3.text-center.bg-image
+            .p-lg-5.mx-auto.my-1
+                h1.display-4.font-weight-normal.p-4 Witaj w SignumLBRI!
+                p.lead.font-weight-normal SignumLBRI jest projektem mającym ułatwić sprzedaż oraz kupno podręczników w szkołach podstawowych oraz ponadpodstawowych!
+                if !disableLogin
+                    a.no-override.btn.btn-primary.p-2.m-4(href="#availableBooks") Sprawdź dostępne podręczniki w Elektryczniaku!
+                else  
+                    h4.m-5 Za 
+                    .flipTimer
+                        .days.m-3
+                        .hours.m-3
+                        .minutes.m-3
+                        .seconds.m-3
+                    h4.m-5 Serwis będzie dostępny!
+    if !disableLogin
+        if !user
+            div(style="height: 140px")
+        .position-relative.overflow-hidden.p-3.p-md-5.m-md-3
+            h2.p-3 Dostępne Książki
+            .d-flex.w-100.flex-wrap.flex-row.justify-content-center#availableBooks
+                each book in data
+                    if book.title && book.available != 0
+                        .d-flex.p-3.bookContainer.border.border-secondary.m-2(style="width: 300px")
+                            .col
+                                .container.d-flex.flex-row.justify-content-center.p-3
+                                    if book.image
+                                        img(src=book.image, style="width: 200px; height: 270px")
+                                    else
+                                        div(style="width: 200px; height: 270px").mx-auto
+                                h5=book.title.length > 80 ? book.title.substring(0, 80 - 3) + "..." : book.title
+                                h6=book.publisher.length > 40 ? book.publisher.substring(0, 40 - 3) + "..." : book.publisher
+                                h4 Dostępne: #{book.available}

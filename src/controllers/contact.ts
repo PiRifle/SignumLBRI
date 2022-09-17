@@ -1,20 +1,29 @@
 import nodemailer from "nodemailer";
 import { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
+import { MAIL_HOST, MAIL_SHOWMAIL } from "../util/secrets";
+import { MAIL_USER } from "../util/secrets";
+import { MAIL_PASSWORD } from "../util/secrets";
 
-const transporter = nodemailer.createTransport({
-    service: "SendGrid",
-    auth: {
-        user: process.env.SENDGRID_USER,
-        pass: process.env.SENDGRID_PASSWORD
-    }
+
+
+// nodemailer.createTestAccount().then((testAccount)=>{
+    const transporter = nodemailer.createTransport({
+     host: MAIL_HOST,
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: MAIL_USER, // generated ethereal user
+            pass: MAIL_PASSWORD // generated ethereal password
+        },
+    // });
 });
 
 /**
  * Contact form page.
  * @route GET /contact
  */
-export const getContact = (req: Request, res: Response) => {
+export const getContact = (_req: Request, res: Response): void => {
     res.render("contact", {
         title: "Contact"
     });
@@ -24,7 +33,7 @@ export const getContact = (req: Request, res: Response) => {
  * Send a contact form via Nodemailer.
  * @route POST /contact
  */
-export const postContact = async (req: Request, res: Response) => {
+export const postContact = async (req: Request, res: Response): Promise<void> => {
     await check("name", "Name cannot be blank").not().isEmpty().run(req);
     await check("email", "Email is not valid").isEmail().run(req);
     await check("message", "Message cannot be blank").not().isEmpty().run(req);
@@ -37,7 +46,7 @@ export const postContact = async (req: Request, res: Response) => {
     }
 
     const mailOptions = {
-        to: "your@email.com",
+        to: MAIL_SHOWMAIL,
         from: `${req.body.name} <${req.body.email}>`,
         subject: "Contact Form",
         text: req.body.message

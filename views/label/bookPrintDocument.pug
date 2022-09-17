@@ -1,0 +1,23 @@
+doctype html
+html(lang='')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        title #{title} - SignumLBRI
+        meta(name='description', content='')
+        meta(name='theme-color' content='#4DA5F4')
+        link(rel='stylesheet', href='/css/print.css')
+        //- script print()
+
+    body
+        .ui
+            include ../../views/partials/header
+
+            .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3
+                button(onclick="print()").btn.btn-primary Wydrukuj #{bookListings.length}
+                block ../../views/content
+
+            include ../../views/partials/footer
+        .printMe
+            
