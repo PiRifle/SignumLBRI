@@ -233,6 +233,24 @@ app.get(
   passportConfig.isAuthenticated,
   bookController.redirectPrint
 );
+app.get(
+  "/bulk",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.getBulkSell
+);
+app.post(
+  "/bulk",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.postBulkSell
+);
+app.get(
+  "/listingJSON",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.listingJSON
+);
 const adminApiRoutes = express.Router();
 
 
@@ -294,6 +312,8 @@ adminRoutes.post(
   passportConfig.isAdmin,
   adminController.postGiveMoneyUser
 );
+
+
 // adminRoutes.post(
 //   "/:userID/delete",
 //   passportConfig.isAuthenticated,

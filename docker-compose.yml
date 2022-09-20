@@ -13,19 +13,22 @@ services:
       - 443:443
     volumes:
       - ./default.conf:/etc/nginx/templates/default.conf.template
-      - /etc/letsencrypt/live/targi.zsel.opole.pl/fullchain.pem:/etc/nginx/ssl/cert.crt
-      - /etc/letsencrypt/live/targi.zsel.opole.pl/privkey.pem:/etc/nginx/ssl/cert.key
+      - ./certs/domain.crt:/etc/nginx/ssl/cert.crt
+      - ./certs/domain.key:/etc/nginx/ssl/cert.key
+      # - /etc/letsencrypt/live/targi.zsel.opole.pl/fullchain.pem:/etc/nginx/ssl/cert.crt
+      # - /etc/letsencrypt/live/targi.zsel.opole.pl/privkey.pem:/etc/nginx/ssl/cert.key
   signumlbri:
     image: signumlbri
     build:
       context: .
       dockerfile: ./Dockerfile
     environment:
+      SESSION_SECRET: 'A'
       MAIL_HOST: 
       MAIL_USER: 
       MAIL_SHOWMAIL: 
       MAIL_PASSWORD: 
       NODE_ENV: production
       MONGODB_URI: mongodb://mongo:27017/
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000

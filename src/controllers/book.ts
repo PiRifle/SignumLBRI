@@ -674,8 +674,8 @@ export const getLibrary = async (
     return res.render("library/books", {
       title: "Biblioteka",
       data: await fetchTopBooks(),
-      disableScripts: true,
-      disableLogin: env.PREMIERE,
+      // disableScripts: true,
+      // disableLogin: env.PREMIERE,
     });
   }
   return res.render("library/books", {
@@ -708,3 +708,25 @@ export const deleteBook = (req: Request, res: Response): void => {
     return res.redirect("manage");
   });
 };
+export function getBulkSell(req: Request, res: Response) {
+  res.render("book/bulk");
+}
+
+export function postBulkSell(req: Request, res: Response) {
+  throw new Error("Function not implemented.");
+}
+
+export async function listingJSON(req: Request, res: Response) {
+  await check("itemID", "Nie podano identyfikatora książki")
+    .exists()
+    .isNumeric()
+    .isLength({ min: 13, max: 13 })
+    .run(req);
+    const errors = validationResult(req);
+if (!errors.isEmpty()) {
+    return res.status(400).end();
+  }
+  const listing = await BookListing.findOne({_id: req.query.itemID}, "book cost commission id").populate("book", "title publisher");
+  return res.json(listing);
+}
+

@@ -328,7 +328,16 @@ export async function buyers(req: Request, res: Response): Promise<void> {
       },
     },
   ]);
-  res.render("admin/page/buyers", { title: "Buyers", buyers: data });
+  let sum;
+  try{sum = data
+      .map((value) => {
+        return value.moneySpent;
+      })
+      .reduce((partialSum, a) => partialSum + a, 0);
+  }catch(_){
+
+  }
+  res.render("admin/page/buyers", { title: "Buyers", buyers: data, buyerSum: sum });
 }
 
 export async function books(req: Request, res: Response) {
