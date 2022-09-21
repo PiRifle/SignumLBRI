@@ -2,13 +2,12 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // const webpack = require("webpack");
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
-const fs = require('fs');
+const fs = require("fs");
 
 class MetaInfoPlugin {
   constructor(options) {
-    this.options = { filename: 'meta.json', ...options };
+    this.options = { filename: "meta.json", ...options };
   }
 
   apply(compiler) {
@@ -19,7 +18,7 @@ class MetaInfoPlugin {
       };
       const json = JSON.stringify(metaInfo);
       return new Promise((resolve, reject) => {
-        fs.writeFile(this.options.filename, json, 'utf8', error => {
+        fs.writeFile(this.options.filename, json, "utf8", error => {
           if (error) {
             reject(error);
             return;
@@ -38,7 +37,7 @@ module.exports = [
       new MiniCssExtractPlugin({
         filename: "[name].[hash].css",
       }),
-      new MetaInfoPlugin({ filename: 'dist/meta.json' }),
+      new MetaInfoPlugin({ filename: "dist/meta.json" }),
 
     //   new webpack.ProvidePlugin({
     //     process: "process/browser",

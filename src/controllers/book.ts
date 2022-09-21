@@ -9,7 +9,6 @@ import { BookListing, BookListingDocument, Label } from "../models/BookListing";
 import { UserDocument } from "../models/User";
 import { generateBarcode } from "../util/barcode";
 import { fetchTopBooks } from "../util/book";
-import { env } from "process";
 
 export async function getFillBookData(
   req: Request,
@@ -709,7 +708,7 @@ export const deleteBook = (req: Request, res: Response): void => {
   });
 };
 export function getBulkSell(req: Request, res: Response) {
-  res.render("book/bulk");
+  res.render("book/bulk", { disableSearch: true });
 }
 
 export async function postBulkSell(req: Request, res: Response) {

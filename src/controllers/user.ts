@@ -377,7 +377,7 @@ export const postUpdatePassword = async (req: Request, res: Response, next: Next
 //         res.redirect("/");
 //     });
 // };
-export const postDeleteAccount = (req: Request, res: Response, next: NextFunction): void => {
+export const postDeleteAccount = (req: Request, res: Response): void => {
     // const user = req.user as UserDocument;
     // User.remove({ _id: user.id }, (err) => {
         // if (err) { return next(err); }

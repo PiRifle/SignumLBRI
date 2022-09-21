@@ -1,4 +1,4 @@
-if device.mobile() && user && user.role != "student"
+if device.mobile() && user && user.role != "student" && !disableSearch
   form(action="/find", method="get")
     .input-group 
       .input-group-prepend 
@@ -31,13 +31,14 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
           //- li.nav-item(class=(title === 'Contact') ? 'active' : undefined)
           //-   a.nav-link(href='/contact') Contact
         if !device.mobile()
-          .col
-            if user && user.role != "student"
-              form(action="/find", method="get")
-                .input-group 
-                  .input-group-prepend 
-                    span.input-group-text Wyszukaj Kod Zlecenia
-                  input(type="text" name="itemID").form-control 
+          if !disableSearch
+            .col
+              if user && user.role != "student"
+                form(action="/find", method="get")
+                  .input-group 
+                    .input-group-prepend 
+                      span.input-group-text Wyszukaj Kod Zlecenia
+                    input(type="text" name="itemID").form-control 
 
 
         ul.nav.navbar-nav

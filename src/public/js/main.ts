@@ -16,6 +16,7 @@ window.rmbook = function rmbook(event: any) {
 }
 // const $ = require("jquery");
 import { Html5Qrcode, Html5QrcodeScanner, Html5QrcodeScannerState, Html5QrcodeScanType, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { Html5QrcodeResult } from "html5-qrcode/esm/core";
 var isMobile = false; //initiate as false
 // device detection
 if (
@@ -96,11 +97,11 @@ if (
   $("#currency").on("change", (change:any) => {
     $("#currencyFormated").val($("#currency").maskMoney("unmasked")[0]);
   });
-  $("button.scan-barcode").on("click", async (target:any) => {
-    if(barcodeDetector){
+  async function instantiateScan(callback: (decodedText: string, result: Html5QrcodeResult)=>void){
+    if (barcodeDetector) {
       let mediaStream: MediaStream | undefined;
-      if ($("#reader").parent().hasClass("d-none")){
-        $("#reader").append("<h6>USING PRFL ENGINE</h6>")
+      if ($("#reader").parent().hasClass("d-none")) {
+        $("#reader").append("<h6>USING PRFL ENGINE</h6>");
         $("#reader").parent().removeClass("d-none");
         mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment" },
@@ -110,38 +111,35 @@ if (
         video.autoplay = true;
         video.style.width = "100%";
         $("#reader").append(video);
-        async function detect(){
-          if(barcodeDetector){
-            try{
-              const read = await barcodeDetector.detect(video).catch(console.error);
-              if (read){
-                console.log(read)
+        async function detect() {
+          if (barcodeDetector) {
+            try {
+              const read = await barcodeDetector
+                .detect(video)
+                .catch(console.error);
+              if (read) {
+                console.log(read);
                 return read[0].rawValue;
               }
-            }catch(e){
-
-            }
+            } catch (e) {}
           }
-        };
+        }
         (async function renderLoop() {
           const val = await detect();
-          if(!val){
+          if (!val) {
             requestAnimationFrame(renderLoop);
-          }else{
-            onScanSuccess(val, {});
+          } else {
+            callback(val, {} as unknown as Html5QrcodeResult);
           }
-          
-          
-
         })();
-        
+
         //mount VideoFeed
-      }else{
+      } else {
         //unmount VideoFeed
         $("#reader").parent().addClass("d-none");
         $("#reader").children().remove();
-        if (mediaStream){
-          mediaStream.getTracks().forEach((track)=>track.stop())
+        if (mediaStream) {
+          mediaStream.getTracks().forEach((track) => track.stop());
         }
       }
     }
@@ -152,7 +150,7 @@ if (
         reader.start(
           { facingMode: "environment" },
           config,
-          onScanSuccess,
+          callback,
           () => {}
         );
       } else {
@@ -160,7 +158,18 @@ if (
         $("#reader").parent().addClass("d-none");
       }
     }
+  }
+  $("button.scan-barcode").on("click", async (target:any) => {
+    await instantiateScan(onScanSuccess)
   });
+  $("button.scan-barcode-addToCart").on("click", async (target: any) => {
+    await instantiateScan(onScanAdd);
+  });
+  async function onScanAdd(decodedText: string, decodedResult: any){
+    $("input[name='itemIDSell']").val(decodedText);
+    $("input[name='itemIDSell']").blur();
+    $("button.scan-barcode-addToCart").click();
+  }
   $("input[name='itemID']").focus();
   $(window).on(
     "keydown",
@@ -234,13 +243,27 @@ async function castData() {
 }
 $("button.sellBooks").on("click", (e:any)=>{
   let ids: string[] = []
+  let costs: number[] = []
   $("table.sellTable > tbody").children().each((index, element)=>{
     const elem = element.getAttribute("data-book-id");
+    const cost = element.getAttribute("data-book-cost");
+    
     if (elem){
       ids.push(elem);
     }
+    if(cost){
+      costs.push(Number(cost))
+    }
   })
   $("input#IDS_BOOK").val(JSON.stringify(ids));
+  $("span#costSum").text(
+    costs
+      .reduce((partialSum, a) => partialSum + a, 0)
+      .toLocaleString("pl-PL", {
+        style: "currency",
+        currency: "PLN",
+      })
+  );
 })
 function shorten(value: string, char: number){
   return value.length > char ? value.substring(0, char - 3) + "..." : value
@@ -253,11 +276,16 @@ $("input[name='itemIDSell']").on("focusout", (event: any) => {
       if (resp){
         if(!$(`tr[data-book-id="${resp._id}"]`)[0]){
           $("table.sellTable > tbody").append(`
-            <tr data-book-id="${resp._id}" ${resp.status != "accepted" ? "class='bg-danger'" : undefined}>
+            <tr data-book-id="${resp._id}" data-book-cost="${
+            Math.ceil(resp.cost + resp.commission)
+          }" ${resp.status != "accepted" ? "class='bg-danger'" : undefined}>
               <td>${resp._id}</td>
               <td>${shorten(resp.book.title, 40)}</td>
               <td>${shorten(resp.book.publisher, 80)}</td>
-              <td>${(resp.cost + resp.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}</td>
+              <td>${(resp.cost + resp.commission).toLocaleString("pl-PL", {
+                style: "currency",
+                currency: "PLN",
+              })}</td>
               <td>${resp.status}</td>
               <td>
                 <button onclick="window.rmbook(this)" class="btn btn-danger rmBook">Usuń</button>
