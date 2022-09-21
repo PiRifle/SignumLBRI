@@ -9,7 +9,7 @@ import path from "path";
 import mongoose from "mongoose";
 import passport from "passport";
 import bluebird from "bluebird";
-import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
+import { MONGODB_URI, SESSION_SECRET, version } from "./util/secrets";
 import MobileDetect from "mobile-detect";
 // Controllers (route handlers)
 import * as performanceController from "./controllers/performance";
@@ -70,6 +70,7 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
   res.locals.device = new MobileDetect(req.headers["user-agent"]);
+  res.locals.version = version.hash;
   next();
 });
 app.use((req, res, next) => {
