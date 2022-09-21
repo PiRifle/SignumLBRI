@@ -109,7 +109,8 @@ block content
             .col.m-0.p-0.pl-3
                 h5
                     b= item.book.authors.join(", ")
-                h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                if item.book.publisher 
+                    h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                 div ID: #{item._id}
                 br
                 if (user.role == "seller" || user.role == "admin")

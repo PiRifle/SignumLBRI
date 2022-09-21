@@ -1,4 +1,3 @@
-
 import $ from "jquery";
 
 import "@popperjs/core";
@@ -243,6 +242,9 @@ $("button.sellBooks").on("click", (e:any)=>{
   })
   $("input#IDS_BOOK").val(JSON.stringify(ids));
 })
+function shorten(value: string, char: number){
+  return value.length > char ? value.substring(0, char - 3) + "..." : value
+}
 $("input[name='itemIDSell']").on("focusout", (event: any) => {
   fetch(`/listingJSON?itemID=${event.target.value}`).then(async (value)=>{
     event.target.value = ''
@@ -251,11 +253,12 @@ $("input[name='itemIDSell']").on("focusout", (event: any) => {
       if (resp){
         if(!$(`tr[data-book-id="${resp._id}"]`)[0]){
           $("table.sellTable > tbody").append(`
-            <tr data-book-id="${resp._id}">
+            <tr data-book-id="${resp._id}" ${resp.status != "accepted" ? "class='bg-danger'" : undefined}>
               <td>${resp._id}</td>
-              <td>${resp.book.title}</td>
-              <td>${resp.book.publisher}</td>
-              <td>${resp.cost + resp.commission}</td>
+              <td>${shorten(resp.book.title, 40)}</td>
+              <td>${shorten(resp.book.publisher, 80)}</td>
+              <td>${(resp.cost + resp.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}</td>
+              <td>${resp.status}</td>
               <td>
                 <button onclick="window.rmbook(this)" class="btn btn-danger rmBook">Usuń</button>
               </td>

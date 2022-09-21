@@ -95,7 +95,8 @@ block content
                             h6 
                                 b= item.book.title
                             div.font-weight-light= item.book.authors.join(", ")
-                            div.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                            if item.book.publisher 
+                                div.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                             div ID Zlecenia: #{item._id}
                         .col.mx-auto.my-4
                             div.d-flex.flex-col.justify-content-center

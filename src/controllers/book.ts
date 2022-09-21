@@ -712,10 +712,45 @@ export function getBulkSell(req: Request, res: Response) {
   res.render("book/bulk");
 }
 
-export function postBulkSell(req: Request, res: Response) {
-  throw new Error("Function not implemented.");
-}
+export async function postBulkSell(req: Request, res: Response) {
+await check("name", "Nie podano imienia").exists().run(req);
+await check("surname", "Nie podano nazwiska").exists().run(req);
+await check("email", "Email jest nieprawidłowy").isEmail().run(req);
+await check("phone", "Numer Telefony jest nieprawidłowy")
+  .isMobilePhone("pl-PL")
+  .run(req);
+await check("bookIDS", "Nie podano identyfikatora książki").exists().isJSON().run(req);
+const bookIDS = JSON.parse(req.body.bookIDS);
 
+
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+  req.flash("errors", errors.array());
+  return res.redirect("/");
+}
+const buyer = await Buyer.findOneAndUpdate(
+  {
+    name: req.body.name,
+    surname: req.body.surname,
+    phone: req.body.phone,
+    email: req.body.email,
+  },
+  {},
+  { new: true, upsert: true }
+);
+const findA = await Promise.all(bookIDS.map(async (book: string)=>{
+  const find = await BookListing.findOneAndUpdate({_id: book, status:"accepted"}, {status: "sold", boughtBy: buyer}).catch(err=>req.flash("errors", {msg: err}));
+  console.log(find);
+  if(find == null){
+    req.flash("errors", {msg: `książka ${book} nie jest wystawiona do sprzedaży lub nie istnieje`});
+  }
+  return find;
+}));
+if (!findA.includes(null)){
+  req.flash("success", {msg: "Sprzedano Ksiażki!"});
+}
+res.redirect("/bulk");
+}
 export async function listingJSON(req: Request, res: Response) {
   await check("itemID", "Nie podano identyfikatora książki")
     .exists()
@@ -726,7 +761,7 @@ export async function listingJSON(req: Request, res: Response) {
 if (!errors.isEmpty()) {
     return res.status(400).end();
   }
-  const listing = await BookListing.findOne({_id: req.query.itemID}, "book cost commission id").populate("book", "title publisher");
+  const listing = await BookListing.findOne({_id: req.query.itemID}, "book cost commission id status").populate("book", "title publisher");
   return res.json(listing);
 }
 
