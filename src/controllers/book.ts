@@ -738,7 +738,7 @@ const buyer = await Buyer.findOneAndUpdate(
   { new: true, upsert: true }
 );
 const findA = await Promise.all(bookIDS.map(async (book: string)=>{
-  const find = await BookListing.findOneAndUpdate({_id: book, status:"accepted"}, {status: "sold", boughtBy: buyer}).catch(err=>req.flash("errors", {msg: err}));
+  const find = await BookListing.findOneAndUpdate({_id: book, status:"accepted"}, {status: "sold", boughtBy: buyer, soldBy: req.user as UserDocument, whenSold: new Date()}).catch(err=>req.flash("errors", {msg: err}));
   console.log(find);
   if(find == null){
     req.flash("errors", {msg: `książka ${book} nie jest wystawiona do sprzedaży lub nie istnieje`});
