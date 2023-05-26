@@ -77,6 +77,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-For any inquiries or further information, please reach out to Piotr Czirnia at [email protected]
+For any inquiries or further information, please reach out to Piotr Czirnia at piotrekpolocz@gmail.com
 
 Let's make book fairs more efficient and enjoyable with SignumLBRI!
