@@ -67,6 +67,21 @@ npm start
 http://localhost:3000
 ```
 
+## Docker Compose
+
+SignumLBRI also provides a Docker Compose file for easy deployment and containerization. To use Docker Compose, make sure you have Docker installed on your machine, and follow these steps:
+
+1. Make sure you are in the project directory.
+
+2. Build and start the containers:
+
+```shell
+docker-compose up --build
+```
+
+3. Access the application in your browser at `http://localhost:3000`.
+
+
 ## Contributing
 
 Contributions are welcome! If you find any issues or have suggestions for improvements, please feel free to submit a pull request or open an issue in the GitHub repository.
