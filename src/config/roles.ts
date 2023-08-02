@@ -3,5 +3,6 @@ export const roles = [
     "student",
     // "buyer",
     "admin",
+    "headadmin",
     "viewer"
 ];

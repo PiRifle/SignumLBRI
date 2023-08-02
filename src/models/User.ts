@@ -1,3 +1,4 @@
+import {SchoolDocument} from "./School";
 import bcrypt from "bcrypt-nodejs";
 import crypto from "crypto";
 import mongoose from "mongoose";
@@ -9,10 +10,11 @@ export type UserDocument = mongoose.Document & {
     passwordResetExpires: Date;
 
     accountVerifyToken: string;
-
+    
     facebook: string;
     tokens: AuthToken[];
-
+    
+    school: SchoolDocument;
     role: string;
 
     profile: {
@@ -23,10 +25,17 @@ export type UserDocument = mongoose.Document & {
         location: string;
         website: string;
         picture: string;
+        
     };
 
     comparePassword: comparePasswordFunction;
     gravatar: (size: number) => string;
+    isSeller: () => boolean;
+    isAdmin: () => boolean;
+    isHeadAdmin: () => boolean;
+
+    softDelete: boolean
+    realAddress: string
 };
 
 type comparePasswordFunction = (candidatePassword: string, cb: (err: Error, isMatch: boolean) => void) => void;
@@ -44,9 +53,12 @@ const userSchema = new mongoose.Schema<UserDocument>(
         passwordResetExpires: Date,
     
         accountVerifyToken: String,
-
-
+        
         role: String,
+        school: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "School",
+        },
 
         profile: {
             name: String,
@@ -56,7 +68,10 @@ const userSchema = new mongoose.Schema<UserDocument>(
             location: String,
             website: String,
             picture: String
-        }
+        },
+
+        softDelete: Boolean,
+        realAddress: String
     },
     { timestamps: true },
 );
@@ -94,6 +109,19 @@ userSchema.methods.gravatar = function (size: number = 200) {
     }
     const md5 = crypto.createHash("md5").update(this.email).digest("hex");
     return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
+};
+
+
+userSchema.methods.isSeller = function () {
+    return ["seller", "admin", "headadmin"].includes(this.role as string);
+};
+
+userSchema.methods.isAdmin = function () {
+    return ["admin", "headadmin"].includes(this.role as string);
+};
+
+userSchema.methods.isHeadAdmin = function () {
+    return ["headadmin"].includes(this.role as string);
 };
 
 export const User = mongoose.model<UserDocument>("User", userSchema);

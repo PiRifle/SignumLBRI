@@ -3,6 +3,7 @@ import { BuyerDocument } from "./Buyer";
 import { BookDocument } from "./Book";
 import { generateEAN13 } from "../util/barcode";
 import { UserDocument } from "./User";
+import { SchoolDocument } from "./School";
 // import { stringify } from "querystring";
 import paginate from "mongoose-paginate-v2";
 
@@ -29,6 +30,7 @@ export type BookListingDocument = mongoose.Document & {
   // barcode: (id: number) => string;
   status: "registered" | "printed_label" | "accepted" | "sold" | "given_money" | "canceled" | "deleted";
   label: LabelDocument;
+  school: SchoolDocument;
 };
 
 const labelSchema = new mongoose.Schema<LabelDocument>(
@@ -75,6 +77,10 @@ const bookListingSchema = new mongoose.Schema<BookListingDocument>(
     givenMoneyBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    school: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "School",
     },
 
     

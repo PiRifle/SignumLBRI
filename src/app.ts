@@ -22,6 +22,8 @@ import * as bookController from "./controllers/book";
 
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
+// import { languageMiddleware } from "./controllers/language";
+import { languageMiddleware } from "./controllers/language";
 
 // Create Express server
 const app = express();
@@ -73,6 +75,21 @@ app.use((req, res, next) => {
   res.locals.version = version.hash;
   next();
 });
+app.use((req, res, next) => {
+  req.flashError = (err, msg, redirect = true) => {
+    if (err) console.error(err);
+
+    if (Array.isArray(msg)){
+      req.flash("errors", msg);
+    }else{
+      req.flash("errors", {msg});
+    }
+    
+    if (redirect) res.redirect("/");
+  };
+  next();
+});
+app.use(languageMiddleware);
 app.use((req, res, next) => {
   // After successful login, redirect back to the intended page
   if (

@@ -1,10 +1,7 @@
 import nodemailer from "nodemailer";
 import { Request, Response } from "express";
 import { check, validationResult } from "express-validator";
-import { MAIL_HOST, MAIL_SHOWMAIL } from "../util/secrets";
-import { MAIL_USER } from "../util/secrets";
-import { MAIL_PASSWORD } from "../util/secrets";
-
+import { MAIL_PASSWORD, MAIL_USER, MAIL_HOST, MAIL_SHOWMAIL } from "../util/secrets";
 
 
 // nodemailer.createTestAccount().then((testAccount)=>{

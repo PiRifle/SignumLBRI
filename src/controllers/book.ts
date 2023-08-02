@@ -277,14 +277,14 @@ export const getManageBook = (
       if (res.locals.device.mobile()) {
         return res.render("book/editBookMobile", {
           item: listing,
-          edit: req.user.role == "seller" || req.user.role == "admin",
+          edit: req.user.isSeller(),
           acceptString: `${"/book/" + listing._id + "/accept"}`,
           sellString: `${"/book/" + listing._id + "/sell"}`,
         });
       } else {
         return res.render("book/editBook", {
           item: listing,
-          edit: req.user.role == "seller" || req.user.role == "admin",
+          edit: req.user.isSeller(),
           acceptString: `${"/book/" + listing._id + "/accept"}`,
           sellString: `${"/book/" + listing._id + "/sell"}`,
         });
@@ -295,7 +295,7 @@ export const getPrintSetup = (req: Request, res: Response): void => {
   BookListing.find(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    req.user.role == "admin" || req.user.role == "seller"
+    req.user.isSeller()
       ? {}
       : { bookOwner: req.user }
   )
@@ -336,7 +336,7 @@ export const getPrintLabel = (req: Request, res: Response): void => {
   BookListing.find(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    req.user.role == "admin" || req.user.role == "seller"
+    req.user.isSeller()
       ? {}
       : { bookOwner: req.user }
   )
@@ -485,7 +485,7 @@ export async function getBookRegistry(
   const query: FilterQuery<BookListingDocument> = {};
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-  if (req.user.role != "admin") {
+  if (req.user.isAdmin()) {
     query.status = { $nin: ["canceled", "deleted"] };
   }
   const bookListings = await BookListing.paginate(query, options);

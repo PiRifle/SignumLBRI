@@ -59,7 +59,7 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
               ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
                 li.nav-item
                   a.nav-link(href='/account') Moje Konto
-                if user.role == "admin"
+                if user.isAdmin()
                   li.nav-item 
                     a.nav-link(href="/setup") Dodaj Konto
                 li.dropdown-divider

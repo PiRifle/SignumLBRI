@@ -155,7 +155,7 @@ export const isAuthenticatedApp = (
 };
 export const isSeller = (req: Request, res: Response, next: NextFunction): void => {
     const user = (req.user as UserDocument);
-    if (user.role == "admin" || user.role == "seller") {
+    if (user.isSeller()) {
         return next();
         // req.user()
     }
@@ -177,7 +177,7 @@ export const isAdmin = (
   next: NextFunction
 ): void => {
   const user = req.user as UserDocument;
-  if (user.role == "admin") {
+  if (user.isAdmin()) {
     return next();
     // req.user()
   }
@@ -186,7 +186,7 @@ export const isAdmin = (
 
 export const isSellerApp = (req: Request, res: Response, next: NextFunction): void => {
   const user = req.user as UserDocument;
-  if (user.role == "admin" || user.role == "seller") {
+  if (user.isSeller()) {
     return next();
     // req.user()
   }
