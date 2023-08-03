@@ -1,13 +1,12 @@
 import $ from "jquery";
 
-
 $(document).ready(function () {
   var beforePrint = function () {
     // console.log('Functionality to run before printing.');
   };
   var afterPrint = async function () {
     const printFlag = await fetch(
-      `/label/registerprints${window.location.search}`
+      `/label/registerprints${window.location.search}`,
     );
     setTimeout(() => {
       if (printFlag.status == 200) {

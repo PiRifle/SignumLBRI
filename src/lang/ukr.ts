@@ -1,7 +1,7 @@
 import { Language } from ".";
 
 export const ukr = {
-    titles: {
-        login: "Login"
-    }
+  titles: {
+    login: "Login",
+  },
 } as Language;

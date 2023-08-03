@@ -45,10 +45,17 @@ block content
           select.form-control(name='role', id='role', placeholder='Choose Role', required)
             if !setup
               option seller 
-              option viewer
+              //- option viewer
               option student
               option admin 
             option headadmin 
+    if schools
+      .input-group.mb-3.row.justify-content-md-center.my-4
+        label.col-sm-3.col-form-label.text-right.font-weight-bold(for='school') Szkoła
+        .col-sm-7
+          select.form-control(name='school', id='school', placeholder='Choose School', required)
+            each school in schools
+              option(value=school._id)= school.name 
     .input-group.mb-3.row.justify-content-md-center.m-4
       .offset-sm-3.col-sm-7
         button.btn.btn-success(type='submit')

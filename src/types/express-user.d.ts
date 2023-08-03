@@ -2,7 +2,7 @@
 import { UserDocument } from "../models/User";
 
 declare global {
-        namespace Express {
+  namespace Express {
     export interface User extends UserDocument {}
-    }
+  }
 }

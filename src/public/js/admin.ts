@@ -1,26 +1,24 @@
-
 import $ from "jquery";
 const moment = require("moment");
 //@ts-ignore
 // import "chart.js/dist/chart";
-import { Chart } from 'chart.js'
+import { Chart } from "chart.js";
 // const Chart = require("chartjs");
 require("./lib/daterangepicker");
 import "@popperjs/core";
 import feather from "feather-icons";
 import "bootstrap";
 
-
-async function getDataset(path: string){
-  const f = await fetch(path)
-  if (f.status == 200){
-    return await f.json()
-  }else{
-    return []
+async function getDataset(path: string) {
+  const f = await fetch(path);
+  if (f.status == 200) {
+    return await f.json();
+  } else {
+    return [];
   }
 }
 
-$(document).ready(()=>{
+$(document).ready(() => {
   ("use strict");
   feather.replace({ "aria-hidden": "true" });
   // Graphs
@@ -117,8 +115,7 @@ $(document).ready(()=>{
               myChart.update();
             }
           });
-        }
+        },
       );
   }
-})
-
+});

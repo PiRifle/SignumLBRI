@@ -15,32 +15,44 @@ const LocalStrategy = passportLocal.Strategy;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 passport.serializeUser<any, any>((req, user, done) => {
-    done(undefined, user);
+  done(undefined, user);
 });
 
 passport.deserializeUser((id, done) => {
-    User.findById(id, (err: NativeError, user: UserDocument) => done(err, user));
+  User.findById(id, (err: NativeError, user: UserDocument) => done(err, user));
 });
-
 
 /**
  * Sign in using Email and Password.
  */
-passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
-    User.findOne({ email: email.toLowerCase(), accountVerifyToken: {$in: [null, ""]} }, (err: NativeError, user: UserDocument) => {
-        if (err) { return done(err); }
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+    User.findOne(
+      { email: email.toLowerCase(), accountVerifyToken: { $in: [null, ""] } },
+      (err: NativeError, user: UserDocument) => {
+        if (err) {
+          return done(err);
+        }
         if (!user) {
-            return done(undefined, false, { message: `Email ${email} not found or account not activated!.` });
+          return done(undefined, false, {
+            message: `Email ${email} not found or account not activated!.`,
+          });
         }
         user.comparePassword(password, (err: Error, isMatch: boolean) => {
-            if (err) { return done(err); }
-            if (isMatch) {
-                return done(undefined, user);
-            }
-            return done(undefined, false, { message: "Invalid email or password." });
+          if (err) {
+            return done(err);
+          }
+          if (isMatch) {
+            return done(undefined, user);
+          }
+          return done(undefined, false, {
+            message: "Invalid email or password.",
+          });
         });
-    });
-}));
+      },
+    );
+  }),
+);
 // passport.use(
 //   new BearerStrategy(
 //     function(token, done) {
@@ -137,34 +149,42 @@ passport.use(new LocalStrategy({ usernameField: "email" }, (email, password, don
 /**
  * Login Required middleware.
  */
-export const isAuthenticated = (req: Request, res: Response, next: NextFunction): void => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect("/login");
-};
-export const isAuthenticatedApp = (
+export const isAuthenticated = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.status(403).json({msg: "not_logged_in"});
+  res.redirect("/login");
 };
-export const isSeller = (req: Request, res: Response, next: NextFunction): void => {
-    const user = (req.user as UserDocument);
-    if (user.isSeller()) {
-        return next();
-        // req.user()
-    }
-    res.redirect("/login");
+export const isAuthenticatedApp = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(403).json({ msg: "not_logged_in" });
+};
+export const isSeller = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const user = req.user as UserDocument;
+  if (user.isSeller()) {
+    return next();
+    // req.user()
+  }
+  res.redirect("/login");
 };
 export const isAnonymous = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   if (!req.user) {
     return res.redirect("/library");
@@ -174,7 +194,7 @@ export const isAnonymous = (
 export const isAdmin = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const user = req.user as UserDocument;
   if (user.isAdmin()) {
@@ -184,7 +204,11 @@ export const isAdmin = (
   res.redirect("/login");
 };
 
-export const isSellerApp = (req: Request, res: Response, next: NextFunction): void => {
+export const isSellerApp = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
   const user = req.user as UserDocument;
   if (user.isSeller()) {
     return next();
@@ -195,13 +219,17 @@ export const isSellerApp = (req: Request, res: Response, next: NextFunction): vo
 /**
  * Authorization Required middleware.
  */
-export const isAuthorized = (req: Request, res: Response, next: NextFunction): void => {
-    const provider = req.path.split("/").slice(-1)[0];
+export const isAuthorized = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const provider = req.path.split("/").slice(-1)[0];
 
-    const user = req.user as UserDocument;
-    if (find(user.tokens, { kind: provider })) {
-        next();
-    } else {
-        res.redirect(`/auth/${provider}`);
-    }
+  const user = req.user as UserDocument;
+  if (find(user.tokens, { kind: provider })) {
+    next();
+  } else {
+    res.redirect(`/auth/${provider}`);
+  }
 };

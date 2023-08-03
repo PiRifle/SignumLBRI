@@ -329,15 +329,18 @@ export async function buyers(req: Request, res: Response): Promise<void> {
     },
   ]);
   let sum;
-  try{sum = data
+  try {
+    sum = data
       .map((value) => {
         return value.moneySpent;
       })
       .reduce((partialSum, a) => partialSum + a, 0);
-  }catch(_){
-
-  }
-  res.render("admin/page/buyers", { title: "Buyers", buyers: data, buyerSum: sum });
+  } catch (_) {}
+  res.render("admin/page/buyers", {
+    title: "Buyers",
+    buyers: data,
+    buyerSum: sum,
+  });
 }
 
 export async function books(req: Request, res: Response) {
@@ -731,7 +734,7 @@ export async function apiBooks(req: Request, res: Response) {
         given_money: number;
         canceled: number;
         deleted: number;
-      }[]
+      }[],
     ) => {
       if (err) {
         return res.status(500).end();
@@ -838,12 +841,12 @@ export async function apiBooks(req: Request, res: Response) {
             new Date(moment(a.x, "DD/MM/YYYY/HH:mm:ss")) -
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
-            new Date(moment(b.x, "DD/MM/YYYY/HH:mm:ss"))
+            new Date(moment(b.x, "DD/MM/YYYY/HH:mm:ss")),
         );
         // console.log(data.data, "sorted");
       });
       return res.json(dataset).end();
-    }
+    },
   );
 }
 export async function apiUsers(req: Request, res: Response) {
@@ -1085,7 +1088,11 @@ export const getEditUser = async (req: Request, res: Response) => {
 //   });
 // };
 
-export const postEditUser = async (req: Request, res: Response, next: NextFunction) => {
+export const postEditUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   await check("userID").exists().run(req);
 
   await check("email", "Please enter a valid email address.")
@@ -1127,27 +1134,30 @@ export const postEditUser = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const postGiveMoneyUser = async (req: Request, res: Response) => {
-    await check("userID").exists().run(req);
-    const errors = validationResult(req);
+  await check("userID").exists().run(req);
+  const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      req.flash("errors", errors.array());
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("back");
+  }
+  BookListing.find({
+    bookOwner: req.params.userID,
+    status: { $in: ["sold", "accepted"] },
+  }).exec((err: Error, listings: BookListingDocument[]) => {
+    if (err) {
+      req.flash("errors", { msg: err });
       return res.redirect("back");
     }
-    BookListing.find({bookOwner: req.params.userID, status: {$in: ["sold", "accepted"]}}).exec((err: Error, listings: BookListingDocument[])=>{
-      if (err){
-        req.flash("errors", {msg: err});
-        return res.redirect("back");
-      }
-      listings.forEach((listing)=>{
-        listing.status = "given_money";
-        listing.whenGivenMoney = new Date();
-        listing.givenMoneyBy = req.user as UserDocument;
-        listing.save((err)=>{
-          req.flash("errors", { msg: err });
-        });
+    listings.forEach((listing) => {
+      listing.status = "given_money";
+      listing.whenGivenMoney = new Date();
+      listing.givenMoneyBy = req.user as UserDocument;
+      listing.save((err) => {
+        req.flash("errors", { msg: err });
       });
-      req.flash("success", {msg: "everything is okay!"});
-      return res.redirect("back");
     });
+    req.flash("success", { msg: "everything is okay!" });
+    return res.redirect("back");
+  });
 };

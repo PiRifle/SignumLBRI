@@ -11,14 +11,14 @@ class MetaInfoPlugin {
   }
 
   apply(compiler) {
-    compiler.hooks.done.tap(this.constructor.name, stats => {
+    compiler.hooks.done.tap(this.constructor.name, (stats) => {
       const metaInfo = {
         // add any other information if necessary
-        hash: stats.hash
+        hash: stats.hash,
       };
       const json = JSON.stringify(metaInfo);
       return new Promise((resolve, reject) => {
-        fs.writeFile(this.options.filename, json, "utf8", error => {
+        fs.writeFile(this.options.filename, json, "utf8", (error) => {
           if (error) {
             reject(error);
             return;
@@ -39,18 +39,18 @@ module.exports = [
       }),
       new MetaInfoPlugin({ filename: "dist/meta.json" }),
 
-    //   new webpack.ProvidePlugin({
-    //     process: "process/browser",
-    //     Buffer: ["buffer", "Buffer"],
-    //   }),
+      //   new webpack.ProvidePlugin({
+      //     process: "process/browser",
+      //     Buffer: ["buffer", "Buffer"],
+      //   }),
     ],
     entry: {
       "js/main": "./src/public/js/main.ts",
-        "css/main": "./src/public/css/main.scss",
+      "css/main": "./src/public/css/main.scss",
       "js/print": "./src/public/js/print.ts",
-        "css/print": "./src/public/css/print.scss",
+      "css/print": "./src/public/css/print.scss",
       "js/admin": "./src/public/js/admin.ts",
-        "css/admin": "./src/public/css/admin.scss",
+      "css/admin": "./src/public/css/admin.scss",
     },
 
     devtool: "inline-source-map",

@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 
 services:
   mongo:
@@ -23,11 +23,11 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      SESSION_SECRET: 'A'
-      MAIL_HOST: 
-      MAIL_USER: 
-      MAIL_SHOWMAIL: 
-      MAIL_PASSWORD: 
+      SESSION_SECRET: "A"
+      MAIL_HOST:
+      MAIL_USER:
+      MAIL_SHOWMAIL:
+      MAIL_PASSWORD:
       NODE_ENV: production
       MONGODB_URI: mongodb://mongo:27017/
     # ports:

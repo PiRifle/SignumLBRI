@@ -12,7 +12,7 @@ import { fetchTopBooks } from "../util/book";
 
 export async function getFillBookData(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<Response<never>> {
   await check("isbn", "Podano nieprawidłowy kod ISBN")
     .isLength({ min: 13 })
@@ -74,7 +74,7 @@ export async function getBooks(req: Request, res: Response): Promise<void> {
 
 export async function postSellBookApp(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<Response<never>> {
   await check("isbn", "Podano nieprawidłowy kod ISBN")
     .isLength({ min: 13 })
@@ -145,14 +145,14 @@ export async function postSellBookApp(
               return res.json({ msg: "added_item_to_db" });
             }
           });
-        }
+        },
       );
-    }
+    },
   );
 }
 export async function postSellBook(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<unknown> {
   await check("isbn", "kod ISBN nie jest ważny")
     .isLength({ min: 13, max: 13 })
@@ -251,7 +251,7 @@ export async function postSellBook(
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getManageBook = (
   req: Request & { user: UserDocument },
-  res: Response
+  res: Response,
 ) => {
   check("id", "Nie podano identyfikatora książki").exists().run(req);
   const errors = validationResult(req);
@@ -295,9 +295,7 @@ export const getPrintSetup = (req: Request, res: Response): void => {
   BookListing.find(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    req.user.isSeller()
-      ? {}
-      : { bookOwner: req.user }
+    req.user.isSeller() ? {} : { bookOwner: req.user },
   )
     .populate("book")
     .populate({ path: "label" })
@@ -336,9 +334,7 @@ export const getPrintLabel = (req: Request, res: Response): void => {
   BookListing.find(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    req.user.isSeller()
-      ? {}
-      : { bookOwner: req.user }
+    req.user.isSeller() ? {} : { bookOwner: req.user },
   )
     .where({ _id: Object.keys(req.query) })
     .populate("label")
@@ -369,7 +365,7 @@ export const redirectPrint = (req: Request, res: Response): void => {
 };
 export const getRegisterPrint = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   for (const id in Object.keys(req.query)) {
     check(id).exists().isNumeric().isLength({ min: 13 }).run(req);
@@ -414,7 +410,7 @@ export const getRegisterPrint = async (
 
 export async function getFindListing(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   await check("itemID", "Nie podano identyfikatora książki")
     .exists()
@@ -446,7 +442,7 @@ export async function getFindListing(
 }
 export async function getFindListingApp(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   await check("itemID", "Nie podano identyfikatora książki").exists().run(req);
   const errors = validationResult(req);
@@ -456,7 +452,7 @@ export async function getFindListingApp(
   }
   const bookListings = await BookListing.find(
     { _id: req.query.itemID },
-    "-__v -createdAt -updatedAt"
+    "-__v -createdAt -updatedAt",
   )
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt");
@@ -464,7 +460,7 @@ export async function getFindListingApp(
 }
 export async function getBookRegistry(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> {
   await check("page", "Nie podano strony")
     .exists()
@@ -509,7 +505,7 @@ export async function editBook(req: Request, res: Response): Promise<void> {
   }
   const bookListings = await BookListing.findOne(
     { _id: req.params.itemID },
-    "-__v -createdAt -updatedAt"
+    "-__v -createdAt -updatedAt",
   )
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt")
@@ -537,7 +533,7 @@ export async function sellBook(req: Request, res: Response): Promise<void> {
   }
   const bookListings = await BookListing.findOne(
     { _id: req.params.id },
-    "-__v -createdAt -updatedAt"
+    "-__v -createdAt -updatedAt",
   )
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt");
@@ -552,7 +548,7 @@ export async function sellBook(req: Request, res: Response): Promise<void> {
       email: req.body.email,
     },
     {},
-    { new: true, upsert: true }
+    { new: true, upsert: true },
   );
   bookListings.save((err) => {
     if (err) {
@@ -567,7 +563,7 @@ export async function sellBook(req: Request, res: Response): Promise<void> {
 }
 export async function sellBookApp(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<Response<never>> {
   await check("itemID", "Nie podano identyfikatora książki")
     .isLength({ min: 12 })
@@ -579,7 +575,7 @@ export async function sellBookApp(
   }
   const bookListings = await BookListing.findOne(
     { _id: req.params.itemID },
-    "-__v -createdAt -updatedAt"
+    "-__v -createdAt -updatedAt",
   )
     .populate("bookOwner", "-_id -__v -createdAt -updatedAt")
     .populate("book", "-_id -__v -createdAt -updatedAt");
@@ -604,7 +600,7 @@ export const acceptBook = (req: Request, res: Response): void => {
   }
   BookListing.updateOne(
     { _id: req.params.id },
-    { status: "accepted", verifiedBy: req.user, whenVerified: new Date() }
+    { status: "accepted", verifiedBy: req.user, whenVerified: new Date() },
   ).exec((err: Error) => {
     if (err) {
       req.flash("errors", { msg: JSON.stringify(err) });
@@ -628,7 +624,7 @@ export const giveMoney = (req: Request, res: Response): void => {
       status: "given_money",
       givenMoneyBy: req.user,
       whenGivenMoney: new Date(),
-    }
+    },
   ).exec((err: Error) => {
     if (err) {
       req.flash("errors", { msg: JSON.stringify(err) });
@@ -661,13 +657,13 @@ export const cancelBook = (req: Request, res: Response): void => {
         req.flash("errors", { msg: "Nie można anulować już ksiażki" });
         return res.redirect("manage");
       }
-    }
+    },
   );
 };
 
 export const getLibrary = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   if (new Date(Date.now()) <= new Date("2022-09-15")) {
     return res.render("library/books", {
@@ -697,7 +693,7 @@ export const deleteBook = (req: Request, res: Response): void => {
       status: "deleted",
       deletedBy: req.user,
       whenDeleted: new Date(),
-    }
+    },
   ).exec((err: Error) => {
     if (err) {
       req.flash("errors", { msg: JSON.stringify(err) });
@@ -712,43 +708,57 @@ export function getBulkSell(req: Request, res: Response) {
 }
 
 export async function postBulkSell(req: Request, res: Response) {
-await check("name", "Nie podano imienia").exists().run(req);
-await check("surname", "Nie podano nazwiska").exists().run(req);
-await check("email", "Email jest nieprawidłowy").isEmail().run(req);
-await check("phone", "Numer Telefony jest nieprawidłowy")
-  .isMobilePhone("pl-PL")
-  .run(req);
-await check("bookIDS", "Nie podano identyfikatora książki").exists().isJSON().run(req);
-const bookIDS = JSON.parse(req.body.bookIDS);
+  await check("name", "Nie podano imienia").exists().run(req);
+  await check("surname", "Nie podano nazwiska").exists().run(req);
+  await check("email", "Email jest nieprawidłowy").isEmail().run(req);
+  await check("phone", "Numer Telefony jest nieprawidłowy")
+    .isMobilePhone("pl-PL")
+    .run(req);
+  await check("bookIDS", "Nie podano identyfikatora książki")
+    .exists()
+    .isJSON()
+    .run(req);
+  const bookIDS = JSON.parse(req.body.bookIDS);
 
-
-const errors = validationResult(req);
-if (!errors.isEmpty()) {
-  req.flash("errors", errors.array());
-  return res.redirect("/");
-}
-const buyer = await Buyer.findOneAndUpdate(
-  {
-    name: req.body.name,
-    surname: req.body.surname,
-    phone: req.body.phone,
-    email: req.body.email,
-  },
-  {},
-  { new: true, upsert: true }
-);
-const findA = await Promise.all(bookIDS.map(async (book: string)=>{
-  const find = await BookListing.findOneAndUpdate({_id: book, status:"accepted"}, {status: "sold", boughtBy: buyer, soldBy: req.user as UserDocument, whenSold: new Date()}).catch(err=>req.flash("errors", {msg: err}));
-  console.log(find);
-  if(find == null){
-    req.flash("errors", {msg: `książka ${book} nie jest wystawiona do sprzedaży lub nie istnieje`});
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("/");
   }
-  return find;
-}));
-if (!findA.includes(null)){
-  req.flash("success", {msg: "Sprzedano Ksiażki!"});
-}
-res.redirect("/bulk");
+  const buyer = await Buyer.findOneAndUpdate(
+    {
+      name: req.body.name,
+      surname: req.body.surname,
+      phone: req.body.phone,
+      email: req.body.email,
+    },
+    {},
+    { new: true, upsert: true },
+  );
+  const findA = await Promise.all(
+    bookIDS.map(async (book: string) => {
+      const find = await BookListing.findOneAndUpdate(
+        { _id: book, status: "accepted" },
+        {
+          status: "sold",
+          boughtBy: buyer,
+          soldBy: req.user as UserDocument,
+          whenSold: new Date(),
+        },
+      ).catch((err) => req.flash("errors", { msg: err }));
+      console.log(find);
+      if (find == null) {
+        req.flash("errors", {
+          msg: `książka ${book} nie jest wystawiona do sprzedaży lub nie istnieje`,
+        });
+      }
+      return find;
+    }),
+  );
+  if (!findA.includes(null)) {
+    req.flash("success", { msg: "Sprzedano Ksiażki!" });
+  }
+  res.redirect("/bulk");
 }
 export async function listingJSON(req: Request, res: Response) {
   await check("itemID", "Nie podano identyfikatora książki")
@@ -756,11 +766,13 @@ export async function listingJSON(req: Request, res: Response) {
     .isNumeric()
     .isLength({ min: 13, max: 13 })
     .run(req);
-    const errors = validationResult(req);
-if (!errors.isEmpty()) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return res.status(400).end();
   }
-  const listing = await BookListing.findOne({_id: req.query.itemID}, "book cost commission id status").populate("book", "title publisher");
+  const listing = await BookListing.findOne(
+    { _id: req.query.itemID },
+    "book cost commission id status",
+  ).populate("book", "title publisher");
   return res.json(listing);
 }
-

@@ -1,25 +1,41 @@
 $height: 100px;
-$perspective: $height*4;
+$perspective: $height * 4;
 $animSpeed: 0.3s;
 
 @-webkit-keyframes flipTop {
-  0% { -webkit-transform: perspective($perspective) rotateX(0deg); }
-  100% { -webkit-transform: perspective($perspective) rotateX(-90deg); }
+  0% {
+    -webkit-transform: perspective($perspective) rotateX(0deg);
+  }
+  100% {
+    -webkit-transform: perspective($perspective) rotateX(-90deg);
+  }
 }
 
 @-webkit-keyframes flipBottom {
-  0% { -webkit-transform: perspective($perspective) rotateX(90deg); }
-  100% { -webkit-transform: perspective($perspective) rotateX(0deg); }
+  0% {
+    -webkit-transform: perspective($perspective) rotateX(90deg);
+  }
+  100% {
+    -webkit-transform: perspective($perspective) rotateX(0deg);
+  }
 }
 
 @-moz-keyframes flipTop {
-  0% { -moz-transform: perspective($perspective) rotateX(0deg); }
-  100% { -moz-transform: perspective($perspective) rotateX(-90deg); }
+  0% {
+    -moz-transform: perspective($perspective) rotateX(0deg);
+  }
+  100% {
+    -moz-transform: perspective($perspective) rotateX(-90deg);
+  }
 }
 
 @-moz-keyframes flipBottom {
-  0% { -moz-transform: perspective($perspective) rotateX(90deg); }
-  100% { -moz-transform: perspective($perspective) rotateX(0deg); }
+  0% {
+    -moz-transform: perspective($perspective) rotateX(90deg);
+  }
+  100% {
+    -moz-transform: perspective($perspective) rotateX(0deg);
+  }
 }
 
 // @-ms-keyframes flipTop {
@@ -33,17 +49,25 @@ $animSpeed: 0.3s;
 // }
 
 @keyframes flipTop {
-  0% { transform: perspective($perspective) rotateX(0deg); }
-  100% { transform: perspective($perspective) rotateX(-90deg); }
+  0% {
+    transform: perspective($perspective) rotateX(0deg);
+  }
+  100% {
+    transform: perspective($perspective) rotateX(-90deg);
+  }
 }
 
 @keyframes flipBottom {
-  0% { transform: perspective($perspective) rotateX(90deg); }
-  100% { transform: perspective($perspective) rotateX(0deg); }
+  0% {
+    transform: perspective($perspective) rotateX(90deg);
+  }
+  100% {
+    transform: perspective($perspective) rotateX(0deg);
+  }
 }
 
 .flipTimer {
-  color: #FFF;
+  color: #fff;
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   font-size: $height * 0.9;
   font-weight: bold;
@@ -66,7 +90,7 @@ $animSpeed: 0.3s;
 
   .digit-set {
     border-radius: $height / 10;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     border: 1px solid #111111;
     width: $height * 0.7;
     height: 100%;
@@ -97,7 +121,7 @@ $animSpeed: 0.3s;
 
         &:before {
           content: "";
-          box-shadow: inset 0 10px 25px rgba(0,0,0,0.4);
+          box-shadow: inset 0 10px 25px rgba(0, 0, 0, 0.4);
           height: 100%;
           width: 100%;
           position: absolute;
@@ -107,7 +131,13 @@ $animSpeed: 0.3s;
       }
 
       &.shadow-top {
-        background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(0,0,0,0)), to(#000));
+        background: -webkit-gradient(
+          linear,
+          0% 0%,
+          0% 100%,
+          from(rgba(0, 0, 0, 0)),
+          to(#000)
+        );
         width: $height * 0.7;
         opacity: 0;
         transition: opacity $animSpeed ease-in;
@@ -118,7 +148,7 @@ $animSpeed: 0.3s;
       &.shadow-bottom {
         background-color: #333;
         bottom: 0;
-        z-index:0;
+        z-index: 0;
         border-radius: 0 0 $height / 10 $height / 10;
 
         .digit-wrap {
@@ -128,7 +158,7 @@ $animSpeed: 0.3s;
 
         &:before {
           content: "";
-          box-shadow: inset 0 10px 25px rgba(0,0,0,0.3);
+          box-shadow: inset 0 10px 25px rgba(0, 0, 0, 0.3);
           border-radius: 0 0 $height / 10 $height / 10;
           height: 100%;
           width: 100%;
@@ -139,7 +169,13 @@ $animSpeed: 0.3s;
       }
 
       &.shadow-bottom {
-        background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#000), to(rgba(0,0,0,0)));
+        background: -webkit-gradient(
+          linear,
+          0% 0%,
+          0% 100%,
+          from(#000),
+          to(rgba(0, 0, 0, 0))
+        );
         width: $height / 2;
         opacity: 0;
         transition: opacity $animSpeed ease-in;
@@ -160,7 +196,6 @@ $animSpeed: 0.3s;
         -ms-animation: flipTop $animSpeed ease-in both;
         transform-origin: 50% 100%;
         animation: flipTop $animSpeed ease-in both;
-
       }
 
       .digit-bottom,

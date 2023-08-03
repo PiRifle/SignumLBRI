@@ -1,4 +1,5 @@
 # Todo
+
 - ~~zabezpiecz /setup i /signup przed nieuprawionymi rejestracjami~~ chyba worky?
 - handling errorów
 - redo otoczki graficznej

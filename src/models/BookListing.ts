@@ -7,10 +7,10 @@ import { SchoolDocument } from "./School";
 // import { stringify } from "querystring";
 import paginate from "mongoose-paginate-v2";
 
-export type LabelDocument= mongoose.Document & {
-  barcode: string,
-  print : boolean,
-}
+export type LabelDocument = mongoose.Document & {
+  barcode: string;
+  print: boolean;
+};
 export type BookListingDocument = mongoose.Document & {
   commission: number;
   cost: number;
@@ -28,17 +28,22 @@ export type BookListingDocument = mongoose.Document & {
   whenCanceled: Date;
   deletedBy: UserDocument;
   // barcode: (id: number) => string;
-  status: "registered" | "printed_label" | "accepted" | "sold" | "given_money" | "canceled" | "deleted";
+  status:
+    | "registered"
+    | "printed_label"
+    | "accepted"
+    | "sold"
+    | "given_money"
+    | "canceled"
+    | "deleted";
   label: LabelDocument;
   school: SchoolDocument;
 };
 
-const labelSchema = new mongoose.Schema<LabelDocument>(
-  {
-    barcode: String,
-    print: Boolean,
-  }
-);
+const labelSchema = new mongoose.Schema<LabelDocument>({
+  barcode: String,
+  print: Boolean,
+});
 
 const bookListingSchema = new mongoose.Schema<BookListingDocument>(
   {
@@ -83,17 +88,16 @@ const bookListingSchema = new mongoose.Schema<BookListingDocument>(
       ref: "School",
     },
 
-    
     whenPrinted: Date,
-    
+
     whenVerified: Date,
-    
+
     whenCanceled: Date,
-    
+
     whenSold: Date,
-    
+
     whenGivenMoney: Date,
-    
+
     whenDeleted: Date,
 
     label: {
@@ -103,7 +107,7 @@ const bookListingSchema = new mongoose.Schema<BookListingDocument>(
 
     status: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 bookListingSchema.plugin(paginate);
 
@@ -111,8 +115,7 @@ bookListingSchema.plugin(paginate);
 // throw "not implemented yet"
 export const Label = mongoose.model<LabelDocument>("Label", labelSchema);
 // }
-export const BookListing = mongoose.model<BookListingDocument, mongoose.PaginateModel<BookListingDocument>>(
-  "BookListing",
-  bookListingSchema 
-);
-
+export const BookListing = mongoose.model<
+  BookListingDocument,
+  mongoose.PaginateModel<BookListingDocument>
+>("BookListing", bookListingSchema);
