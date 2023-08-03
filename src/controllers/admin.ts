@@ -15,6 +15,8 @@ import { WriteError } from "mongodb";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 durationFormat(moment);
+
+
 export async function main(req: Request, res: Response): Promise<void> {
   const data = await UserPerformance.aggregate([
     {
@@ -73,7 +75,7 @@ export async function main(req: Request, res: Response): Promise<void> {
       .duration(role.sum, "milliseconds")
       .format("w[w] d[d] h[h] m[m] s[s]");
   });
-  res.render("admin/page/dashboard", { title: "Dashboard", data: data });
+  res.render("admin/page/dashboard", { title: req.language.titles.adminDashboard, data: data });
 }
 
 export async function users(req: Request, res: Response): Promise<void> {
@@ -1071,23 +1073,6 @@ export const getEditUser = async (req: Request, res: Response) => {
   });
 };
 
-// export const postRemoveUser = async (req: Request, res: Response, next: NextFunction) => {
-//   await check("userID").exists().run(req);
-//   const errors = validationResult(req);
-
-//   if (!errors.isEmpty()) {
-//     req.flash("errors", errors.array());
-//     return res.redirect("back");
-//   }
-//   User.remove({ _id: req.params.userID }, (err) => {
-//     if (err) {
-//       return next(err);
-//     }
-//     req.flash("info", { msg: "this account has been deleted." });
-//     res.redirect("/");
-//   });
-// };
-
 export const postEditUser = async (
   req: Request,
   res: Response,
@@ -1095,7 +1080,7 @@ export const postEditUser = async (
 ) => {
   await check("userID").exists().run(req);
 
-  await check("email", "Please enter a valid email address.")
+  await check("email", req.language.errors.validate.emailInvalid)
     .isEmail()
     .run(req);
   await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
@@ -1120,14 +1105,12 @@ export const postEditUser = async (
     user.save((err: WriteError & CallbackError) => {
       if (err) {
         if (err.code === 11000) {
-          req.flash("errors", {
-            msg: "The email address you have entered is already associated with an account.",
-          });
+          req.flashError(null, req.language.errors.accountAlreadyExists);
           return res.redirect("/admin");
         }
         return next(err);
       }
-      req.flash("success", { msg: "Profile information has been updated." });
+      req.flash("success", { msg: req.language.success.accountInfoUpdated });
       res.redirect("/admin");
     });
   });
@@ -1141,23 +1124,26 @@ export const postGiveMoneyUser = async (req: Request, res: Response) => {
     req.flash("errors", errors.array());
     return res.redirect("back");
   }
-  BookListing.find({
+
+  const [err, listings] = await BookListing.find({
     bookOwner: req.params.userID,
     status: { $in: ["sold", "accepted"] },
-  }).exec((err: Error, listings: BookListingDocument[]) => {
-    if (err) {
-      req.flash("errors", { msg: err });
-      return res.redirect("back");
-    }
-    listings.forEach((listing) => {
-      listing.status = "given_money";
-      listing.whenGivenMoney = new Date();
-      listing.givenMoneyBy = req.user as UserDocument;
-      listing.save((err) => {
-        req.flash("errors", { msg: err });
-      });
-    });
-    req.flash("success", { msg: "everything is okay!" });
+  }).then(a=>[null, a]).catch(a=>[a, null]);
+  
+  if (err) {
+    req.flashError(err, req.language.errors.internal, false);
     return res.redirect("back");
+  }
+  
+  listings.forEach((listing: BookListingDocument) => {
+    listing.status = "given_money";
+    listing.whenGivenMoney = new Date();
+    listing.givenMoneyBy = req.user as UserDocument;
+    listing.save((err) => {
+      req.flashError(err, req.language.errors.internal, false);
+    });
   });
+
+  req.flash("success", { msg: req.language.success.moneyGiven });
+  return res.redirect("back");
 };

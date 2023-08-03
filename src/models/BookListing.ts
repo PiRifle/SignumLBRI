@@ -4,8 +4,8 @@ import { BookDocument } from "./Book";
 import { generateEAN13 } from "../util/barcode";
 import { UserDocument } from "./User";
 import { SchoolDocument } from "./School";
-// import { stringify } from "querystring";
 import paginate from "mongoose-paginate-v2";
+import { Language } from "../lang";
 
 export type LabelDocument = mongoose.Document & {
   barcode: string;
@@ -27,17 +27,17 @@ export type BookListingDocument = mongoose.Document & {
   whenPrinted: Date;
   whenCanceled: Date;
   deletedBy: UserDocument;
-  // barcode: (id: number) => string;
   status:
-    | "registered"
-    | "printed_label"
-    | "accepted"
-    | "sold"
-    | "given_money"
-    | "canceled"
-    | "deleted";
+  | "registered"
+  | "printed_label"
+  | "accepted"
+  | "sold"
+  | "given_money"
+  | "canceled"
+  | "deleted";
   label: LabelDocument;
   school: SchoolDocument;
+  getStatusString: (language: Language) => string;
 };
 
 const labelSchema = new mongoose.Schema<LabelDocument>({
@@ -111,7 +111,10 @@ const bookListingSchema = new mongoose.Schema<BookListingDocument>(
 );
 bookListingSchema.plugin(paginate);
 
-// bookListingSchema.methods.barcode = () => {
+bookListingSchema.methods.getStatusString = function(language: Language){
+  const status = (this as BookListingDocument).status;
+  return language.statuses[status];
+};
 // throw "not implemented yet"
 export const Label = mongoose.model<LabelDocument>("Label", labelSchema);
 // }

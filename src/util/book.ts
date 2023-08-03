@@ -1,5 +1,13 @@
 import { Book, BookDocument } from "../models/Book";
 
+export function calculateComission(price: number, divisibleBy: number, comissionMultiplier: number): number {
+  price = Number(price);
+  const comission = price * comissionMultiplier;
+  return price + (comission % Math.round(divisibleBy)) == 0
+    ? price + comission
+    : 2 - ((price + comission) % 2) + comission;
+}
+
 export async function fetchTopBooks(): Promise<
   (BookDocument & { available: number; sold: number })[]
 > {

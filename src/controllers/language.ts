@@ -17,5 +17,6 @@ export function languageMiddleware(
   } else {
     req.language = langProvider.en;
   }
+  res.locals.language = req.language;
   next();
 }

@@ -215,12 +215,6 @@ app.post(
   bookController.sellBook,
 );
 app.post(
-  "/book/:id/givemoney",
-  passportConfig.isAuthenticated,
-  passportConfig.isSeller,
-  bookController.giveMoney,
-);
-app.post(
   "/book/:id/cancel",
   passportConfig.isAuthenticated,
   bookController.cancelBook,
@@ -264,12 +258,12 @@ app.post(
   passportConfig.isSeller,
   bookController.postBulkSell,
 );
-app.get(
-  "/listingJSON",
-  passportConfig.isAuthenticated,
-  passportConfig.isSeller,
-  bookController.listingJSON,
-);
+// app.get(
+//   "/listingJSON",
+//   passportConfig.isAuthenticated,
+//   passportConfig.isSeller,
+//   bookController.listingJSON,
+// );
 
 app.get(
   "/school/add",

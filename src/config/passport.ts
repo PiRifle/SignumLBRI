@@ -199,7 +199,6 @@ export const isAdmin = (
   const user = req.user as UserDocument;
   if (user.isAdmin()) {
     return next();
-    // req.user()
   }
   res.redirect("/login");
 };

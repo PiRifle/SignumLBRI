@@ -38,11 +38,16 @@ export const postRegisterSchool = async (req: Request, res: Response) => {
 
   await storageMiddleware(req, res);
 
-  await check("name", "Please provide name of school")
+  await check("commission", req.language.errors.validate.schoolComissionMultiplierInvalid)
+  .exists()
+  .isFloat({lt:1, gt:0.01})
+  .run(req);
+
+  await check("name", req.language.errors.validate.schoolNameBlank)
     .exists()
     .isLength({ min: 1 })
     .run(req);
-  await check("street", "Please provide street for school")
+  await check("street", req.language.errors.validate.schoolstreetBlank)
     .exists()
     .isLength({ min: 1 })
     .run(req);
@@ -57,6 +62,7 @@ export const postRegisterSchool = async (req: Request, res: Response) => {
     name: req.body.name,
     longName: req.body.longname || req.body.name,
     street: req.body.street,
+    markup: req.body.comission
   });
 
   if (req.file) {
@@ -91,7 +97,7 @@ export const postRegisterSchool = async (req: Request, res: Response) => {
   if (err) return req.flashError(err, req.language.errors.internal);
 
   req.flash("success", {
-    msg: "Successfully created School",
+    msg: req.language.success.schoolCreated,
   });
 
   res.redirect("/");

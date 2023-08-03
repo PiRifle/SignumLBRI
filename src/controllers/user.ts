@@ -134,8 +134,7 @@ export const getSignup = async (req: Request, res: Response): Promise<void> => {
   const schools = await School.find({}, "_id name");
 
   if (!schools.length) {
-    //TODO: add language support
-    req.flash("info", { msg: "The registration is currently disabled" });
+    req.flash("info", { msg: req.language.info.registrationDisabled });
     return res.redirect("/");
   }
 
@@ -192,10 +191,9 @@ export const postSignup = async (
   await check("confirmPassword", req.language.errors.validate.passwordNotMatch)
     .equals(req.body.password)
     .run(req);
-  // TODO: add language support
   if (!(req.body.role == "headadmin")) {
     const schools = await School.find({}, "_id");
-    await check("school", "provide school")
+    await check("school", req.language.errors.validate.schoolNameBlank)
       .exists()
       .isIn(schools.map((a) => a._id.toString()))
       .run(req);
@@ -321,7 +319,7 @@ export const postUpdateProfile = async (
         }
         return next(err);
       }
-      req.flash("success", { msg: "Profile information has been updated." });
+      req.flash("success", { msg: req.language.success.accountInfoUpdated });
       res.redirect("/account");
     });
   });
@@ -413,12 +411,12 @@ export const getReset = (
       }
       if (!user) {
         req.flash("errors", {
-          msg: "Password reset token is invalid or has expired.",
+          msg: req.language.errors.passwordResetTokenInvalid,
         });
         return res.redirect("/forgot");
       }
       res.render("account/reset", {
-        title: "Password Reset",
+        title: req.language.titles.resetPassword,
       });
     });
 };
@@ -662,7 +660,7 @@ export const postResendVerify = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  await check("email", "Podaj poprawny adres email.").isEmail().run(req);
+  await check("email", req.language.errors.validate.emailInvalid).isEmail().run(req);
   await body("email").normalizeEmail({ gmail_remove_dots: false }).run(req);
 
   const errors = validationResult(req);
@@ -694,7 +692,7 @@ export const postResendVerify = async (
   transporter.sendMail(mailOptions, (err, info) => {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     req.flash("success", {
-      msg: "Sukces, Mail aktywacyjny został wysłany!",
+      msg: req.language.success.activationMailSent,
     });
     return res.redirect("/");
   });

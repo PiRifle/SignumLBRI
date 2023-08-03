@@ -6,6 +6,7 @@ export type SchoolDocument = mongoose.Document & {
   street: string;
   icon: string;
   color: string;
+  markup: number;
   getIcon: (host: string) => string;
 };
 
@@ -16,6 +17,7 @@ const schoolSchema = new mongoose.Schema<SchoolDocument>(
     street: String,
     icon: String,
     color: String,
+    markup: Number,
   },
   { timestamps: true },
 );
