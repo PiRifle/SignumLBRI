@@ -1,7 +1,8 @@
 export const roles = [
-    "seller",
-    "student",
-    // "buyer",
-    "admin",
-    "viewer"
+  "seller",
+  "student",
+  // "buyer",
+  "admin",
+  "headadmin",
+  "viewer",
 ];

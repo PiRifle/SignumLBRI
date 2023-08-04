@@ -7,13 +7,13 @@ html(lang='')
     title #{title} - SignumLBRI
     meta(name='description', content='')
     meta(name='theme-color' content='#4DA5F4')
-    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href=`/css/main.${version}.css`)
     title #{title} - SignumLBRI
-    script(src='/js/lib/jquery-3.6.1.min.js')
-    script(src='/js/lib/popper.min.js')
-    script(src='/js/lib/bootstrap.min.js')
-    script(src='/js/lib/jquery.maskMoney.min.js')
-    script(src='/js/lib/html5-qrcode.min.js')
+    //- script(src='/js/lib/jquery-3.6.1.min.js')
+    //- script(src='/js/lib/popper.min.js')
+    //- script(src='/js/lib/bootstrap.min.js')
+    //- script(src='/js/lib/jquery.maskMoney.min.js')
+    //- script(src=`/js/lib/html5-qrcode.min.js')
 
   body
     if !disableLogin
@@ -28,8 +28,7 @@ html(lang='')
     include partials/footer
 
     //- script(async defer src="https://buttons.github.io/buttons.js")
-    if !disableScripts
-      script(src='/js/main.js')
+    script(src=`/js/main.${version}.js`)
 
     //- Google Analytics: change UA-38177297-2 to be your site's ID
     //- script.

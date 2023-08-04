@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { UserDocument } from "./User";
 export type PerformanceDocument = mongoose.Document & {
-  user: UserDocument,
-  from: string,
-  to: string,
-  time: number,
+  user: UserDocument;
+  from: string;
+  to: string;
+  time: number;
 };
 
 const performanceSchema = new mongoose.Schema<PerformanceDocument>(
@@ -17,6 +17,9 @@ const performanceSchema = new mongoose.Schema<PerformanceDocument>(
     to: String,
     time: Number,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-export const UserPerformance = mongoose.model<PerformanceDocument>("Performance", performanceSchema);
+export const UserPerformance = mongoose.model<PerformanceDocument>(
+  "Performance",
+  performanceSchema,
+);

@@ -9,19 +9,22 @@ import path from "path";
 import mongoose from "mongoose";
 import passport from "passport";
 import bluebird from "bluebird";
-import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
+import { MONGODB_URI, SESSION_SECRET, version } from "./util/secrets";
 import MobileDetect from "mobile-detect";
 // Controllers (route handlers)
 import * as performanceController from "./controllers/performance";
 import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
 import * as adminController from "./controllers/admin";
+import * as schoolController from "./controllers/school";
 // import * as apiController from "./controllers/api";
 // import * as contactController from "./controllers/contact";
 import * as bookController from "./controllers/book";
 
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
+// import { languageMiddleware } from "./controllers/language";
+import { languageMiddleware } from "./controllers/language";
 
 // Create Express server
 const app = express();
@@ -37,7 +40,7 @@ mongoose
   })
   .catch((err) => {
     console.log(
-      `MongoDB connection error. Please make sure MongoDB is running. ${err}`
+      `MongoDB connection error. Please make sure MongoDB is running. ${err}`,
     );
     // process.exit();
   });
@@ -57,7 +60,7 @@ app.use(
     store: new MongoStore({
       mongoUrl,
     }),
-  })
+  }),
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -70,8 +73,24 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
   res.locals.device = new MobileDetect(req.headers["user-agent"]);
+  res.locals.version = version.hash;
   next();
 });
+app.use((req, res, next) => {
+  req.flashError = (err, msg, redirect = true) => {
+    if (err) console.error(err);
+
+    if (Array.isArray(msg)) {
+      req.flash("errors", msg);
+    } else {
+      req.flash("errors", { msg });
+    }
+
+    if (redirect) res.redirect("/");
+  };
+  next();
+});
+app.use(languageMiddleware);
 app.use((req, res, next) => {
   // After successful login, redirect back to the intended page
   if (
@@ -89,7 +108,7 @@ app.use((req, res, next) => {
 });
 
 app.use(
-  express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
+  express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }),
 );
 app.use(performanceController.registerPerformance);
 /**
@@ -116,17 +135,17 @@ app.get("/account", passportConfig.isAuthenticated, userController.getAccount);
 app.post(
   "/account/profile",
   passportConfig.isAuthenticated,
-  userController.postUpdateProfile
+  userController.postUpdateProfile,
 );
 app.post(
   "/account/password",
   passportConfig.isAuthenticated,
-  userController.postUpdatePassword
+  userController.postUpdatePassword,
 );
 app.post(
   "/account/delete",
   passportConfig.isAuthenticated,
-  userController.postDeleteAccount
+  userController.postDeleteAccount,
 );
 app.get("/account/unlink/:provider", passportConfig.isAuthenticated);
 
@@ -154,91 +173,116 @@ app.get(
   "/find",
   passportConfig.isAuthenticated,
   passportConfig.isSeller,
-  bookController.getFindListing
+  bookController.getFindListing,
 );
 
 app.get(
   "/book/add",
   passportConfig.isAuthenticated,
-  bookController.getSellBook
+  bookController.getSellBook,
 );
 app.post(
   "/book/add",
   passportConfig.isAuthenticated,
-  bookController.postSellBook
+  bookController.postSellBook,
 );
 app.get(
   "/book/fromisbn",
   passportConfig.isAuthenticated,
-  bookController.getFillBookData
+  bookController.getFillBookData,
 );
 app.get(
   "/book/registry",
   passportConfig.isAuthenticated,
   passportConfig.isSeller,
-  bookController.getBookRegistry
+  bookController.getBookRegistry,
 );
 app.get(
   "/book/:id/manage",
   passportConfig.isAuthenticated,
-  bookController.getManageBook
+  bookController.getManageBook,
 );
 app.post(
   "/book/:id/accept",
   passportConfig.isAuthenticated,
   passportConfig.isSeller,
-  bookController.acceptBook
+  bookController.acceptBook,
 );
 app.post(
   "/book/:id/sell",
   passportConfig.isAuthenticated,
   passportConfig.isSeller,
-  bookController.sellBook
-);
-app.post(
-  "/book/:id/givemoney",
-  passportConfig.isAuthenticated,
-  passportConfig.isSeller,
-  bookController.giveMoney
+  bookController.sellBook,
 );
 app.post(
   "/book/:id/cancel",
   passportConfig.isAuthenticated,
-  bookController.cancelBook
+  bookController.cancelBook,
 );
 app.post(
   "/book/:id/delete",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  bookController.deleteBook
+  bookController.deleteBook,
 );
 app.get("/label", passportConfig.isAuthenticated, bookController.getPrintSetup);
 app.get(
   "/label/print",
   passportConfig.isAuthenticated,
-  bookController.getPrintLabel
+  bookController.getPrintLabel,
 );
 app.get(
   "/label/print/success",
   passportConfig.isAuthenticated,
-  bookController.redirectPrintSuccess
+  bookController.redirectPrintSuccess,
 );
 app.get(
   "/label/registerprints",
   passportConfig.isAuthenticated,
-  bookController.getRegisterPrint
+  bookController.getRegisterPrint,
 );
 app.get(
   "/label/:id",
   passportConfig.isAuthenticated,
-  bookController.redirectPrint
+  bookController.redirectPrint,
 );
-const adminApiRoutes = express.Router();
+app.get(
+  "/bulk",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.getBulkSell,
+);
+app.post(
+  "/bulk",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.postBulkSell,
+);
+// app.get(
+//   "/listingJSON",
+//   passportConfig.isAuthenticated,
+//   passportConfig.isSeller,
+//   bookController.listingJSON,
+// );
 
+app.get(
+  "/school/add",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  schoolController.getRegisterSchool,
+);
+
+app.post(
+  "/school/add",
+  passportConfig.isAuthenticated,
+  passportConfig.isAdmin,
+  schoolController.postRegisterSchool,
+);
+
+const adminApiRoutes = express.Router();
 
 adminApiRoutes.get("/users", adminController.apiUsers);
 adminApiRoutes.get("/books", adminController.apiBooks);
-
 
 const adminRoutes = express.Router();
 
@@ -246,54 +290,54 @@ adminRoutes.get(
   "/",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  adminController.main
+  adminController.main,
 );
 adminRoutes.get(
   "/users",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  adminController.users
+  adminController.users,
 );
 adminRoutes.get(
   "/buyers",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  adminController.buyers
+  adminController.buyers,
 );
 adminRoutes.get(
   "/books",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  adminController.books
-  
+  adminController.books,
 );
 adminRoutes.use("/api/", adminApiRoutes);
 adminRoutes.get(
   "/:userID/",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-(req: Request, res: Response)=>{
-  res.redirect(`/admin/${req.params.userID}/manage`);
-}
+  (req: Request, res: Response) => {
+    res.redirect(`/admin/${req.params.userID}/manage`);
+  },
 );
 adminRoutes.get(
   "/:userID/manage",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  adminController.getEditUser
+  adminController.getEditUser,
 );
 adminRoutes.post(
   "/:userID/update",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  adminController.postEditUser
+  adminController.postEditUser,
 );
 adminRoutes.post(
   "/:userID/giveMoney",
   passportConfig.isAuthenticated,
   passportConfig.isAdmin,
-  adminController.postGiveMoneyUser
+  adminController.postGiveMoneyUser,
 );
+
 // adminRoutes.post(
 //   "/:userID/delete",
 //   passportConfig.isAuthenticated,

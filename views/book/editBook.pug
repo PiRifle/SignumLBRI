@@ -101,53 +101,60 @@ block content
     |</div>
 
     .col.me-auto
-        h2.mb-5 Książka 
+        h2 Książka 
             b #{item.book.title}
+        div.mb-5 
+            span.mx-1 Szkoła: 
+                b= item.school.name
+            span @ #{item.school.street}
         div.d-flex.flex-row
             div
                 img(style="width: 200px", src=item.book.image).mx-4
             .col.m-0.p-0.pl-3
                 h5
                     b= item.book.authors.join(", ")
-                h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                if item.book.publisher 
+                    h5.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                 div ID: #{item._id}
-                br
-                if (user.role == "seller" || user.role == "admin")
-                    div.my-auto Marża: #{item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-                    div.my-auto Wydanie Sprzedającemu: #{item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-                    br
+                br  
+                
+                if !outsideView
+                    if (user.isSeller() && !outsideView)
+                        div.my-auto Marża: #{item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                        div.my-auto Wydanie Sprzedającemu: #{item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+                        br
 
-                div.my-auto
-                    .d-flex.flex-row
-                        if (user.role == "seller" || user.role == "admin")
-                            h3.mt-auto.me-4
-                                b= (item.cost+item.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                        else 
-                            .d-flex.flex-row
-                                h3.mt-auto.me-4 Twoja cena: 
-                                    b= (item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                if (user.role == "seller" || user.role == "admin")
-
-                    .d-flex.flex-row 
-                        h5.me-1= item.bookOwner.profile.name
-                        h5= item.bookOwner.profile.surname 
-                    h5= item.bookOwner.profile.phone
-                    div= item.bookOwner.email
-                    br
-                h6 Status: #{item.status}
-            .col-.d-flex.flex-column
-                if item.status == "registered" || item.status == "printed_label"
-                    a(href=`/label/${item._id}/`).btn.btn-success.m-1 Wydrukuj etykietę
-                if edit
-                    if user.role == "admin"
-                        if (item.status != "deleted")
-                            button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-1 Usuń
-                    if (user.role == "seller" || user.role == "admin")
-                        if (item.status != "deleted") && (item.status != "canceled")
-                            if (item.status == "registered" || item.status == "printed_label")
-                                button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
-                            else if (item.status != "sold") 
-                                button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
-                else if (item.status == "registered") || (item.status == "printed_label")
-                    button(data-bs-toggle="modal" data-bs-target="#cancelModal").btn.btn-danger.m-1 Anuluj
+                    div.my-auto
+                        .d-flex.flex-row
+                            if (user.isSeller())
+                                h3.mt-auto.me-4
+                                    b= (item.cost+item.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                            else 
+                                .d-flex.flex-row
+                                    h3.mt-auto.me-4 Twoja cena: 
+                                        b= (item.cost).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                    if (user.isSeller())
+                        .d-flex.flex-row 
+                            h5.me-1= item.bookOwner.profile.name
+                            h5= item.bookOwner.profile.surname 
+                        h5= item.bookOwner.profile.phone
+                        div= item.bookOwner.email
+                        br
+                h6 Status: #{item.getStatusString(language)}
+            if !outsideView
+                .col-.d-flex.flex-column
+                    if item.status == "registered" || item.status == "printed_label"
+                        a(href=`/label/${item._id}/`).btn.btn-success.m-1 Wydrukuj etykietę
+                    if edit
+                        if user.isAdmin()
+                            if (item.status != "deleted")
+                                button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.m-1 Usuń
+                        if user.isSeller()
+                            if (item.status != "deleted") && (item.status != "canceled")
+                                if (item.status == "registered" || item.status == "printed_label")
+                                    button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1 Przyjmij
+                                else if (item.status != "sold") 
+                                    button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1 Sprzedaj
+                    else if (item.status == "registered") || (item.status == "printed_label") 
+                        button(data-bs-toggle="modal" data-bs-target="#cancelModal").btn.btn-danger.m-1 Anuluj
 

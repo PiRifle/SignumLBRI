@@ -7,7 +7,7 @@ html(lang='')
         title #{title} - SignumLBRI
         meta(name='description', content='')
         meta(name='theme-color' content='#4DA5F4')
-        link(rel='stylesheet', href='/css/print.css')        
+        link(rel='stylesheet', href=`/css/print.${version}.css`)        
     body
         .ui
             .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3
@@ -34,6 +34,6 @@ html(lang='')
                             span.ms-3=item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                         p imię: #{item.bookOwner.profile.name} #{item.bookOwner.profile.surname}
 
-        script(src='/js/lib/jquery-3.6.1.min.js')
-        script(src='/js/lib/bootstrap.min.js')
-        script(src="/js/print.js") 
+        //- script(src='/js/lib/jquery-3.6.1.min.js')
+        //- script(src='/js/lib/bootstrap.min.js')
+        script(src=`/js/print.${version}.js`) 

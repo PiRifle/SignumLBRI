@@ -95,7 +95,8 @@ block content
                             h6 
                                 b= item.book.title
                             div.font-weight-light= item.book.authors.join(", ")
-                            div.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                            if item.book.publisher 
+                                div.font-weight-light= item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
                             div ID Zlecenia: #{item._id}
                         .col.mx-auto.my-4
                             div.d-flex.flex-col.justify-content-center
@@ -104,13 +105,13 @@ block content
                                         center
                                             a(href=`/book/${item._id}/manage`).btn.btn-primary.m-auto Zarządzaj
                                         if edit
-                                            if item.status != "sold" && (user.role == "seller" || user.role == "admin")
+                                            if item.status != "sold" && user.isSeller()
                                                 center
                                                     if (item.status == "registered" || item.status == "printed_label")
                                                         button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.mt-2 Przyjmij
                                                     else if (item.status != "deleted")
                                                         button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
-                                            if user.role == "admin" && item.status != "deleted"
+                                            if  user.isAdmin() && item.status != "deleted"
                                                 center
                                                     button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.mt-2 Usuń
                        

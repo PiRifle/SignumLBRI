@@ -1,10 +1,10 @@
 "use strict";
 var EAN13;
 
-EAN13 = (function() {
+EAN13 = (function () {
   EAN13.prototype.settings = {};
 
-  EAN13.prototype.init = function() {
+  EAN13.prototype.init = function () {
     var checkDigit, code;
     if (!this.number) {
       this.settings.onError.call(this, "Number cannot be null");
@@ -34,13 +34,27 @@ EAN13 = (function() {
     }
   };
 
-  EAN13.prototype.isNumeric = function(input) {
+  EAN13.prototype.isNumeric = function (input) {
     return !isNaN(parseFloat(input)) && isFinite(input);
   };
 
-  EAN13.prototype.getCode = function() {
-    var countries, digit, encoding, i, leftCode, parts, prefix, raw_number, rightCode, table, tables;
-    tables = [[0xd, 0x19, 0x13, 0x3d, 0x23, 0x31, 0x2f, 0x3b, 0x37, 0xb], [0x27, 0x33, 0x1b, 0x21, 0x1d, 0x39, 0x5, 0x11, 0x9, 0x17], [0x72, 0x66, 0x6c, 0x42, 0x5c, 0x4e, 0x50, 0x44, 0x48, 0x74]];
+  EAN13.prototype.getCode = function () {
+    var countries,
+      digit,
+      encoding,
+      i,
+      leftCode,
+      parts,
+      prefix,
+      raw_number,
+      rightCode,
+      table,
+      tables;
+    tables = [
+      [0xd, 0x19, 0x13, 0x3d, 0x23, 0x31, 0x2f, 0x3b, 0x37, 0xb],
+      [0x27, 0x33, 0x1b, 0x21, 0x1d, 0x39, 0x5, 0x11, 0x9, 0x17],
+      [0x72, 0x66, 0x6c, 0x42, 0x5c, 0x4e, 0x50, 0x44, 0x48, 0x74],
+    ];
     countries = [0x0, 0xb, 0xd, 0xe, 0x13, 0x19, 0x1c, 0x15, 0x16, 0x1a];
     leftCode = 0;
     rightCode = 0;
@@ -66,7 +80,7 @@ EAN13 = (function() {
     return [leftCode, rightCode];
   };
 
-  EAN13.prototype.clear = function(context) {
+  EAN13.prototype.clear = function (context) {
     if (this.settings.background === null) {
       return context.clearRect(0, 0, this.element.width, this.element.height);
     } else {
@@ -75,8 +89,41 @@ EAN13 = (function() {
     }
   };
 
-  EAN13.prototype.draw = function(code) {
-    var border_height, border_offset, chars, context, divider, height, height_no_padding, i, item_offset, item_width, j, k, key, l, layout, left, len, len1, len2, line, lines, m, mask, offset, prefix, prefix_offset, ref, ref1, ref2, value, width, width_no_padding, x, y;
+  EAN13.prototype.draw = function (code) {
+    var border_height,
+      border_offset,
+      chars,
+      context,
+      divider,
+      height,
+      height_no_padding,
+      i,
+      item_offset,
+      item_width,
+      j,
+      k,
+      key,
+      l,
+      layout,
+      left,
+      len,
+      len1,
+      len2,
+      line,
+      lines,
+      m,
+      mask,
+      offset,
+      prefix,
+      prefix_offset,
+      ref,
+      ref1,
+      ref2,
+      value,
+      width,
+      width_no_padding,
+      x,
+      y;
     layout = {
       prefix_offset: 0.06,
       font_stretch: 0.073,
@@ -85,11 +132,11 @@ EAN13 = (function() {
       line_height: 0.9,
       font_size: 0.15,
       font_y: 1.03,
-      text_offset: 2
+      text_offset: 2,
     };
     if (this.settings.prefix) {
       width_no_padding = this.element.width - 2 * this.settings.padding;
-      width = width_no_padding - (width_no_padding * layout.prefix_offset);
+      width = width_no_padding - width_no_padding * layout.prefix_offset;
     } else {
       width = this.element.width - 2 * this.settings.padding;
     }
@@ -128,7 +175,7 @@ EAN13 = (function() {
       code[0] = Math.floor(code[0] / 2);
       i++;
     }
-    left = left + (item_width * (7 * 6)) + 3 * item_width;
+    left = left + item_width * (7 * 6) + 3 * item_width;
     context.fillRect(left, this.settings.padding, item_width, border_height);
     left = left + item_width * 2;
     context.fillRect(left, this.settings.padding, item_width, border_height);
@@ -180,26 +227,53 @@ EAN13 = (function() {
       }
     }
     if (this.settings.debug) {
-      divider = [3, 3 + 1 * 7, 3 + 2 * 7, 3 + 3 * 7, 3 + 4 * 7, 3 + 5 * 7, 3 + 6 * 7];
-      for (x = l = 0, ref1 = width, ref2 = item_width; ref2 > 0 ? l <= ref1 : l >= ref1; x = l += ref2) {
+      divider = [
+        3,
+        3 + 1 * 7,
+        3 + 2 * 7,
+        3 + 3 * 7,
+        3 + 4 * 7,
+        3 + 5 * 7,
+        3 + 6 * 7,
+      ];
+      for (
+        x = l = 0, ref1 = width, ref2 = item_width;
+        ref2 > 0 ? l <= ref1 : l >= ref1;
+        x = l += ref2
+      ) {
         context.beginPath();
         context.rect(x, 0, 1, border_height);
-        context.fillStyle = 'red';
+        context.fillStyle = "red";
         context.fill();
       }
-      lines = [3, 3 + 1 * 7, 3 + 2 * 7, 3 + 3 * 7, 3 + 4 * 7, 3 + 5 * 7, 3 + 6 * 7, 3 + 6 * 7 + 5, 3 + 6 * 7 + 5 + 1 * 7, 3 + 6 * 7 + 5 + 2 * 7, 3 + 6 * 7 + 5 + 3 * 7, 3 + 6 * 7 + 5 + 4 * 7, 3 + 6 * 7 + 5 + 5 * 7, 3 + 6 * 7 + 5 + 6 * 7];
+      lines = [
+        3,
+        3 + 1 * 7,
+        3 + 2 * 7,
+        3 + 3 * 7,
+        3 + 4 * 7,
+        3 + 5 * 7,
+        3 + 6 * 7,
+        3 + 6 * 7 + 5,
+        3 + 6 * 7 + 5 + 1 * 7,
+        3 + 6 * 7 + 5 + 2 * 7,
+        3 + 6 * 7 + 5 + 3 * 7,
+        3 + 6 * 7 + 5 + 4 * 7,
+        3 + 6 * 7 + 5 + 5 * 7,
+        3 + 6 * 7 + 5 + 6 * 7,
+      ];
       for (m = 0, len2 = lines.length; m < len2; m++) {
         line = lines[m];
         context.beginPath();
         context.rect(line * item_width, 0, 1, this.element.height);
-        context.fillStyle = 'red';
+        context.fillStyle = "red";
         context.fill();
       }
     }
     return this.settings.onSuccess.call(this, this.number);
   };
 
-  EAN13.prototype.generateCheckDigit = function(number) {
+  EAN13.prototype.generateCheckDigit = function (number) {
     var chars, counter, j, key, len, value;
     counter = 0;
     chars = number.split("");
@@ -214,14 +288,17 @@ EAN13 = (function() {
     return (10 - (counter % 10)) % 10;
   };
 
-  EAN13.prototype.validate = function() {
-    return parseInt(this.number.slice(-1), 10) === this.generateCheckDigit(this.number.slice(0, -1));
+  EAN13.prototype.validate = function () {
+    return (
+      parseInt(this.number.slice(-1), 10) ===
+      this.generateCheckDigit(this.number.slice(0, -1))
+    );
   };
 
-  EAN13.prototype.toBin = function(number) {
+  EAN13.prototype.toBin = function (number) {
     var str;
     str = number.toString(2);
-    return '000000000'.substr(str.length) + str;
+    return "000000000".substr(str.length) + str;
   };
 
   function EAN13(element, number1, options) {
@@ -235,10 +312,10 @@ EAN13 = (function() {
       background: null,
       padding: 0,
       debug: false,
-      onValid: function() {},
-      onInvalid: function() {},
-      onSuccess: function() {},
-      onError: function() {}
+      onValid: function () {},
+      onInvalid: function () {},
+      onSuccess: function () {},
+      onError: function () {},
     };
     if (options) {
       for (option in options) {
@@ -249,15 +326,18 @@ EAN13 = (function() {
   }
 
   return EAN13;
-
 })();
 
-(function($, window, document) {
+(function ($, window, document) {
   var pluginName;
   pluginName = "EAN13";
-  return $.fn[pluginName] = function(number, options) {
-    return this.each(function() {
-      return $.data(this, "plugin_" + pluginName, new EAN13(this, number, options));
+  return ($.fn[pluginName] = function (number, options) {
+    return this.each(function () {
+      return $.data(
+        this,
+        "plugin_" + pluginName,
+        new EAN13(this, number, options),
+      );
     });
-  };
+  });
 })(jQuery, window, document);

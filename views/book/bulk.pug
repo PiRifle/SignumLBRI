@@ -1,0 +1,61 @@
+extends ../layout
+
+block content
+    form(action="", method="post") 
+        |<div class="modal fade" id="sellModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        |  <div class="modal-dialog" role="document">
+        |    <div class="modal-content">
+        |      <div class="modal-header">
+        |        <h5 class="modal-title" id="exampleModalLabel">Sprzedaj Książkę</h5>
+        |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+        |          <span aria-hidden="true">&times;</span>
+        |        </button>
+        |      </div>
+        |      <div class="modal-body">
+        input(name="bookIDS")#IDS_BOOK
+        h5 Suma:
+            span#costSum
+        .input-group.mb-3.row.justify-content-md-center
+            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Imię i Nazwisko
+            .col-sm-7
+                div.d-flex.flex-row
+                    input(type="text", name="name", placeholder="Imię", required, autofocus).form-control.me-2.d-inline
+                    input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ms-2.d-inline
+        .input-group.mb-3.row.justify-content-md-center.my-4
+            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
+            .col-sm-7
+                input(type="email", name="email", placeholder="E-Mail" required).form-control
+        .input-group.mb-3.row.justify-content-md-center.my-4
+            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='phone') Numer Telefonu
+            .col-sm-7
+                input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control
+        |      </div>
+        |      <div class="modal-footer">
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        button(type="submit").btn.btn-success Sprzedaj
+        |      </div>
+        |    </div>
+        |  </div>
+        |</div>
+    h2 Kasa 
+    .input-group 
+        .input-group-prepend 
+            span.input-group-text Wpisz ID Zlecenia
+        input(type="number" name="itemIDSell").form-control.numeric
+        if device.mobile()
+            .input-group-append  
+                button(type="button").mobile.fa.fa-camera.border-0.scan-barcode-addToCart.h-100
+    table.table.sellTable
+        thead 
+            th ID
+            th Tytuł
+            th Wydawca 
+            th Cena 
+            th Status
+            th Edit
+        tbody 
+
+      
+    button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1.sellBooks Sprzedaj
+
+

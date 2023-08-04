@@ -5,20 +5,19 @@ import { UserPerformance } from "../models/Performance";
 export async function registerPerformance(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   const result = await check("performance", "Nie podano wartości wydajności")
     .isNumeric({ no_symbols: true })
     .isInt({ min: 0 })
     .run(req, { dryRun: true });
-if (!result.isEmpty()){
+  if (!result.isEmpty()) {
     return next();
-}
+  }
 
   if (req.user) {
     if (req.body.performance) {
-      
-      if(typeof req.body.performance == typeof []){
+      if (typeof req.body.performance == typeof []) {
         req.body.performance = (req.body.performance as number[]).at(-1);
       }
       UserPerformance.create({
@@ -36,7 +35,7 @@ if (!result.isEmpty()){
         from: req.headers.referer,
         to: req.url,
       });
-    req.query.performance = undefined;
+      req.query.performance = undefined;
     }
   }
   next();

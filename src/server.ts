@@ -6,9 +6,9 @@ import nodemailer from "nodemailer";
  * Error Handler. Provides full stack
  */
 if (process.env.NODE_ENV === "development") {
-    app.use(errorHandler());
-    
-    nodemailer.createTestAccount().then((testAccount) => {
+  app.use(errorHandler());
+
+  nodemailer.createTestAccount().then((testAccount) => {
     nodemailer.createTransport({
       host: "smtp.ethereal.email",
       port: 465,
@@ -18,18 +18,17 @@ if (process.env.NODE_ENV === "development") {
         pass: testAccount.pass, // generated ethereal password
       },
     });
-    });
-
-}else{
-//  transporter = nodemailer.createTransport({
-//    host: "smtp.ethereal.email",
-//    port: 465,
-//    secure: true, // true for 465, false for other ports
-//    auth: {
-//      user: testAccount.user, // generated ethereal user
-//      pass: testAccount.pass, // generated ethereal password
-//    },
-//  });
+  });
+} else {
+  //  transporter = nodemailer.createTransport({
+  //    host: "smtp.ethereal.email",
+  //    port: 465,
+  //    secure: true, // true for 465, false for other ports
+  //    auth: {
+  //      user: testAccount.user, // generated ethereal user
+  //      pass: testAccount.pass, // generated ethereal password
+  //    },
+  //  });
 }
 
 // console.log()
@@ -38,14 +37,13 @@ if (process.env.NODE_ENV === "development") {
  * Start Express server.
  */
 
-
 const server = app.listen(app.get("port"), () => {
-    console.log(
-        "  App is running at http://localhost:%d in %s mode",
-        app.get("port"),
-        app.get("env")
-    );
-    console.log("  Press CTRL-C to stop\n");
+  console.log(
+    "  App is running at http://localhost:%d in %s mode",
+    app.get("port"),
+    app.get("env"),
+  );
+  console.log("  Press CTRL-C to stop\n");
 });
 
 export default server;
