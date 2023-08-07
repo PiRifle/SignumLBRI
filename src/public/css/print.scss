@@ -1,8 +1,10 @@
 @import "/node_modules/bootstrap/scss/bootstrap";
 @import "lib/font-awesome/fontawesome";
-// @import "themes/default/default";
-// @import "themes/default/variables";
-
+@import "themes/default/default";
+@import "themes/default/variables";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @font-face {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;

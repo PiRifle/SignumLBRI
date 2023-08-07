@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const webpack = require("webpack");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+
 
 const fs = require("fs");
 
@@ -13,7 +14,6 @@ class MetaInfoPlugin {
   apply(compiler) {
     compiler.hooks.done.tap(this.constructor.name, (stats) => {
       const metaInfo = {
-        // add any other information if necessary
         hash: stats.hash,
       };
       const json = JSON.stringify(metaInfo);
@@ -39,10 +39,6 @@ module.exports = [
       }),
       new MetaInfoPlugin({ filename: "dist/meta.json" }),
 
-      //   new webpack.ProvidePlugin({
-      //     process: "process/browser",
-      //     Buffer: ["buffer", "Buffer"],
-      //   }),
     ],
     entry: {
       "js/main": "./src/public/js/main.ts",
@@ -52,20 +48,26 @@ module.exports = [
       "js/admin": "./src/public/js/admin.ts",
       "css/admin": "./src/public/css/admin.scss",
     },
-
-    devtool: "inline-source-map",
+    optimization: {
+      minimizer: [
+        new CssMinimizerPlugin(),
+      ],
+    },
+    devtool: "source-map",
     module: {
       rules: [
         {
           test: /\.s[ac]ss$/i,
           use: [
-            // // Creates `style` nodes from JS strings
-            // "style-loader",
-            // // Translates CSS into CommonJS
             MiniCssExtractPlugin.loader,
-            "css-loader",
-            // Compiles Sass to CSS
+            {
+              loader: "css-loader",
+              options: {
+                importLoaders: 1,
+              }
+            },
             "sass-loader",
+            "postcss-loader",
           ],
         },
         {

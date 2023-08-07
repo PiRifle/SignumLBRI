@@ -1,11 +1,14 @@
+
+
 @import "themes/default/variables";
 
-@import "/node_modules/bootstrap/scss/bootstrap";
+// @import "/node_modules/bootstrap/scss/bootstrap";
 @import "lib/font-awesome/fontawesome";
-
 @import "themes/default/default";
 @import "lib/flipTimer.scss";
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 // Scaffolding
 // -------------------------
 

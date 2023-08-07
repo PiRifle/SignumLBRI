@@ -7,7 +7,7 @@ SignumLBRI is a comprehensive bookshop website designed specifically for school 
 - Node.js
 - TypeScript
 - Pug.js
-- Bootstrap
+- Tailwind CSS
 - Webpack
 - MongoDB
 
