@@ -1,5 +1,4 @@
 import $ from "jquery";
-
 import "@popperjs/core";
 import "bootstrap";
 //@ts-ignore
@@ -7,6 +6,9 @@ import maskMoney from "./lib/maskMoney";
 maskMoney($);
 //@ts-ignore
 window.JQuery = $;
+
+import { setupRenderer } from "./webrender";
+setupRenderer()
 
 //@ts-ignore
 window.rmbook = function rmbook(event: any) {

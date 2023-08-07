@@ -48,11 +48,11 @@ module.exports = [
       "js/admin": "./src/public/js/admin.ts",
       "css/admin": "./src/public/css/admin.scss",
     },
-    optimization: {
-      minimizer: [
-        new CssMinimizerPlugin(),
-      ],
-    },
+    // optimization: {
+    //   minimizer: [
+    //     new CssMinimizerPlugin(),
+    //   ],
+    // },
     devtool: "source-map",
     module: {
       rules: [

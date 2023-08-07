@@ -5,3 +5,4 @@ import * as shell from "shelljs";
 shell.cp("-R", "src/public/locales", "dist/public/locales");
 shell.cp("-R", "src/public/fonts", "dist/public/");
 shell.cp("-R", "src/public/images", "dist/public/");
+shell.cp("-R", "src/public/models", "dist/public/");

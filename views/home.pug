@@ -3,36 +3,36 @@ extends layout
 block content
     center 
         h1 Witaj
-    h3 Twoje Książki
-    br
-    br
-    center 
-        if bookListings
-            table.table
-                thead 
-                    td Tytuł
-                    if !device.mobile()
-                        td Wydawca 
-                        td Cena 
-                    td Status
-                    td 
-                tbody 
-                    each bookListing in bookListings
-                        tr 
-                            td
-                                p.m-auto= bookListing.book.title.length > 40 ? bookListing.book.title.substring(0, 40 - 3) + "..." : bookListing.book.title
-                            if !device.mobile()
-                                td
-                                    p.m-auto= bookListing.book.publisher.length > 80 ? bookListing.book.publisher.substring(0, 80 - 3) + "..." : bookListing.book.publisher
-                                td
-                                    p.m-auto= bookListing.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-                            td
-                                p.m-auto= bookListing.status
-                            td
-                                a(href=`/book/${bookListing._id}/manage`).btn.btn-success Zarządzaj
-            a(href="/book/add").btn.btn-primary Dodaj następną książkę
+    //- h3 Twoje Książki
+    //- br
+    //- br
+    //- center 
+    //-     if bookListings
+    //-         table.table
+    //-             thead 
+    //-                 td Tytuł
+    //-                 if !device.mobile()
+    //-                     td Wydawca 
+    //-                     td Cena 
+    //-                 td Status
+    //-                 td 
+    //-             tbody 
+    //-                 each bookListing in bookListings
+    //-                     tr 
+    //-                         td
+    //-                             p.m-auto= bookListing.book.title.length > 40 ? bookListing.book.title.substring(0, 40 - 3) + "..." : bookListing.book.title
+    //-                         if !device.mobile()
+    //-                             td
+    //-                                 p.m-auto= bookListing.book.publisher.length > 80 ? bookListing.book.publisher.substring(0, 80 - 3) + "..." : bookListing.book.publisher
+    //-                             td
+    //-                                 p.m-auto= bookListing.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+    //-                         td
+    //-                             p.m-auto= bookListing.status
+    //-                         td
+    //-                             a(href=`/book/${bookListing._id}/manage`).btn.btn-success Zarządzaj
+    //-         a(href="/book/add").btn.btn-primary Dodaj następną książkę
 
-        else 
-            h6 Trochę tu pusto...
-            a(href="/book/add").btn.btn-primary Dodaj pierwszą książkę
+    //-     else 
+    //-         h6 Trochę tu pusto...
+    //-         a(href="/book/add").btn.btn-primary Dodaj pierwszą książkę
                 
