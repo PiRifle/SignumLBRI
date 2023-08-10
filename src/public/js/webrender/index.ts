@@ -1,6 +1,11 @@
-import THREE from "three"
+import * as THREE from "three"
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader"
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'			import { SAOPass } from 'three/addons/postprocessing/SAOPass.js';
+import { SAOPass } from 'three/examples/jsm/postprocessing/SAOPass';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass';
+
 import { getMouseDegrees, getMousePos } from "./utils";
 
 export async function setupRenderer(): Promise<any> {
@@ -67,6 +72,7 @@ export async function setupRenderer(): Promise<any> {
     camera.position.copy(model.cameras[0].position)
     camera.rotation.copy(model.cameras[0].rotation)
     scene.add(model.scene)
+    
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(Math.min(window.innerWidth, window.innerHeight), Math.min(window.innerWidth, window.innerHeight))
@@ -75,6 +81,21 @@ export async function setupRenderer(): Promise<any> {
     if (!container) return null;
     container.append(renderer.domElement)
     window.addEventListener("resize", onWindowResize, false)
+    
+    const composer = new EffectComposer( renderer );
+
+    const renderPass = new RenderPass( scene, camera );
+    composer.addPass( renderPass );
+    const saoPass = new SAOPass( scene, camera, false, true );
+    saoPass.params.saoIntensity = 0.02
+    saoPass.params.saoScale = 5
+    // saoPass.params.saoBias = 1
+    saoPass.params.saoMinResolution = 0.0001
+    // saoPass.params.saoBlur = 
+
+    composer.addPass( saoPass );
+    const outputPass = new OutputPass();
+    composer.addPass( outputPass );
 
     function onWindowResize() {
         camera.updateProjectionMatrix();
@@ -102,7 +123,7 @@ export async function setupRenderer(): Promise<any> {
             bookOBJ.rotation.y = -THREE.MathUtils.degToRad(deg.x)/5 + roty
             // bookOBJ.rotation.z = THREE.MathUtils.degToRad(deg.z)
         }
-        renderer.render(scene, camera)
+        composer.render()
     }
     animate()
 

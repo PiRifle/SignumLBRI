@@ -47,12 +47,18 @@ module.exports = [
       "css/print": "./src/public/css/print.scss",
       "js/admin": "./src/public/js/admin.ts",
       "css/admin": "./src/public/css/admin.scss",
+      "css/tailwind": "./src/public/css/tailwind.scss",
+      
     },
-    // optimization: {
-    //   minimizer: [
-    //     new CssMinimizerPlugin(),
-    //   ],
-    // },
+    optimization: {
+      minimizer: [
+        new CssMinimizerPlugin(),
+      ],
+      // runtimeChunk: 'single',
+      // splitChunks: {
+      //   chunks: "all",
+      // },
+    },
     devtool: "source-map",
     module: {
       rules: [
@@ -72,7 +78,12 @@ module.exports = [
         },
         {
           test: /\.ts?$/,
-          use: "ts-loader",
+          use: [{
+            loader: "ts-loader",
+            options: {
+                configFile: "client.tsconfig.json"
+            }
+        }],
           exclude: /node_modules/,
         },
       ],
@@ -81,6 +92,7 @@ module.exports = [
       extensions: [".tsx", ".ts", ".js"],
     },
     output: {
+      chunkFilename: "[name].[hash].js",
       filename: "[name].[hash].js",
       path: path.resolve(__dirname, "dist/public/"),
     },

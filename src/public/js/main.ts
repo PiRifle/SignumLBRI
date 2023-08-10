@@ -1,14 +1,25 @@
+if([...document.querySelector("body")!.classList].includes("using-tailwindcss")){
+  console.log("loading tailwindcss scripts")
+  import(/* webpackChunkName: "tailwinduiengine" */ "tw-elements").then(({ Toast, Dropdown, initTE })=>{initTE({ Dropdown, Toast,  })})
+}else{
+  console.log("loading bootstrap scripts")
+  import(/* webpackChunkName: "popper" */"@popperjs/core");
+  import(/* webpackChunkName: "bootstrap" */"bootstrap");
+}
 import $ from "jquery";
-import "@popperjs/core";
-import "bootstrap";
 //@ts-ignore
 import maskMoney from "./lib/maskMoney";
 maskMoney($);
 //@ts-ignore
 window.JQuery = $;
 
-import { setupRenderer } from "./webrender";
-setupRenderer()
+const container = document.querySelector('.book-render')
+if (container){
+  console.log("loading webrenderer")
+  import(/* webpackChunkName: "webgl" */ "./webrender").then(({setupRenderer})=>{setupRenderer()}).catch((error) => {
+    console.log(error)
+  })
+};
 
 //@ts-ignore
 window.rmbook = function rmbook(event: any) {
@@ -19,10 +30,8 @@ window.rmbook = function rmbook(event: any) {
 // const $ = require("jquery");
 import {
   Html5Qrcode,
-  Html5QrcodeScanner,
   Html5QrcodeScannerState,
-  Html5QrcodeScanType,
-  Html5QrcodeSupportedFormats,
+  Html5QrcodeSupportedFormats
 } from "html5-qrcode";
 import { Html5QrcodeResult } from "html5-qrcode/esm/core";
 var isMobile = false; //initiate as false

@@ -1,24 +1,20 @@
-extends ../layout
+extends ../layout_tailwindcss
+
+include ../mixins/prebuild_blocks
 
 block content
-  .page-header
-    h3 Sign in
-    hr
-
-  form.form-horizontal(method='POST')
-    input(type='hidden', name='_csrf', value=_csrf)
-    .input-group.mb-3.row.justify-content-md-center.m-4
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
-      .col-sm-7
-        input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus, required)
-    .input-group.mb-3.row.justify-content-md-center.m-4
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='password') Password
-      .col-sm-7
-        input.form-control(type='password', name='password', id='password', placeholder='Password', required)
-    .input-group.mb-3.row.justify-content-md-center.m-4
-      .offset-sm-3.col-sm-7
-        button.col-sm-3.btn.btn-primary(type='submit')
-          i.fa.fa-user
-          | Login
-        a.btn.btn-link(href='/forgot') Forgot your password?
+  .container.mx-auto.mt-16
+    +header() Zaloguj Się
+    +divider
+    form(method='POST')
+      input(type='hidden', name='_csrf', value=_csrf)
+      div(class="w-2/5")
+        .my-4
+          +form_input("email", "text", "Email", "Podaj swój Email")
+          +form_input("password", "password", "Hasło", "Podaj swoje hasło")
+        .mt-14
+          +button(type='submit').mr-5
+            i.fa.fa-user.mr-2
+            | Zaloguj się
+          a(href='/forgot') Zapomniałeś hasła?
 

@@ -1,20 +1,23 @@
-extends ../layout
+extends ../layout_tailwindcss
 include ../mixins/a.pug
 block content
-    section.container.m-auto
-        div(class="absolute left-1/3 bottom-14 blur-[400px]")
-            div(class="-z-10 h-[550px] w-[550px] bg-primary bg-opacity-40 rounded-full blur-[400px]")
-        div(class="absolute left-[35%] -top-52 blur-[400px]")
-            div(class="h-[600px] w-[600px] -z-10 bg-secondary bg-opacity-50 rounded-full blur-[400px]")
-        div(class="absolute left-[55%] top-[35%]  blur-[400px]")
-            div(class="h-96 w-96 -z-10 bg-white bg-opacity-70 rounded-full blur-[400px]")
-        div.flex.flex-row.absolute.bottom-0.top-0.z-10
-            div.my-auto.flex-grow
-                h1.text-8xl.font-extrabold.text-white.my-4 Targi Książek,
-                h2.text-5xl.font-serif.font-semibold.text-primary.my-9 prościej!
-                p.text-white.text-xl.my-4.max-w-2xl "Sprzedawaj, oddawaj, zarabiaj!" To nasze przesłanie. Twoje podręczniki szkolne zyskują drugie życie dzięki szybkiemu i wygodnemu procesowi sprzedaży i odkupienia na naszej platformie.
-                div.flex.mt-20.justify-center.align-center.space-x-8
-                    +a-button("#books", "Dostępne Książki")
-                    +link("#books", "Dostępne Książki").my-auto
-            div.overflow-clip.relative.-left-36
-                div.book-render
+    div.flex.flex.col(class="h-[90vh]")
+        div.flex-grow.flex.justify-center.overflow-hidden
+            section.container.m-auto
+                div.flex.justify-around.w-full
+                    div.max-w-max.flex-grow.min-w-max.z-10(class="sm:max-lg:text-center")
+                        h1.text-8xl.font-extrabold.text-white.my-4 Targi Książek,
+                        h2.text-5xl.font-serif.font-semibold.text-primary.my-9 prościej!
+                        p.text-white.text-xl.my-4.max-w-2xl "Sprzedawaj, oddawaj, zarabiaj!" To nasze przesłanie. Twoje podręczniki szkolne zyskują drugie życie dzięki szybkiemu i wygodnemu procesowi sprzedaży i odkupienia na naszej platformie.
+                        div.flex.mt-20.justify-center.align-center.space-x-8
+                            +a-button("/addbook") Dodaj Książkę
+                            +link("#books").no-override.my-auto  Dostępne Książki
+                    div.w-96.h-96.relative(class="sm:max-lg:hidden")
+                        div.book-render.w-max.absolute(class="-translate-x-1/2 left-1/2 -translate-y-1/2 top-1/2")
+                div(class="pointer-events-none absolute left-1/3 bottom-14 -z-10")
+                    div(class="-z-10 h-[550px] w-[550px] bg-primary bg-opacity-40 rounded-full blur-[8rem]")
+                div(class="pointer-events-none absolute left-[35%] -top-52 -z-10")
+                    div(class="h-[600px] w-[600px] -z-10 bg-secondary bg-opacity-50 rounded-full blur-[8rem]")
+                div(class="pointer-events-none absolute left-[55%] top-[35%] -z-10")
+                    div(class="h-96 w-96 -z-10 bg-white bg-opacity-70 rounded-full blur-[8rem]")
+    section#books.min-h-screen

@@ -1,38 +1,40 @@
-extends layout
+extends layout_tailwindcss
+
+include mixins/a
+include mixins/prebuild_blocks
 
 block content
-    center 
-        h1 Witaj
-    //- h3 Twoje Książki
-    //- br
-    //- br
-    //- center 
-    //-     if bookListings
-    //-         table.table
-    //-             thead 
-    //-                 td Tytuł
-    //-                 if !device.mobile()
-    //-                     td Wydawca 
-    //-                     td Cena 
-    //-                 td Status
-    //-                 td 
-    //-             tbody 
-    //-                 each bookListing in bookListings
-    //-                     tr 
-    //-                         td
-    //-                             p.m-auto= bookListing.book.title.length > 40 ? bookListing.book.title.substring(0, 40 - 3) + "..." : bookListing.book.title
-    //-                         if !device.mobile()
-    //-                             td
-    //-                                 p.m-auto= bookListing.book.publisher.length > 80 ? bookListing.book.publisher.substring(0, 80 - 3) + "..." : bookListing.book.publisher
-    //-                             td
-    //-                                 p.m-auto= bookListing.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
-    //-                         td
-    //-                             p.m-auto= bookListing.status
-    //-                         td
-    //-                             a(href=`/book/${bookListing._id}/manage`).btn.btn-success Zarządzaj
-    //-         a(href="/book/add").btn.btn-primary Dodaj następną książkę
+    .container.mx-auto
+        +header() Twoje Książki
+        +divider()
 
-    //-     else 
-    //-         h6 Trochę tu pusto...
-    //-         a(href="/book/add").btn.btn-primary Dodaj pierwszą książkę
+        if bookListings
+            div
+                table.w-full.table-auto.my-6
+                    thead.text-sm.bg-gray-700.text-white.uppercase.border-gray-50.border
+                        th.px-6.py-3 Tytuł
+                        if !device.mobile()
+                            th.px-6.py-3 Wydawca 
+                            th.px-6.py-3 Cena 
+                        th.px-6.py-3 Status
+                        th.px-6.py-3 
+                    tbody
+                        each bookListing in bookListings
+                            tr.border-b.py-2
+                                td
+                                    p.px-6.py-3= bookListing.book.title.length > 40 ? bookListing.book.title.substring(0, 40 - 3) + "..." : bookListing.book.title
+                                if !device.mobile()
+                                    td
+                                        p.px-6.py-3= bookListing.book.publisher.length > 80 ? bookListing.book.publisher.substring(0, 80 - 3) + "..." : bookListing.book.publisher
+                                    td
+                                        p.px-6.py-3= bookListing.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                                td
+                                    p.px-6.py-3= bookListing.getStatusString(language)
+                                td 
+                                    +a-button(href=`/book/${bookListing._id}/manage`).block.m-3.w-max.mx-auto Zarządzaj
+            +a-button(href="/book/add").w-max.block.m-3 Dodaj następną książkę
+
+        else 
+            h6 Trochę tu pusto...
+            +a-button(href="/book/add").block.m-3 Dodaj pierwszą książkę
                 

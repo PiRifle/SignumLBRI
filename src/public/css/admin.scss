@@ -1,12 +1,9 @@
 
 @import "themes/default/variables";
 @import "./daterangepicker.scss";
-// @import "/node_modules/bootstrap/scss/bootstrap";
-// @import "lib/font-awesome/fontawesome";
+@import "/node_modules/bootstrap/scss/bootstrap";
+@import "lib/font-awesome/fontawesome";
 @import "themes/default/default";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 body {
   font-size: 0.875rem;
 }

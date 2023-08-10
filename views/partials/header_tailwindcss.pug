@@ -1,0 +1,31 @@
+include ../mixins/a
+nav.px-28.py-9.flex.z-10
+  a.my-auto(href='/')
+    i.bg-clip-text.text-transparent.bg-gradient-to-tr.from-white.to-primary.fa-solid.fa-bookmark.mx-4.text-3xl.
+    span.font-bold.text-white.text-2xl.my-auto SignumLBRI
+  if !setup 
+    nav.navigator.grow.mx-8.m-auto
+      +link("/", "Główna")
+      if user && user.role == "student"
+        +link('/label') Etykiety
+        +link('/book/add') Dodaj Książkę
+        +link('/library#books') Dostępne Książki
+
+    nav.user.flex-none.m-auto
+      if !user
+        +link('/login') Zaloguj się 
+        +link('/signup') Zarejestruj Się 
+      else
+        a(id="profileDropdown", data-te-dropdown-toggle-ref, aria-expanded="false", data-te-offset=[15, 25])
+          img.inline.w-12.rounded-full(src=(user.profile.picture || user.gravatar()), alt=(user.profile.name || user.email || user.id))
+          p.inline-block.my-auto.ml-3= user.profile.name || user.email || user.id
+          i.inline-block.my-auto.fa-solid.fa-caret-down.font-extrabold.m-1
+          //-   //- i.caret
+          ul(class="absolute z-[1000] py-2 px-4 hidden min-w-max rounded-2xl backdrop-blur-xl bg-opacity-5 bg-white text-white [&[data-te-dropdown-show]]:block", aria-labelledby="profileDropdown", data-te-dropdown-menu-ref)
+            li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75")
+              a(href='/account') Moje Konto
+            if user.isAdmin()
+              li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75")
+                a(href="/setup") Dodaj Konto
+            li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75")
+              a(href='/logout') Wyloguj

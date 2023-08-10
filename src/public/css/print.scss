@@ -2,19 +2,11 @@
 @import "lib/font-awesome/fontawesome";
 @import "themes/default/default";
 @import "themes/default/variables";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 @font-face {
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   src: url(/src/public/fonts/fa-solid-900.ttf);
 }
-// @font-face {
-//     font-family: 'Font Awesome 6 Free';
-//     font-weight: 900;
-//     src: url(/dist/public/fonts/fa-brands-400.ttf);
-// }
 @font-face {
   font-family: "Font Awesome 6 Free";
   font-weight: 400;

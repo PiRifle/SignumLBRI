@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "removeComments": false,
+    "moduleResolution": "node",
+    "lib": ["es2017", "dom"]
+  },
+  "include": ["src/public/**/*"]
+}

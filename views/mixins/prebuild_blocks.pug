@@ -1,0 +1,19 @@
+mixin header()
+    h1.text-8xl.font-extrabold.text-white.my-4&attributes(attributes)
+        block
+
+mixin divider()
+    .w-48.h-3.mb-14.mt-4.rounded-full.bg-primary
+
+mixin form_input(id, type="text", label_name, placeholder)
+    label.block.text-lg.tracking-wide.text-white.font-light.m-2(for=id)= label_name
+    input.block.w-full.bg-back-blue.text-gray-100.border.rounded-lg.py-3.px-4.mb-3.leading-tight(class="focus:outline-none focus:bg-gray-700", id=id, name=id, type=type, placeholder=placeholder)&attributes(attributes)
+
+mixin form_select(id, type="text", label_name, placeholder)
+    label.block.text-lg.tracking-wide.text-white.font-light.m-2(for=id)= label_name
+    select.block.w-full.bg-back-blue.text-gray-100.border.rounded-lg.py-3.px-4.mb-3.leading-tight(class="focus:outline-none focus:bg-gray-700", id=id, name=id, type=type, placeholder=placeholder)&attributes(attributes)
+        block
+
+mixin button()
+    button(class="px-14 py-3 text-white rounded-full border-white border-2 hover:border-secondary transition-all duration-75")&attributes(attributes)
+        block
