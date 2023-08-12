@@ -117,6 +117,7 @@ app.use(performanceController.registerPerformance);
 // app.get("/contact", contactController.getContact);
 // app.post("/contact", contactController.postContact);
 app.get("/", passportConfig.isAnonymous, homeController.index);
+app.get("/privacy", homeController.policy);
 app.get("/library", bookController.getLibrary);
 app.get("/login", userController.getLogin);
 app.post("/login", userController.postLogin);
@@ -258,12 +259,12 @@ app.post(
   passportConfig.isSeller,
   bookController.postBulkSell,
 );
-// app.get(
-//   "/listingJSON",
-//   passportConfig.isAuthenticated,
-//   passportConfig.isSeller,
-//   bookController.listingJSON,
-// );
+app.get(
+  "/listingJSON",
+  passportConfig.isAuthenticated,
+  passportConfig.isSeller,
+  bookController.listingJSON,
+);
 
 app.get(
   "/school/add",

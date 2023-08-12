@@ -1,6 +1,6 @@
 mixin link(href)
-    a(href=href class="mx-2 text-white hover:underline hover:text-secondary transition-all duration-75")&attributes(attributes)
+    a(href=href class="mx-2 text-white hover:underline hover:text-secondary transition-all duration-75 max-md:text-xs max-md:p-0")&attributes(attributes)
         block
 mixin a-button(href)
-    a(href=href class="px-14 py-3 text-white rounded-full border-white border-2 hover:border-secondary transition-all duration-75")&attributes(attributes)
+    a(href=href class="px-14 py-3 text-white rounded-full border-white border-2 hover:border-secondary transition-all duration-75 max-md:text-xs max-md:px-8 max-md:py-3")&attributes(attributes)
         block

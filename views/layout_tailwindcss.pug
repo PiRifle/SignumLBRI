@@ -1,6 +1,8 @@
 doctype html
 html(lang='')
   head
+    <! No Heja! Zainteresowany? Obczaj resztę moich projektów! https://github.com/PiRifle !>
+
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
@@ -8,11 +10,11 @@ html(lang='')
     meta(name='description', content='')
     meta(name='theme-color' content='#4DA5F4')
     link(rel='stylesheet', href=`/css/tailwind.${version}.css`)
-  body.bg-back-blue.using-tailwindcss
+  body.bg-back-blue.using-tailwindcss.p-2.flex.flex-col.min-h-screen
     include partials/flash_tailwindcss
-    //- div.container
     if !disableLogin
       include partials/header_tailwindcss
-      block content
-    //- include partials/footer
+    block content
+    include partials/footer_tailwindcss
     script(defer, src=`/js/main.${version}.js`)
+  

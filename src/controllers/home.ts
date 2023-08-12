@@ -26,14 +26,6 @@ async function fetchTopBooks(): Promise<
       },
     },
     {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "book",
-        as: "listings",
-      },
-    },
-    {
       $project: {
         _id: 1,
         title: 1,
@@ -73,6 +65,11 @@ async function fetchTopBooks(): Promise<
   // documents.forEach(item => {(item as (BookDocument & { count: number })).count = 1;});
   // return documents as (BookDocument & { count: number })[];
 }
+
+export const policy = (req: Request, res: Response) => {
+  res.render("privacy_policy/read");
+};
+
 export const index = async (req: Request, res: Response): Promise<void> => {
   if ((req.user as UserDocument).role != "student") {
     res.render("homeStaff", {

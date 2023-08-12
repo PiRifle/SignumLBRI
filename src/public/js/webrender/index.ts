@@ -9,12 +9,15 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass';
 import { getMouseDegrees, getMousePos } from "./utils";
 
 export async function setupRenderer(): Promise<any> {
+    const container = document.querySelector('.book-render')
+
     const loader = new GLTFLoader();
     const scene = new THREE.Scene()
     const model = await new Promise<GLTF>((resolve, reject) => loader.load(
         'models/book.gltf',
         function (gltf) {
             console.log("model loaded")
+            container?.setAttribute("data-obj-loaded", "")
             resolve(gltf)
         },
         function (xhr) {
@@ -77,7 +80,6 @@ export async function setupRenderer(): Promise<any> {
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(Math.min(window.innerWidth, window.innerHeight), Math.min(window.innerWidth, window.innerHeight))
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    const container = document.querySelector('.book-render')
     if (!container) return null;
     container.append(renderer.domElement)
     window.addEventListener("resize", onWindowResize, false)

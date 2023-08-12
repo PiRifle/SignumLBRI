@@ -10,13 +10,13 @@ export type BookDocument = mongoose.Document & {
 };
 const bookSchema = new mongoose.Schema<BookDocument>(
   {
-    title: String,
-    publisher: String,
-    authors: [String],
-    pubDate: Number,
-    isbn: Number,
-    image: String,
-    msrp: Number,
+    title: { type: String, default: "" },
+    publisher: { type: String, default: "" },
+    authors: { type: [String], default: [""] },
+    pubDate: { type: Number, default: 0 },
+    isbn: { type: Number, default: 0 },
+    image: { type: String, default: "" },
+    msrp: { type: Number, default: 0 },
   },
   { timestamps: true },
 );

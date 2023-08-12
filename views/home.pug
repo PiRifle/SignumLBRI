@@ -9,8 +9,8 @@ block content
         +divider()
 
         if bookListings
-            div
-                table.w-full.table-auto.my-6
+            div(class="max-md:overflow-scroll")
+                table.w-full.table-auto.my-6(class="max-md:text-3xs text-sm")
                     thead.text-sm.bg-gray-700.text-white.uppercase.border-gray-50.border
                         th.px-6.py-3 Tytuł
                         if !device.mobile()
@@ -35,6 +35,8 @@ block content
             +a-button(href="/book/add").w-max.block.m-3 Dodaj następną książkę
 
         else 
-            h6 Trochę tu pusto...
-            +a-button(href="/book/add").block.m-3 Dodaj pierwszą książkę
+            div.text-center.mx-auto            
+                h6 Trochę tu pusto...
+                .flex.justify-center
+                    +a-button(href="/book/add").block.m-3.max-w-max Dodaj pierwszą książkę
                 

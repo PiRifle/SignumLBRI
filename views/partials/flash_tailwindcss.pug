@@ -1,5 +1,5 @@
 if messages.errors
-  div.w-96.min-w-24.bg-red-700.bg-opacity-50.fixed.rounded-2xl.p-3.m-4.right-6.bottom-6.backdrop-blur-xl.z-50.transition-opacity.duration-150(class="data-[te-toast-hide]:opacity-0 data-[te-toast-show]:block", id="static-example", role="alert",data-te-animation="false", aria-live="assertive", aria-atomic="true", data-te-autohide="true", data-te-toast-init, data-te-toast-show)
+  div.w-96.min-w-24.bg-red-700.bg-opacity-50.fixed.rounded-2xl.p-3.m-4.right-6.bottom-6.backdrop-blur-xl.z-50.transition-opacity.duration-150(class="data-[te-toast-hide]:opacity-0 data-[te-toast-show]:block max-md:left-0 max-md:right-0 max-md:m-2 max-md:w-auto", id="static-example", role="alert",data-te-animation="false", aria-live="assertive", aria-atomic="true", data-te-autohide="true", data-te-toast-init, data-te-toast-show)
     a(data-te-toast-dismiss, aria-label="Close")
       i.fa-solid.fa-close.font-bold.absolute.top-0.right-0.p-4.text-xl
     div.font-bold Error
@@ -7,7 +7,7 @@ if messages.errors
       div= error.msg
 
 if messages.success
-  div.w-96.min-w-24.bg-emerald-700.bg-opacity-50.fixed.rounded-2xl.p-3.m-4.right-6.bottom-6.backdrop-blur-xl.z-50.transition-opacity.duration-150(class="data-[te-toast-hide]:opacity-0 data-[te-toast-show]:block", id="static-example", role="alert",data-te-animation="false", aria-live="assertive", aria-atomic="true", data-te-autohide="true", data-te-toast-init, data-te-toast-show)
+  div.w-96.min-w-24.bg-emerald-700.bg-opacity-50.fixed.rounded-2xl.p-3.m-4.right-6.bottom-6.backdrop-blur-xl.z-50.transition-opacity.duration-150(class="data-[te-toast-hide]:opacity-0 data-[te-toast-show]:block max-md:left-0 max-md:right-0 max-md:m-2 max-md:w-auto", id="static-example", role="alert",data-te-animation="false", aria-live="assertive", aria-atomic="true", data-te-autohide="true", data-te-toast-init, data-te-toast-show)
     a(data-te-toast-dismiss, aria-label="Close")
       i.fa-solid.fa-close.font-bold.absolute.top-0.right-0.p-4.text-xl
     div.font-bold Success
@@ -15,7 +15,7 @@ if messages.success
       div= success.msg
 
 if messages.info
-  div.w-96.min-w-24.bg-cyan-700.bg-opacity-50.fixed.rounded-2xl.p-3.m-4.right-6.bottom-6.backdrop-blur-xl.z-50.transition-opacity.duration-150(class="data-[te-toast-hide]:opacity-0 data-[te-toast-show]:block", id="static-example", role="alert", aria-live="assertive", aria-atomic="true", data-te-autohide="true",data-te-animation="false", data-te-toast-init, data-te-toast-show)
+  div.w-96.min-w-24.bg-cyan-700.bg-opacity-50.fixed.rounded-2xl.p-3.m-4.right-6.bottom-6.backdrop-blur-xl.z-50.transition-opacity.duration-150(class="data-[te-toast-hide]:opacity-0 data-[te-toast-show]:block max-md:left-0 max-md:right-0 max-md:m-2 max-md:w-auto", id="static-example", role="alert", aria-live="assertive", aria-atomic="true", data-te-autohide="true",data-te-animation="false", data-te-toast-init, data-te-toast-show)
     a(data-te-toast-dismiss, aria-label="Close")
       i.fa-solid.fa-close.font-bold.absolute.top-0.right-0.p-4.text-xl
     div.font-bold Info

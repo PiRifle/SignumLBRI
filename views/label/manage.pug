@@ -1,35 +1,42 @@
-extends ../layout
+extends ../layout_tailwindcss
+
+include ../mixins/a
+include ../mixins/prebuild_blocks
 
 block content
-    h2 Zarządzaj Etykietami
-    center 
+    .container.mx-auto
+        +header() Zarządzaj Etykietami
+        +divider()
         if listings 
             form(method="get", action="/label/print") 
-                table.table
-                    thead 
-                        td Drukuj
-                        td Tytuł
-                        td Wydawca
-                        td Cena
-                        td Wydrukowane
-                    tbody 
-                        each listing in listings
-                            tr 
-                                td  
-                                    if listing._id==selectedLabel
-                                        input(type="checkbox", name=`${listing._id}`, checked)
-                                    else   
-                                        input(type="checkbox", name=`${listing._id}`)
+                div(class="max-md:overflow-scroll")
+                    table.w-full.table-auto.my-6(class="max-md:text-3xs text-sm")
+                        thead.bg-gray-700.text-white.uppercase.border-gray-50.border
+                            th.px-6.py-3 Drukuj
+                            th.px-6.py-3 Tytuł
+                            th.px-6.py-3(class="max-md:hidden") Wydawca
+                            th.px-6.py-3 Cena
+                            th.px-6.py-3 Wydrukowane
+                        tbody 
+                            each listing in listings
+                                tr.border-b.py-2
+                                    td.px-6.py-3
+                                        if listing._id==selectedLabel
+                                            input(type="checkbox", name=`${listing._id}`, checked)
+                                        else   
+                                            input(type="checkbox", name=`${listing._id}`)
 
-                                td= listing.book.title
-                                td= listing.book.publisher
-                                td= listing.cost
-                                td= listing.label.print ? 'Tak' : "Nie"
-                input(type="submit" value="Wydrukuj").btn.btn-primary.m-1
-                a(href="/book/add" ).btn.btn-success.m-1 Dodaj następną książkę
+                                    td.px-6.py-3= listing.book.title.length > 40 ? listing.book.title.substring(0, 40 - 3) + "..." : listing.book.title
+                                    td.px-6.py-3(class="max-md:hidden")= listing.book.publisher.length > 80 ? listing.book.publisher.substring(0, 80 - 3) + "..." : listing.book.publisher
+                                    td.px-6.py-3= listing.cost
+                                    td.px-6.py-3= listing.label.print ? 'Tak' : "Nie"
+                .flex.flex-row.space-x-4.items-center.justify-center.m-4
+                    +button(type="submit") Wydrukuj
+                    +link(href="/book/add").my-auto Dodaj następną książkę
                                 
         else 
-            
-            h6 Trochę tu pusto...
-            a(href="/book/add").btn.btn-primary Dodaj pierwszą książkę
-                
+            div.text-center.mx-auto            
+                h6 Trochę tu pusto...
+                .flex.justify-center
+                    +a-button(href="/book/add").block.m-3.max-w-max Dodaj pierwszą książkę
+                    

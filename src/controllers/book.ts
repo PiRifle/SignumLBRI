@@ -8,7 +8,7 @@ import { BuyerDocument } from "../models/Buyer";
 import { BookListing, BookListingDocument, Label } from "../models/BookListing";
 import { UserDocument } from "../models/User";
 import { generateBarcode } from "../util/barcode";
-import { calculateComission, fetchTopBooks } from "../util/book";
+import { calculateComission, fetchAnonTopBooks, fetchTopBooks } from "../util/book";
 import { School, SchoolDocument } from "../models/School";
 
 export async function getFillBookData(
@@ -81,7 +81,7 @@ export async function postSellBook(
     .isLength({ min: 13, max: 13 })
     .isEAN()
     .run(req);
-  await check("title", req.language.errors.validate.bookTitleBlank).exists().run(req);
+  await check("title", req.language.errors.validate.bookTitleBlank).exists().isString().isLength({min:1}).run(req);
   await check("publisher", req.language.errors.validate.bookPublisherBlank).exists().run(req);
   await check("pubDate", req.language.errors.validate.bookPublicationDateBlank).isNumeric().run(req);
   await check("cost", req.language.errors.validate.noPriceProvided)
@@ -172,6 +172,19 @@ export const getManageBook = (
       
     });
 };
+export async function listingJSON(req: Request, res: Response) {
+  await check("itemID", "Nie podano identyfikatora książki")
+    .exists()
+    .isNumeric()
+    .isLength({ min: 13, max: 13 })
+    .run(req);
+    const errors = validationResult(req);
+if (!errors.isEmpty()) {
+    return res.status(400).end();
+  }
+  const listing = await BookListing.findOne({_id: req.query.itemID}, "book cost commission id status").populate("book", "title publisher");
+  return res.json(listing);
+}
 export const getPrintSetup = (req: Request, res: Response): void => {
   BookListing.find(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -445,18 +458,10 @@ export const getLibrary = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  if (new Date(Date.now()) <= new Date("2022-09-15")) {
-    return res.render("library/books", {
-      title: req.language.titles.library,
-      data: await fetchTopBooks(),
-      // disableScripts: true,
-      // disableLogin: env.PREMIERE,
-    });
-  }
   return res.render("library/books", {
+    
     title: req.language.titles.library,
-    data: await fetchTopBooks(),
-    disableScripts: true,
+    data: await fetchAnonTopBooks()
   });
 };
 

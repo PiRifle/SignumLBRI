@@ -1,15 +1,16 @@
 include ../mixins/a
-nav.px-28.py-9.flex.z-10
+nav(class="lg:px-28 lg:py-9 p-3 flex z-10")
   a.my-auto(href='/')
     i.bg-clip-text.text-transparent.bg-gradient-to-tr.from-white.to-primary.fa-solid.fa-bookmark.mx-4.text-3xl.
-    span.font-bold.text-white.text-2xl.my-auto SignumLBRI
+    span.font-bold.text-white.text-2xl.my-auto(class="max-lg:hidden") SignumLBRI
   if !setup 
-    nav.navigator.grow.mx-8.m-auto
-      +link("/", "Główna")
-      if user && user.role == "student"
-        +link('/label') Etykiety
-        +link('/book/add') Dodaj Książkę
-        +link('/library#books') Dostępne Książki
+    nav.navigator.grow.m-auto
+      div(class="max-md:hidden md:mx-8") 
+        +link("/", "Główna")
+        if user && user.role == "student"
+          +link('/label') Etykiety
+          +link('/book/add') Dodaj Książkę
+          +link('/library#books') Dostępne Książki
 
     nav.user.flex-none.m-auto
       if !user
@@ -29,3 +30,9 @@ nav.px-28.py-9.flex.z-10
                 a(href="/setup") Dodaj Konto
             li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75")
               a(href='/logout') Wyloguj
+            li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75 md:hidden")
+              a(href='/label') Etykiety
+            li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75 md:hidden")
+              a(href='/book/add') Dodaj Książkę
+            li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75 md:hidden")
+              a(href='/library#books') Dostępne Książki      
