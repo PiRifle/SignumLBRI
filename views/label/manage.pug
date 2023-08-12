@@ -5,7 +5,7 @@ include ../mixins/prebuild_blocks
 
 block content
     .container.mx-auto
-        +header() Zarządzaj Etykietami
+        +header()= language.website.headers.manage
         +divider()
         if listings 
             form(method="get", action="/label/print") 
@@ -31,12 +31,12 @@ block content
                                     td.px-6.py-3= listing.cost
                                     td.px-6.py-3= listing.label.print ? 'Tak' : "Nie"
                 .flex.flex-row.space-x-4.items-center.justify-center.m-4
-                    +button(type="submit") Wydrukuj
-                    +link(href="/book/add").my-auto Dodaj następną książkę
+                    +button(type="submit")= language.website.button.print
+                    +link(href="/book/add").my-auto= language.website.button.addNextBook
                                 
         else 
             div.text-center.mx-auto            
-                h6 Trochę tu pusto...
+                h6= language.website.empty
                 .flex.justify-center
-                    +a-button(href="/book/add").block.m-3.max-w-max Dodaj pierwszą książkę
+                    +a-button(href="/book/add").block.m-3.max-w-max= language.website.button.addFirstBook
                     

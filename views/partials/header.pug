@@ -44,9 +44,9 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
         ul.nav.navbar-nav
           if !user
             li.nav-item(class=(title === 'Login') ? 'active' : undefined)
-              a.nav-link(href='/login') Zaloguj Się
+              a.nav-link(href='/login')= language.website.button.login
             li.nav-item(class=(title === 'Create Account') ? 'active' : undefined)
-              a.nav-link(href='/signup') Zarejestruj się
+              a.nav-link(href='/signup')= language.website.button.signup
           else
             li.nav-item.dropdown#dropdownMenuButton1(class=(title === 'Account Management') ? 'active' : undefined)
               a.nav-link.dropdown-toggle(data-bs-toggle='dropdown' aria-expanded="false")
@@ -58,10 +58,10 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
                 i.caret
               ul.dropdown-menu(aria-labelledby="dropdownMenuButton1")
                 li.nav-item
-                  a.nav-link(href='/account') Moje Konto
+                  a.nav-link(href='/account')= language.website.button.myAccount
                 if user.isAdmin()
                   li.nav-item 
-                    a.nav-link(href="/setup") Dodaj Konto
+                    a.nav-link(href="/setup")= language.website.button.addAccount
                 li.dropdown-divider
                 li.nav-item
-                  a.nav-link(href='/logout') Wyloguj
+                  a.nav-link(href='/logout')= language.website.button.logout

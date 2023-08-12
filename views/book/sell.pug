@@ -6,7 +6,7 @@ include ../mixins/a
 
 block content
     div.container.mx-auto
-        +header Dodaj Książkę
+        +header= language.website.headers.sellBook
         +divider
         form(action="", method="post").register_book.mt-6
             input(type="text", name="cost" required)#currencyFormated.hidden
@@ -15,18 +15,18 @@ block content
                     img(class="data-[val-loaded]:visible data-[val-loaded]:opacity-100 data-[val-loaded]:h-[32rem] data-[val-loaded]:object-contain data-[val-loaded]:w-auto data-[val-loaded]:m-4").bookCover.invisible.opacity-0.transition-opacity.duration-150
                     div.grow
                         div
-                            +form_input("isbn", "text", "Podaj kod ISBN (Kod Kreskowy z tyłu książki)", "ISBN", required).numeric
+                            +form_input("isbn", "text", language.website.input.isbn.label, language.website.input.isbn.placeholder, required).numeric
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("title", "text", "Nazwa Książki", required)
+                            +form_input("title", "text", language.website.input.title.label,language.website.input.title.placeholder, required)
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("publisher", "text", "Wydawca", required)
+                            +form_input("publisher", "text", language.website.input.publisher.label,language.website.input.publisher.placeholder, required)
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("authors", "text", "Autorzy")
+                            +form_input("authors", "text", language.website.input.authors.label,language.website.input.authors.placeholder)
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("pubDate", "text", "Data Publikacji")
+                            +form_input("pubDate", "text", language.website.input.pubDate.label,language.website.input.pubDate.placeholder)
                 .dataLoad.text-center.hidden
                     //- span Ładowanie
                     i.fa-solid.fa-book.font-bold.ml-3.animate-ping
                 div.w-auto
                     +form_input("", "text", "Cena", required)#currency
-            +button(type="submit").mt-6 Wystaw
+            +button(type="submit").mt-6= language.website.button.sell

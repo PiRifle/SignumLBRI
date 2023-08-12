@@ -2,4 +2,9 @@ include ../mixins/a
 footer.mt-auto
   .container.flex.flex-row.justify-center.space-x-4.mx-auto
     +link("https://www.linkedin.com/in/piotr-czirnia-79a7401bb/") by Piotr Czirnia 
-    +link("/privacy") Polityka Prywatności
+    +link("/privacy")= language.website.button.privacyPolicy
+
+  form.flex.flex-row.my-auto.justify-center.space-x-2(action="/language", method="POST")
+    button(name="language", value="uk") Ukrainian
+    button(name="language", value="pl") Polish
+    button(name="language", value="en") English

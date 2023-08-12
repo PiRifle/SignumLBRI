@@ -8,14 +8,14 @@ nav(class="lg:px-28 lg:py-9 p-3 flex z-10")
       div(class="max-md:hidden md:mx-8") 
         +link("/", "Główna")
         if user && user.role == "student"
-          +link('/label') Etykiety
-          +link('/book/add') Dodaj Książkę
-          +link('/library#books') Dostępne Książki
+          +link('/label')= language.website.button.labels
+          +link('/book/add')= language.website.button.addBook
+          +link('/library#books')= language.website.button.availableBooks
 
     nav.user.flex-none.m-auto
       if !user
-        +link('/login') Zaloguj się 
-        +link('/signup') Zarejestruj Się 
+        +link('/login')= language.website.button.login
+        +link('/signup')= language.website.button.signup
       else
         a(id="profileDropdown", data-te-dropdown-toggle-ref, aria-expanded="false", data-te-offset=[15, 25])
           img.inline.w-12.rounded-full(src=(user.profile.picture || user.gravatar()), alt=(user.profile.name || user.email || user.id))
@@ -24,15 +24,15 @@ nav(class="lg:px-28 lg:py-9 p-3 flex z-10")
           //-   //- i.caret
           ul(class="absolute z-[1000] py-2 px-4 hidden min-w-max rounded-2xl backdrop-blur-xl bg-opacity-5 bg-white text-white [&[data-te-dropdown-show]]:block", aria-labelledby="profileDropdown", data-te-dropdown-menu-ref)
             li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75")
-              a(href='/account') Moje Konto
+              a(href='/account')= language.website.button.myAccount
             if user.isAdmin()
               li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75")
-                a(href="/setup") Dodaj Konto
+                a(href="/setup")= language.website.button.addAccount
             li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75")
-              a(href='/logout') Wyloguj
+              a(href='/logout')= language.website.button.logout
             li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75 md:hidden")
-              a(href='/label') Etykiety
+              a(href='/label')= language.website.button.labels
             li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75 md:hidden")
-              a(href='/book/add') Dodaj Książkę
+              a(href='/book/add')= language.website.button.addBook
             li(class="p-2 rounded-lg bg-transparent hover:bg-back-blue transition-colors duration-75 md:hidden")
-              a(href='/library#books') Dostępne Książki      
+              a(href='/library#books')= language.website.button.availableBooks

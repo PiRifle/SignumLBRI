@@ -5,7 +5,7 @@ include mixins/prebuild_blocks
 
 block content
     .container.mx-auto
-        +header() Twoje Książki
+        +header()= language.website.headers.books
         +divider()
 
         if bookListings
@@ -31,12 +31,12 @@ block content
                                 td
                                     p.px-6.py-3= bookListing.getStatusString(language)
                                 td 
-                                    +a-button(href=`/book/${bookListing._id}/manage`).block.m-3.w-max.mx-auto Zarządzaj
-            +a-button(href="/book/add").w-max.block.m-3 Dodaj następną książkę
+                                    +a-button(href=`/book/${bookListing._id}/manage`).block.m-3.w-max.mx-auto= language.website.button.manage
+            +a-button(href="/book/add").w-max.block.m-3= language.website.button.addNextBook
 
         else 
             div.text-center.mx-auto            
-                h6 Trochę tu pusto...
+                h6= language.website.empty
                 .flex.justify-center
-                    +a-button(href="/book/add").block.m-3.max-w-max Dodaj pierwszą książkę
+                    +a-button(href="/book/add").block.m-3.max-w-max= language.website.button.addFirstBook
                 

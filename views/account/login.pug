@@ -4,17 +4,17 @@ include ../mixins/prebuild_blocks
 
 block content
   .container.mx-auto.mt-16
-    +header() Zaloguj Się
+    +header()= language.website.headers.login
     +divider
     form(method='POST')
       input(type='hidden', name='_csrf', value=_csrf)
       div(class="md:w-2/5")
         .my-4
-          +form_input("email", "text", "Email", "Podaj swój Email")
-          +form_input("password", "password", "Hasło", "Podaj swoje hasło")
+          +form_input("email", "text", language.website.input.email.label, language.website.input.email.placeholder)
+          +form_input("password","password", language.website.input.password.label, language.website.input.password.placeholder)
         .mt-14
           +button(type='submit').mr-5
             i.fa.fa-user.mr-2
-            | Zaloguj się
-          a(href='/forgot') Zapomniałeś hasła?
+            | #{language.website.button.login}
+          a(href='/forgot')= language.website.button.forgotPasword
 

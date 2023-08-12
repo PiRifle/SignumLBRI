@@ -6,15 +6,15 @@ block content
   .container.mx-auto
     if !signup
       if setup
-        +header Witaj!
+        +header= language.website.headers.hello
         +divider
         p Stwórz konto administratora aby móc korzystać z programu!
       else 
-        +header Dodaj Konto!
+        +header= language.website.headers.addAccount
         +divider
         p Stwórz nowe konto użytkownika i rozszerz swój zespół :)
     else 
-        +header Witaj!
+        +header= language.website.headers.hello
         +divider
         p.-mt-8 Stwórz konto użytkownika aby móc sprzedać swoje książki
     div(class="md:w-3/5")
@@ -22,21 +22,21 @@ block content
         input(type='hidden', name='_csrf', value=_csrf)
         .my-4.flex.flex-wrap
           div(class="w-full md:w-1/2").px-2
-            +form_input("name", "text", "Imię", "Podaj Imię")(required, autofocus)
+            +form_input("name", "text", language.website.input.name.label, language.website.input.name.placeholder)(required, autofocus)
           div(class="w-full md:w-1/2").px-2
-            +form_input("surname", "text", "Nazwisko", "Podaj Nazwisko")(required)
+            +form_input("surname", "text", language.website.input.surname.label, language.website.input.surname.placeholder)(required)
           div(class="w-full").px-2
-            +form_input("email", "email", "E-Mail", "Podaj E-Mail")(required)
+            +form_input("email", "email", language.website.input.email.label, language.website.input.email.placeholder)(required)
           if !setup
             div(class="w-full").px-2
-              +form_input("phone", "phone", "Nr. Telefonu", "Podaj Numer Telefonu")(required)
+              +form_input("phone", "phone", language.website.input.email.phone.label, language.website.input.email.phone.placeholder)(required)
           div(class="w-full md:w-1/2").px-2
-            +form_input('password', 'password', 'Hasło', 'Podaj Hasło')(required)
+            +form_input('password', 'password', language.website.input.password.label, language.website.input.password.placeholder)(required)
           div(class="w-full md:w-1/2").px-2
-            +form_input('confirmPassword', 'password', 'Powtórz Hasło', 'Wpisz ponownie hasło')(required)
+            +form_input('confirmPassword', 'password', language.website.input.confirmPassword.label, language.website.input.confirmPassword.placeholder)(required)
           if !signup
             div(class="w-full").px-2
-              +form_select('role', 'role', 'Wybierz Rolę', 'Wybierz Rolę')(required)
+              +form_select('role', 'role', language.website.input.role.label,language.website.input.role.label.placeholder)(required)
                 if !setup
                   option seller 
                   option student
@@ -44,7 +44,7 @@ block content
                 option headadmin 
           if schools
             div(class="w-full").px-2
-              +form_select('school', 'school', 'Wybierz Szkołę', 'Wybierz Szkołę')(required)
+              +form_select('school', 'school', language.website.input.school.label, language.website.input.school.label.placeholder)(required)
                 each school in schools
                   option(value=school._id)= school.name 
           div.m-2
@@ -54,4 +54,4 @@ block content
         .mt-14
           +button(type='submit')
             i.fa.fa-user-plus.mr-2
-            | Signup
+            | #{language.website.button.signup}

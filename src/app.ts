@@ -24,7 +24,7 @@ import * as bookController from "./controllers/book";
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
 // import { languageMiddleware } from "./controllers/language";
-import { languageMiddleware } from "./controllers/language";
+import { languageMiddleware, changeLanguage } from "./controllers/language";
 
 // Create Express server
 const app = express();
@@ -119,6 +119,7 @@ app.use(performanceController.registerPerformance);
 app.get("/", passportConfig.isAnonymous, homeController.index);
 app.get("/privacy", homeController.policy);
 app.get("/library", bookController.getLibrary);
+app.post("/language", changeLanguage);
 app.get("/login", userController.getLogin);
 app.post("/login", userController.postLogin);
 app.get("/logout", passportConfig.isAuthenticated, userController.logout);

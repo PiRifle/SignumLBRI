@@ -1,77 +1,165 @@
 export { pl } from "./pl";
-export { ukr } from "./ukr";
+export { uk } from "./uk";
 export { en } from "./en";
-import { lang } from "./en";
 
-export type Language = typeof lang
+export interface Language {
+  mail: {
+    accountVerifyPrompt: {
+      subject: string,
+      text: string,
+    },
+    accountVerified: {
+      subject: string,
+      text: string,
+    },
+    passwordChanged: {
+      subject: "",
+      text: string,
+    },
+  },
+  titles: {
+    login: string,
+    setup: string,
+    signup: string,
+    manage: string,
+    forgotPassword: string,
+    sellBook: string,
+    printLabel: string,
+    library: string,
+    adminDashboard: string,
+    resetPassword: string
+  },
+  statuses: {
+    registered: string,
+    printed_label: string,
+    accepted: string,
+    sold: string,
+    given_money: string,
+    canceled: string,
+    deleted: string,
+  },
+  success: {
+    schoolCreated: string,
+    activationMailSent: string,
+    listingSold: string,
+    listingsSold: string,
+    listingDeleted: string,
+    listingCancelled: string,
+    moneyGiven: string,
+    listingAccepted: string,
+    listingCreated: string,
+    accountInfoUpdated: string,
 
-// export interface Language {
-//   titles: {
-//     login: string;
-//     setup: string;
-//     signup: string;
-//     manage: string;
-//     forgotPassword: string;
-//     sellBook: string;
-//     printLabel: string;
-//     library: string;    
-//   };
-//   success: {
-//     listingSold: string;
-//     listingsSold: string;
-//     listingDeleted: string;
-//     listingCancelled: string;
-//     moneyGiven: string;
-//     listingAccepted: string;
-//     listingCreated: string;
-//     loggedIn: string;
-//     accountVerifyPrompt: string;
-//     passwordChanged: string;
-//     accountDeleted: string;
-//     accountVerified: string;
-//     passwordResetInfo: string;
-//     accountInfoUpdated: string;
-//   };
-//   statuses: {
-//     registered: string;
-//     printed_label: string;
-//     accepted: string;
-//     sold: string;
-//     given_money: string;
-//     canceled: string;
-//     deleted: string;
-//   },
-//   errors: {
-//     listingDoesntExist: string;
-//     notLoggedIn: string;
-//     listingCancelForbidden: string;
-//     validate: {
-//       emailInvalid: string;
-//       nameNotProvided: string;
-//       surnameNotProvided: string;
-//       passwordInvalid: string;
-//       passwordNotMatch: string;
-//       passwordBlank: string;
-//       tokenNotProvided: string;
-//       tokenInvalid: string;
-//       passwordTokenInvalid: string;
-//       isbnInvalid: string;
-//       phoneInvalid: string;
-//       pageNotProvided: string;
-//       bookTitleBlank: string;
-//       bookPublisherBlank: string;
-//       bookPublicationDateBlank: string;
-//       noPriceProvided: string;
-//       listingIdBlank: string;
-//       schoolNameBlank: string;  
-//       schoolstreetBlank: string;  
-//       schoolComissionMultiplierInvalid: string; 
-//     };
-//     emailNotSent: string;
-//     accountAlreadyExists: string;
-//     accountCreationPermissionDenied: string;
-//     roleNotExisting: string;
-//     internal: string;
-//     accountDoesntExist: string;
-//   };
-// }
+    loggedIn: string,
+    accountVerifyPrompt:
+      string,
+    accountVerified: string,
+    passwordChanged: string,
+    accountDeleted: string,
+    passwordResetInfo:
+      string,
+  },
+  info: {
+    registrationDisabled: string,
+  },
+  errors: {
+    permissionDenied: string,
+    notLoggedIn: string,
+    listingDoesntExist: string,
+    listingCancelForbidden: string,
+    roleNotExisting: string,
+    internal: string,
+    passwordResetTokenInvalid: string,
+    accountCreationPermissionDenied: string,
+    accountAlreadyExists: string,
+    emailNotSent: string,
+    accountDoesntExist: string,
+    validate: {
+      schoolNameBlank: string,
+      schoolstreetBlank: string,
+      schoolComissionMultiplierInvalid: string,
+
+      isbnInvalid: string,
+      phoneInvalid: string,
+      bookTitleBlank: string,
+      bookPublisherBlank: string,
+      bookPublicationDateBlank: string,
+      pageNotProvided: string,
+      noPriceProvided: string,
+      listingIdBlank: string,
+      emailInvalid: string,
+      nameNotProvided: string,
+      surnameNotProvided: string,
+      passwordBlank: string,
+      passwordInvalid: string,
+      passwordNotMatch: string,
+      tokenNotProvided: string,
+      tokenInvalid: string,
+      passwordTokenInvalid: string,
+    },
+  },
+  website: {
+    title: string,
+    signature: string,
+    description: string,
+    creator: string,
+    empty: string,
+    headers: {
+      books: string,
+      login: string,
+      sellBook: string,
+      hello: string,
+      addAccount: string,
+      privacyPolicy: string,
+      manage: string,
+    },
+    button: {
+      manage: string,
+      addFirstBook: string,
+      addNextBook: string,
+      addBook: string,
+      availableBooks: string,
+      registry: string,
+      registerBook: string,
+      delete: string,
+      accept: string,
+      sell: string,
+      logout: string,
+      myAccount: string,
+      addAccount: string,
+      cancel: string,
+      back: string,
+      next: string,
+      previous: string,
+      labels: string,
+      send: string,
+      analitycs: string,
+      resetPassword: string,
+      forgotPassword: string,
+      login: string,
+      signup: string,
+      register: string,
+      resendPassword: string,
+      updateProfile: string,
+      privacyPolicy: string,
+      changePassword: string,
+      print: string,
+      printLabel: string
+    },
+    input: {
+      email: { placeholder: string, label: string },
+      password: { placeholder: string, label: string },
+      name: { placeholder: string, label: string },
+      surname: { placeholder: string, label: string },
+      phone: { placeholder: string, label: string },
+      confirmPassword: { placeholder: string, label: string },
+      isbn: { placeholder: string, label: string },
+      title: { placeholder: string, label: string },
+      publisher: { placeholder: string, label: string },
+      authors: { placeholder: string, label: string },
+      pubDate: { placeholder: string, label: string },
+      role: { placeholder: string, label: string },
+      school: { placeholder: string, label: string }
+    },
+  }
+}
