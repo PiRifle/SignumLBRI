@@ -10,6 +10,7 @@ import { UserDocument } from "../models/User";
 import { generateBarcode } from "../util/barcode";
 import { calculateComission, fetchAnonTopBooks, fetchTopBooks } from "../util/book";
 import { School, SchoolDocument } from "../models/School";
+import { shortenString } from "../utils";
 
 export async function getFillBookData(
   req: Request,
@@ -81,13 +82,13 @@ export async function postSellBook(
     .isLength({ min: 13, max: 13 })
     .isEAN()
     .run(req);
-  await check("title", req.language.errors.validate.bookTitleBlank).exists().isString().isLength({min:1}).run(req);
-  await check("publisher", req.language.errors.validate.bookPublisherBlank).exists().run(req);
-  await check("pubDate", req.language.errors.validate.bookPublicationDateBlank).isNumeric().run(req);
+  await check("title", req.language.errors.validate.bookTitleBlank).exists().isString().isLength({min:1, max:999}).run(req);
+  await check("publisher", req.language.errors.validate.bookPublisherBlank).exists().isLength({max:999}).run(req);
+  await check("pubDate", req.language.errors.validate.bookPublicationDateBlank).isNumeric().isInt({max:9999, min:0}).run(req);
   await check("cost", req.language.errors.validate.noPriceProvided)
     .exists()
     .isNumeric()
-    .isFloat()
+    .isFloat({min:1, max: 9999})
     .run(req);
   const errors = validationResult(req);
   
@@ -98,8 +99,8 @@ export async function postSellBook(
   const [findErr, book] = await Book.findOneAndUpdate(
     { isbn: sellingData.isbn },
     {
-      title: sellingData.title,
-      publisher: sellingData.publisher || "",
+      title: shortenString(sellingData.title, 99),
+      publisher: shortenString(sellingData.publisher, 99) || "",
       authors: sellingData.authors.split(",") || [""],
       pubDate: sellingData.pubDate || "",
     },
@@ -114,7 +115,6 @@ export async function postSellBook(
 
   console.log(school);
   
-
   const listing = new BookListing({
     commission: calculateComission(sellingData.cost, 2, (school as SchoolDocument).markup || 0.07),
     school: school,
@@ -150,7 +150,7 @@ export const getManageBook = (
   req: Request & { user: UserDocument },
   res: Response,
 ) => {
-  check("id", req.language.errors.validate.listingIdBlank).exists().run(req);
+  check("id", req.language.errors.validate.listingIdBlank).exists().isNumeric().run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) return req.flashError(null, errors.array());
 
@@ -308,7 +308,7 @@ export async function getFindListingApp(
   req: Request,
   res: Response,
 ): Promise<void> {
-  await check("itemID", req.language.errors.validate.listingIdBlank).exists().run(req);
+  await check("itemID", req.language.errors.validate.listingIdBlank).exists().isLength({min:13}).run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) return req.flashError(null, errors.array());
 
@@ -375,8 +375,8 @@ export async function sellBook(req: Request, res: Response): Promise<void> {
     .isLength({ min: 13, max: 13 })
     .isNumeric()
     .run(req);
-  await check("name", req.language.errors.validate.nameNotProvided).exists().run(req);
-  await check("surname", req.language.errors.validate.surnameNotProvided).exists().run(req);
+  await check("name", req.language.errors.validate.nameNotProvided).exists().isLength({min:1, max:99}).run(req);
+  await check("surname", req.language.errors.validate.surnameNotProvided).exists().isLength({min:1, max:99}).run(req);
   await check("email", req.language.errors.validate.emailInvalid).isEmail().run(req);
   await check("phone", req.language.errors.validate.phoneInvalid)
     .isMobilePhone("pl-PL")
@@ -416,7 +416,7 @@ export async function sellBook(req: Request, res: Response): Promise<void> {
 }
 
 export const acceptBook = async (req: Request, res: Response): Promise<void> => {
-  check("id", req.language.errors.validate.listingIdBlank).exists().run(req);
+  check("id", req.language.errors.validate.listingIdBlank).exists().isLength({min:13, max:13}).run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) return req.flashError(null, errors.array());
 
@@ -432,7 +432,7 @@ export const acceptBook = async (req: Request, res: Response): Promise<void> => 
 };
 
 export const cancelBook = (req: Request, res: Response): void => {
-  check("id", req.language.errors.validate.listingIdBlank).exists().run(req);
+  check("id", req.language.errors.validate.listingIdBlank).exists().isLength({min:13, max:13}).run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) return req.flashError(null, errors.array());
 
@@ -466,7 +466,7 @@ export const getLibrary = async (
 };
 
 export const deleteBook = (req: Request, res: Response): void => {
-  check("id", req.language.errors.validate.listingIdBlank).exists().run(req);
+  check("id", req.language.errors.validate.listingIdBlank).exists().isLength({min:13, max:13}).run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) return req.flashError(null, errors.array());
 
@@ -490,8 +490,8 @@ export function getBulkSell(req: Request, res: Response) {
 }
 
 export async function postBulkSell(req: Request, res: Response) {
-  await check("name", req.language.errors.validate.nameNotProvided).exists().run(req);
-  await check("surname", req.language.errors.validate.surnameNotProvided).exists().run(req);
+  await check("name", req.language.errors.validate.nameNotProvided).exists().isLength({min:1, max:99}).run(req);
+  await check("surname", req.language.errors.validate.surnameNotProvided).exists().isLength({min:1, max:99}).run(req);
   await check("email", req.language.errors.validate.emailInvalid).isEmail().run(req);
   await check("phone", req.language.errors.validate.phoneInvalid)
     .isMobilePhone("pl-PL")

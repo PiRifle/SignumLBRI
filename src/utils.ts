@@ -25,3 +25,7 @@ export function randomPick<T>(list: T[]): T | null {
     const randomIndex = Math.floor(Math.random() * list.length);
     return list[randomIndex];
 }
+
+export function shortenString(string: string, max_len: number):string {
+  return string.length > max_len ? string.substring(0, max_len) + "..." : string
+}

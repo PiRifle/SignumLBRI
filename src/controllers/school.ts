@@ -5,6 +5,7 @@ import multer, { memoryStorage } from "multer";
 import path from "path";
 import crypto from "crypto";
 import sharp from "sharp";
+import { shortenString } from "../utils";
 
 const storage = multer({
   storage: memoryStorage(),
@@ -45,11 +46,11 @@ export const postRegisterSchool = async (req: Request, res: Response) => {
 
   await check("name", req.language.errors.validate.schoolNameBlank)
     .exists()
-    .isLength({ min: 1 })
+    .isLength({ min: 1, max:99 })
     .run(req);
   await check("street", req.language.errors.validate.schoolstreetBlank)
     .exists()
-    .isLength({ min: 1 })
+    .isLength({ min: 1, max:99 })
     .run(req);
 
   const errors = validationResult(req);
@@ -59,9 +60,9 @@ export const postRegisterSchool = async (req: Request, res: Response) => {
   console.log(req.body);
 
   const school = new School({
-    name: req.body.name,
-    longName: req.body.longname || req.body.name,
-    street: req.body.street,
+    name: shortenString(req.body.name, 99),
+    longName: shortenString(req.body.longname || req.body.name, 99),
+    street: shortenString(req.body.street, 99),
     markup: req.body.comission
   });
 

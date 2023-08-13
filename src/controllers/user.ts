@@ -174,6 +174,10 @@ export const postSignup = async (
       msg: req.language.errors.accountCreationPermissionDenied,
     });
     return res.redirect("/");
+  }else{
+    check("phone", req.language.errors.validate.phoneInvalid)
+    .isMobilePhone("pl-PL")
+    .run(req);
   }
 
   await check("email", req.language.errors.validate.emailInvalid)
@@ -181,9 +185,11 @@ export const postSignup = async (
     .run(req);
   await check("name", req.language.errors.validate.nameNotProvided)
     .exists()
+    .isLength({ min: 1, max:99 })
     .run(req);
   await check("surname", req.language.errors.validate.surnameNotProvided)
     .exists()
+    .isLength({ min: 1, max:99 })
     .run(req);
   await check("password", req.language.errors.validate.passwordInvalid)
     .isLength({ min: 4 })

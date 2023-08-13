@@ -22,14 +22,14 @@ block content
         input(type='hidden', name='_csrf', value=_csrf)
         .my-4.flex.flex-wrap
           div(class="w-full md:w-1/2").px-2
-            +form_input("name", "text", language.website.input.name.label, language.website.input.name.placeholder)(required, autofocus)
+            +form_input("name", "text", language.website.input.name.label, language.website.input.name.placeholder)(maxlength="20",required, autofocus)
           div(class="w-full md:w-1/2").px-2
-            +form_input("surname", "text", language.website.input.surname.label, language.website.input.surname.placeholder)(required)
+            +form_input("surname", "text", language.website.input.surname.label, language.website.input.surname.placeholder)(maxlength="20", required)
           div(class="w-full").px-2
             +form_input("email", "email", language.website.input.email.label, language.website.input.email.placeholder)(required)
           if !setup
             div(class="w-full").px-2
-              +form_input("phone", "phone", language.website.input.email.phone.label, language.website.input.email.phone.placeholder)(required)
+              +form_input("phone", "phone", language.website.input.phone.label, language.website.input.phone.placeholder)(required)
           div(class="w-full md:w-1/2").px-2
             +form_input('password', 'password', language.website.input.password.label, language.website.input.password.placeholder)(required)
           div(class="w-full md:w-1/2").px-2

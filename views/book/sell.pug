@@ -15,15 +15,15 @@ block content
                     img(class="data-[val-loaded]:visible data-[val-loaded]:opacity-100 data-[val-loaded]:h-[32rem] data-[val-loaded]:object-contain data-[val-loaded]:w-auto data-[val-loaded]:m-4").bookCover.invisible.opacity-0.transition-opacity.duration-150
                     div.grow
                         div
-                            +form_input("isbn", "text", language.website.input.isbn.label, language.website.input.isbn.placeholder, required).numeric
+                            +form_input("isbn", "text", language.website.input.isbn.label, language.website.input.isbn.placeholder,maxlength="13", required).numeric
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("title", "text", language.website.input.title.label,language.website.input.title.placeholder, required)
+                            +form_input("title", "text", language.website.input.title.label,language.website.input.title.placeholder, required,maxlength="99")
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("publisher", "text", language.website.input.publisher.label,language.website.input.publisher.placeholder, required)
+                            +form_input("publisher", "text", language.website.input.publisher.label,language.website.input.publisher.placeholder, required,maxlength="99")
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("authors", "text", language.website.input.authors.label,language.website.input.authors.placeholder)
+                            +form_input("authors", "text", language.website.input.authors.label,language.website.input.authors.placeholder, maxlength="99")
                         div.h-0.opacity-0.transition-opacity.duration-150(class="data-[val-loaded]:h-auto data-[val-loaded]:opacity-100")
-                            +form_input("pubDate", "text", language.website.input.pubDate.label,language.website.input.pubDate.placeholder)
+                            +form_input("pubDate", "text", language.website.input.pubDate.label,language.website.input.pubDate.placeholder, maxlength="99")
                 .dataLoad.text-center.hidden
                     //- span Ładowanie
                     i.fa-solid.fa-book.font-bold.ml-3.animate-ping

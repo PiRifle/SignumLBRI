@@ -30,9 +30,9 @@ html(lang='')
                     .col !{item.label.barcode}
                     .col
                         p 
-                            b=item.book.title
+                            b=item.book.title.substring(0,40)
                             span.ms-3=item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
-                        p imię: #{item.bookOwner.profile.name} #{item.bookOwner.profile.surname}
+                        p imię: #{item.bookOwner.profile.name.substring(0, 20)} #{item.bookOwner.profile.surname.substring(0, 20)}
 
         //- script(src='/js/lib/jquery-3.6.1.min.js')
         //- script(src='/js/lib/bootstrap.min.js')

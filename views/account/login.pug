@@ -10,7 +10,7 @@ block content
       input(type='hidden', name='_csrf', value=_csrf)
       div(class="md:w-2/5")
         .my-4
-          +form_input("email", "text", language.website.input.email.label, language.website.input.email.placeholder)
+          +form_input("email", "text", language.website.input.email.label, language.website.input.email.placeholder)(maxlength="99")
           +form_input("password","password", language.website.input.password.label, language.website.input.password.placeholder)
         .mt-14
           +button(type='submit').mr-5

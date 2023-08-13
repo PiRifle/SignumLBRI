@@ -32,7 +32,7 @@ block content
                         each bookEntry in schoolEntry.book
                             div.relative.border-2.border-primary.rounded-lg.p-6.m-5(class="w-[17rem] min-w-[17rem] h-[28rem]")
                                 //- img(src=bookEntry.book.image).mx-auto.min-h-2xl.h-2xl
-                                div.w-full.m-2(class="h-2/3", style=`background-image: url(${bookEntry.book.image}); background-size: cover;`)
+                                div.w-full.mb-2(class="h-2/3", style=`background-image: url(${bookEntry.book.image}); background-size: cover;`)
                                 div.font-bold.text-lg.overflow-y-auto.overflow-y-auto.relative= bookEntry.book.title && bookEntry.book.title.length > 80 ? bookEntry.book.title.substring(0, 80 - 3) + "..." : bookEntry.book.title || ""
                                 div.absolute.bottom-0.right-0.bg-primary.rounded-full.px-5.py-1.m-2.text-sm.font-thin #{bookEntry.available} sztuk
 
