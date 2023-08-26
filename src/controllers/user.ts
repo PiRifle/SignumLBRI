@@ -17,6 +17,7 @@ import {
   MAIL_USER,
 } from "../util/secrets";
 import { School } from "../models/School";
+import { ObjectID } from "bson";
 
 /**
  * Login page.
@@ -167,14 +168,26 @@ export const postSignup = async (
     return res.redirect("/");
   }
 
-  if (
-    !(userCount == 0 || (req.user && req.user.isAdmin())) &&
-    ["headadmin", "admin", "seller"].includes(req.body.role)
-  ) {
+  if(!(userCount == 0 || (req.user && req.user.isAdmin()))){
     check("phone", req.language.errors.validate.phoneInvalid)
     .isMobilePhone("pl-PL")
     .run(req);
-    
+  }
+
+
+  // check if user has permissions to create account
+  if (
+    !(userCount == 0 || (req.user && req.user.isAdmin())) &&
+    ["headadmin", "admin", "seller"].includes(req.body.role)
+  ) {    
+    req.flash("errors", {
+      msg: req.language.errors.accountCreationPermissionDenied,
+    });
+    return res.redirect("/");
+  }
+
+  // check if admin is from same school
+  if((req.user && req.body.school && (req.user.school as any) != new ObjectID(req.body.school)) && !req.user.isHeadAdmin()){ 
     req.flash("errors", {
       msg: req.language.errors.accountCreationPermissionDenied,
     });
@@ -227,7 +240,7 @@ export const postSignup = async (
       phone: req.body.phone,
     },
     role: req.body.role,
-    accountVerifyToken: token,
+    ...(IS_PROD && {accountVerifyToken: token}),
     ...(req.body.school && { school: req.body.school }),
   });
 

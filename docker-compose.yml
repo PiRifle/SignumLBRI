@@ -4,6 +4,20 @@ services:
   mongo:
     image: mongo
     restart: always
+    ports:
+     - 22222:27017
+  nginx:
+    image: nginx
+    environment:
+      PROXY_IP: http://signumlbri:3000/
+    ports:
+      - 800:80
+      - 4430:443
+    volumes:
+      - ./default.conf:/etc/nginx/templates/default.conf.template
+      - ./certs/:/etc/nginx/ssl/
+      # - /etc/letsencrypt/live/targi.zsel.opole.pl/fullchain.pem:/etc/nginx/ssl/cert.crt
+      # - /etc/letsencrypt/live/targi.zsel.opole.pl/privkey.pem:/etc/nginx/ssl/cert.key
   signumlbri:
     image: signumlbri
     build:
@@ -15,7 +29,9 @@ services:
       MAIL_USER:
       MAIL_SHOWMAIL:
       MAIL_PASSWORD:
-      NODE_ENV: production
+      # NODE_ENV: production
+      NODE_ENV: developement
       MONGODB_URI: mongodb://mongo:27017/
-    ports:
-      - 3000:3000
+      MONGODB_URI_LOCAL: mongodb://mongo:27017/
+    # ports:
+    #   - 3000:3000

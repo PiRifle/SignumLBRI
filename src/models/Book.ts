@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import _ from "mongoose-paginate-v2";
-import {stringify} from "querystring"
+import {stringify} from "querystring";
 export type BookDocument = mongoose.Document & {
   title: string;
   publisher: string;
@@ -25,7 +25,7 @@ const bookSchema = new mongoose.Schema<BookDocument>(
 );
 
 bookSchema.methods.getImageLink = function(args:any = {}){
-  return `/book/${this.id}/image?${stringify(args)}`
-}
+  return `/book/${this.id}/image?${stringify(args)}`;
+};
 
 export const Book = mongoose.model<BookDocument>("Book", bookSchema);

@@ -27,7 +27,9 @@ block content
         section#books.min-h-screen.container.mx-auto.my-6
             each schoolEntry in data
                 div.my-12
-                    h1.text-4xl.font-bold= schoolEntry.school.name
+                    h1.text-4xl.font-bold
+                        img(src=`/school/${schoolEntry.school._id}/logo?width=80&height=80&quality=60`, class="rounded-full inline-block m-4")
+                        span= schoolEntry.school.name
                     .flex.flex-row.space-x-6.overflow-x-auto.overflow-y-hidden
                         each bookEntry in schoolEntry.book
                             div.relative.border-2.border-primary.rounded-lg.p-6.m-5(class="w-[17rem] min-w-[17rem] h-[28rem]")

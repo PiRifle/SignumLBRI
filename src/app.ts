@@ -199,7 +199,7 @@ app.get(
   bookController.getFillBookData,
 );
 
-app.get("/book/:id/image", imageController.getBookCover)
+app.get("/book/:id/image", imageController.getBookCover);
 
 app.get(
   "/book/registry",
@@ -289,7 +289,7 @@ app.post(
   schoolController.postRegisterSchool,
 );
 
-app.get("/school/:schoolID/logo", imageController.getSchoolLogo)
+app.get("/school/:schoolID/logo", imageController.getSchoolLogo);
 
 const adminApiRoutes = express.Router();
 

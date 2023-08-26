@@ -26,7 +26,7 @@ const schoolSchema = new mongoose.Schema<SchoolDocument>(
 
 schoolSchema.methods.getIcon = function (args:any) {
   if (this.icon) {
-    return `/school/${this.id}/logo?${stringify(args)}`
+    return `/school/${this.id}/logo?${stringify(args)}`;
   } else {
     const md5 = crypto.createHash("md5").update(this.name).digest("hex");
     return `https://gravatar.com/avatar/${md5}?s=${args.width || args.height || 200}&d=retro`;

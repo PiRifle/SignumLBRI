@@ -22,10 +22,10 @@ export const getSchoolLogo = async (req: Request<{ schoolID: string }, null, nul
 
         let out_w = img_w;
         let out_h = img_h;
-        let out_q = Number(quality)
+        let out_q = Number(quality);
 
         if (!out_q){
-            out_q = 100
+            out_q = 100;
         }
 
         if(out_q > 100 && out_q < 1){
@@ -73,10 +73,10 @@ export const getBookCover = async (req: Request<{ id: string }, null, null, { he
 
         let out_w = img_w;
         let out_h = img_h;
-        let out_q = Number(quality)
+        let out_q = Number(quality);
 
         if (!out_q){
-            out_q = 100
+            out_q = 100;
         }
 
         if(out_q > 100 && out_q < 1){
