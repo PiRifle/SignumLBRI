@@ -22,6 +22,7 @@ export const MAIL_SHOWMAIL = process.env.MAIL_SHOWMAIL;
 export const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
 export const ENVIRONMENT = process.env.NODE_ENV;
 const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
+export const IS_PROD = prod;
 
 export const SESSION_SECRET = process.env["SESSION_SECRET"];
 export const MONGODB_URI = prod

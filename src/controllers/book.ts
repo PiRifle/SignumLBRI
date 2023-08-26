@@ -113,7 +113,7 @@ export async function postSellBook(
 
   if (schoolFindErr) return req.flashError(schoolFindErr, req.language.errors.internal);
 
-  console.log(school);
+  // console.log(school);
   
   const listing = new BookListing({
     commission: calculateComission(sellingData.cost, 2, (school as SchoolDocument).markup || 0.07),
@@ -161,7 +161,7 @@ export const getManageBook = (
     .exec((err: Error, listing: BookListingDocument) => {
       if (err) return req.flashError(err, req.language.errors.internal);
       if (!listing) return req.flashError(null, req.language.errors.listingDoesntExist);
-      console.log(req.user.isHeadAdmin());
+      // console.log(req.user.isHeadAdmin());
       return res.render( res.locals.device.mobile() ? "book/editBookMobile" : "book/editBook", {
         item: listing,
         edit: (req.user.isSeller() && req.user.school == listing.school.id) || req.user.isHeadAdmin(),

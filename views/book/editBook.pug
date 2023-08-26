@@ -109,7 +109,7 @@ block content
             span @ #{item.school.street}
         div.d-flex.flex-row
             div
-                img(style="width: 200px", src=item.book.image).mx-4
+                img(style="width: 200px", src=item.book.getImageLink({width: 200})).mx-4
             .col.m-0.p-0.pl-3
                 h5
                     b= item.book.authors.join(", ")

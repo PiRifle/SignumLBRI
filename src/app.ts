@@ -17,9 +17,12 @@ import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
 import * as adminController from "./controllers/admin";
 import * as schoolController from "./controllers/school";
+import * as errorController from "./controllers/errors";
 // import * as apiController from "./controllers/api";
 // import * as contactController from "./controllers/contact";
 import * as bookController from "./controllers/book";
+
+import * as imageController from "./controllers/image";
 
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
@@ -118,6 +121,7 @@ app.use(performanceController.registerPerformance);
 // app.post("/contact", contactController.postContact);
 app.get("/", passportConfig.isAnonymous, homeController.index);
 app.get("/privacy", homeController.policy);
+app.post("/error/send", errorController.postError);
 app.get("/library", bookController.getLibrary);
 app.post("/language", changeLanguage);
 app.get("/login", userController.getLogin);
@@ -188,11 +192,15 @@ app.post(
   passportConfig.isAuthenticated,
   bookController.postSellBook,
 );
+
 app.get(
   "/book/fromisbn",
   passportConfig.isAuthenticated,
   bookController.getFillBookData,
 );
+
+app.get("/book/:id/image", imageController.getBookCover)
+
 app.get(
   "/book/registry",
   passportConfig.isAuthenticated,
@@ -280,6 +288,8 @@ app.post(
   passportConfig.isAdmin,
   schoolController.postRegisterSchool,
 );
+
+app.get("/school/:schoolID/logo", imageController.getSchoolLogo)
 
 const adminApiRoutes = express.Router();
 

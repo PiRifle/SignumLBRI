@@ -102,7 +102,7 @@ block content
         div.d-flex.flex-column
             div(style="height: 30px; box-shadow: 0px 10px 20px white")
             .container(style="width: 100%; z-index: -1;  top: 10%").position-sticky
-                img(style="width: 100%;", src=item.book.image)
+                img(style="width: 100%;", src=item.book.getImageLink())
             .p-auto.bg-white
                 div(style="height: 30px; box-shadow: 0px -10px 30px white")
                 h3 Książka 
@@ -147,8 +147,8 @@ block content
                                 if user.isSeller()
                                     if (item.status != "deleted") && (item.status != "canceled")
                                         if (item.status == "registered" || item.status == "printed_label")
-                                            button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1= language.website.button.accept}
+                                            button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.m-1= language.website.button.accept
                                         else if (item.status != "sold") 
-                                            button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1= language.website.button.sell}
+                                            button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1= language.website.button.sell
                             else if (item.status == "registered") || (item.status == "printed_label")
                                 button(data-bs-toggle="modal" data-bs-target="#cancelModal").btn.btn-danger.m-1= language.website.button.cancel

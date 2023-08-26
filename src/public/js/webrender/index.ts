@@ -76,10 +76,10 @@ export async function setupRenderer(): Promise<any> {
     camera.rotation.copy(model.cameras[0].rotation)
     scene.add(model.scene)
     
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    const renderer = new THREE.WebGLRenderer({ antialias: false })
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(Math.min(window.innerWidth, window.innerHeight), Math.min(window.innerWidth, window.innerHeight))
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio/1.5, 2/1.5))
     if (!container) return null;
     container.append(renderer.domElement)
     window.addEventListener("resize", onWindowResize, false)
@@ -111,6 +111,7 @@ export async function setupRenderer(): Promise<any> {
     // renderer.shadowMap.type = THREE.VSMShadowMap
     const rotx = bookOBJ!.rotation.x
     const roty = bookOBJ!.rotation.y
+
     function animate() {
         requestAnimationFrame(animate);
         if (bookOBJ) {
@@ -123,6 +124,7 @@ export async function setupRenderer(): Promise<any> {
 
             // bookOBJ.rotation.z = THREE.MathUtils.degToRad(deg.y)
             bookOBJ.rotation.y = -THREE.MathUtils.degToRad(deg.x)/5 + roty
+
             // bookOBJ.rotation.z = THREE.MathUtils.degToRad(deg.z)
         }
         composer.render()

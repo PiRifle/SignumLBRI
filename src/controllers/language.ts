@@ -21,7 +21,7 @@ export function languageMiddleware(
     }
   }
     res.locals.language = req.language;
-    console.log(req.session.usesLang);
+    // console.log(req.session.usesLang);
     next();
 }
 

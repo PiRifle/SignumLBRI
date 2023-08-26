@@ -11,10 +11,10 @@ block content
                         p.text-white.text-xl.my-4.max-w-2xl(class="max-md:text-base max-md:max-w-none max-md:w-full max-md:my-2")= language.website.description 
                             small.italic.text-gray-400= language.website.creator
                         div.flex.mt-20.justify-center.align-center.space-x-8
-                            +a-button("/addbook")= language.website.button.addBook
+                            +a-button("/book/add")= language.website.button.addBook
                             +link("#books").no-override.my-auto= language.website.button.availableBook
                     if !device.mobile()
-                        div.w-96.h-96.relative(class="sm:max-lg:hidden",)
+                        div.w-96.h-96.relative(class="sm:max-lg:hidden", style="filter:blur(1px)")
                             div.book-render.w-max.absolute.opacity-0.transition-opacity.duration-300(class="-translate-x-1/2 left-1/2 -translate-y-1/2 top-1/2 data-[obj-loaded]:opacity-100")
                 if !device.mobile()
                     div(class="pointer-events-none absolute left-1/3 bottom-14 -z-10")
@@ -23,8 +23,8 @@ block content
                         div(class="h-[600px] w-[600px] -z-10 bg-secondary bg-opacity-50 rounded-full blur-[8rem]")
                     div(class="pointer-events-none absolute left-[55%] top-[35%] -z-10")
                         div(class="h-96 w-96 -z-10 bg-white bg-opacity-70 rounded-full blur-[8rem]")
-    section#books.min-h-screen.container.mx-auto.my-6
-        if data
+    if data.length
+        section#books.min-h-screen.container.mx-auto.my-6
             each schoolEntry in data
                 div.my-12
                     h1.text-4xl.font-bold= schoolEntry.school.name
@@ -32,7 +32,7 @@ block content
                         each bookEntry in schoolEntry.book
                             div.relative.border-2.border-primary.rounded-lg.p-6.m-5(class="w-[17rem] min-w-[17rem] h-[28rem]")
                                 //- img(src=bookEntry.book.image).mx-auto.min-h-2xl.h-2xl
-                                div.w-full.mb-2(class="h-2/3", style=`background-image: url(${bookEntry.book.image}); background-size: cover;`)
+                                div.w-full.mb-2(class="h-2/3", style=`background-image: url(/book/${bookEntry.book._id}/image); background-size: cover;`)
                                 div.font-bold.text-lg.overflow-y-auto.overflow-y-auto.relative= bookEntry.book.title && bookEntry.book.title.length > 80 ? bookEntry.book.title.substring(0, 80 - 3) + "..." : bookEntry.book.title || ""
                                 div.absolute.bottom-0.right-0.bg-primary.rounded-full.px-5.py-1.m-2.text-sm.font-thin #{bookEntry.available} sztuk
 

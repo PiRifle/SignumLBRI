@@ -27,5 +27,9 @@ export function randomPick<T>(list: T[]): T | null {
 }
 
 export function shortenString(string: string, max_len: number):string {
-  return string.length > max_len ? string.substring(0, max_len) + "..." : string
+  return string.length > max_len ? string.substring(0, max_len) + "..." : string;
+}
+
+export function applyRatio(x: number, y: number, new_x: number){
+  return y*(x/new_x);
 }

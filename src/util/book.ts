@@ -79,7 +79,6 @@ export async function fetchAnonTopBooks(): Promise<
     }[]
   }[]
 > {
-  console.log("MIAAUUU");
   const result = await BookListing.aggregate([
     {
       $group: {

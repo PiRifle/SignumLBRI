@@ -1,5 +1,7 @@
 import crypto from "crypto";
 import mongoose from "mongoose";
+import { stringify } from "querystring";
+
 export type SchoolDocument = mongoose.Document & {
   name: string;
   longName: string;
@@ -7,7 +9,7 @@ export type SchoolDocument = mongoose.Document & {
   icon: string;
   color: string;
   markup: number;
-  getIcon: (host: string) => string;
+  getIcon: ({width, height, quality}: {width?: number, height?: number, quality?: number}) => string;
 };
 
 const schoolSchema = new mongoose.Schema<SchoolDocument>(
@@ -22,12 +24,12 @@ const schoolSchema = new mongoose.Schema<SchoolDocument>(
   { timestamps: true },
 );
 
-schoolSchema.methods.getIcon = function (host: string) {
+schoolSchema.methods.getIcon = function (args:any) {
   if (this.icon) {
-    return `${host}/uploads/${this.icon}`;
+    return `/school/${this.id}/logo?${stringify(args)}`
   } else {
     const md5 = crypto.createHash("md5").update(this.name).digest("hex");
-    return `https://gravatar.com/avatar/${md5}?s=${200}&d=retro`;
+    return `https://gravatar.com/avatar/${md5}?s=${args.width || args.height || 200}&d=retro`;
   }
 };
 

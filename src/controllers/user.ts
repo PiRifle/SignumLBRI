@@ -10,6 +10,7 @@ import { body, check, validationResult } from "express-validator";
 import "../config/passport";
 import { CallbackError, Error } from "mongoose";
 import {
+  IS_PROD,
   MAIL_HOST,
   MAIL_PASSWORD,
   MAIL_SHOWMAIL,
@@ -170,14 +171,14 @@ export const postSignup = async (
     !(userCount == 0 || (req.user && req.user.isAdmin())) &&
     ["headadmin", "admin", "seller"].includes(req.body.role)
   ) {
+    check("phone", req.language.errors.validate.phoneInvalid)
+    .isMobilePhone("pl-PL")
+    .run(req);
+    
     req.flash("errors", {
       msg: req.language.errors.accountCreationPermissionDenied,
     });
     return res.redirect("/");
-  }else{
-    check("phone", req.language.errors.validate.phoneInvalid)
-    .isMobilePhone("pl-PL")
-    .run(req);
   }
 
   await check("email", req.language.errors.validate.emailInvalid)
@@ -236,6 +237,8 @@ export const postSignup = async (
     .catch((err) => err);
 
   if (err) return req.flashError(err, req.language.errors.internal);
+
+  if (!IS_PROD){ req.flash("info", {msg: "In Developement Mode, verification disabled"}); await (new Promise((resolve, reject)=>req.logIn(user, ()=>{resolve(2);}))); return res.redirect("/"); }
 
   const transporter = nodemailer.createTransport({
     host: MAIL_HOST,

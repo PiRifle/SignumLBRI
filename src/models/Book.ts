@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import _ from "mongoose-paginate-v2";
+import {stringify} from "querystring"
 export type BookDocument = mongoose.Document & {
   title: string;
   publisher: string;
@@ -7,6 +9,7 @@ export type BookDocument = mongoose.Document & {
   isbn: number;
   image: string;
   msrp: number;
+  getImageLink: ({width, height, quality}?: {width?: number, height?: number, quality?: number}) => string;
 };
 const bookSchema = new mongoose.Schema<BookDocument>(
   {
@@ -20,4 +23,9 @@ const bookSchema = new mongoose.Schema<BookDocument>(
   },
   { timestamps: true },
 );
+
+bookSchema.methods.getImageLink = function(args:any = {}){
+  return `/book/${this.id}/image?${stringify(args)}`
+}
+
 export const Book = mongoose.model<BookDocument>("Book", bookSchema);

@@ -1,4 +1,5 @@
 import { registerPerformance } from "./performance"
+import { sendError } from "./error"
 import { detectMobile } from "./utils/detectMobile"
 const usingTailwind = [...document.querySelector("body")!.classList].includes("using-tailwindcss")
 if(usingTailwind){
@@ -32,6 +33,7 @@ window.rmbook = function rmbook(event: any) {
 
 const isMobile = detectMobile()
 
+window.addEventListener("error", (ev)=>sendError("","",0,0,ev.error))
 
 $(document).ready(async function () {
   const setupBarcode = isMobile && !usingTailwind ? (await import(/* webpackChunkName: "barcode" */"./barcode/utils")).setupBarcodeScanner : function(...args:any[]){return async function(...args:any[]){}}

@@ -30,7 +30,7 @@ block content
                             .col
                                 .container.d-flex.flex-row.justify-content-center.p-3
                                     if book.image
-                                        img(src=book.image, style="width: 200px; height: 270px")
+                                        img(src=book.getImageLink({width: 200, height: 270}), style="width: 200px; height: 270px", loading="lazy")
                                     else
                                         div(style="width: 200px; height: 270px").mx-auto
                                 h5=book.title.length > 80 ? book.title.substring(0, 80 - 3) + "..." : book.title
