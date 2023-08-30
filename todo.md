@@ -8,7 +8,7 @@
 - ~~dodaj wsparcie języków, tłumaczenia~~
 - bugchecki
 
-
+<!-- 
 Polityka prywatności
 I. Postanowienia ogólne
 1.	Polityka prywatności określa, jak zbierane, przetwarzane i przechowywane są dane osobowe Użytkowników niezbędne do świadczenia usług drogą elektroniczną za pośrednictwem serwisu internetowego [adres strony] (dalej: Serwis).
@@ -46,4 +46,4 @@ IX. Zautomatyzowane podejmowanie decyzji i profilowanie
 X. Postanowienia końcowe
 1.	Administrator ma prawo do wprowadzenia zmian w Polityce prywatności, przy czym prawa Użytkowników nie zostaną ograniczone.
 2.	Informacja o wprowadzonych zmianach pojawi się w formie komunikatu dostępnego w Serwisie.
-3.	W sprawach nieuregulowanych w niniejszej Polityce prywatności obowiązują przepisy RODO i przepisy prawa polskiego.
+3.	W sprawach nieuregulowanych w niniejszej Polityce prywatności obowiązują przepisy RODO i przepisy prawa polskiego. -->

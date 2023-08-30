@@ -11,63 +11,39 @@ import { UserPerformance } from "../models/Performance";
 import mongoose, { CallbackError } from "mongoose";
 import crypto from "crypto";
 import { WriteError } from "mongodb";
+import { School, SchoolDocument } from "../models/School";
+import { getBookGraph, getBookStats, getBuyerStats, getGlobalStats, getRoleTime, getStaffStatistics, getStatsPerUser, getUser, getUserGraph } from "../util/admin";
+import { error } from "console";
+import { ObjectID, ObjectId } from "bson";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 durationFormat(moment);
 
 
+export async function adminDataProvider(req: Request, res: Response, next: NextFunction) {
+  res.locals.requestData = { params: {}, query: {} };
+  if (req.user.isHeadAdmin()) {
+    res.locals.availableSchools = await School.find({});
+  } else {
+    res.locals.availableSchools = await School.find({ _id: req.user.school });
+  }
+
+  next();
+}
+
+export async function checkSchoolPermissions(req: Request, res: Response, next: NextFunction) {
+  if (req.params.schoolID && (res.locals.availableSchools as SchoolDocument[]).every((a) => a._id.toString() != req.params.schoolID.toString())) {
+    return res.redirect("/");
+  }
+  next();
+}
+
+
 export async function main(req: Request, res: Response): Promise<void> {
-  const data = await UserPerformance.aggregate([
-    {
-      $group: {
-        _id: "$user",
-        sum: {
-          $sum: "$time",
-        },
-        avg: {
-          $avg: "$time",
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "_id",
-        foreignField: "_id",
-        as: "user",
-      },
-    },
-    {
-      $addFields: {
-        role: {
-          $first: "$user",
-        },
-      },
-    },
-    {
-      $addFields: {
-        role: "$role.role",
-      },
-    },
-    {
-      $project: {
-        user: 0,
-      },
-    },
-    {
-      $group: {
-        _id: "$role",
-        sum: {
-          $sum: "$sum",
-        },
-        avg: {
-          $avg: "$avg",
-        },
-      },
-    },
-  ]);
-  data.forEach((role) => {
+  req.params = res.locals.requestData.params
+  const data = await getRoleTime(req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  data.forEach((role: { formattedAvg: string, formattedSum: string, avg: number, sum: number, _id: string }) => {
     role.formattedAvg = moment
       .duration(role.avg, "milliseconds")
       .format("w[w] d[d] h[h] m[m] s[s]");
@@ -77,193 +53,11 @@ export async function main(req: Request, res: Response): Promise<void> {
   });
   res.render("admin/page/dashboard", { title: req.language.titles.adminDashboard, data: data });
 }
-
 export async function users(req: Request, res: Response): Promise<void> {
-  const stats = await User.aggregate([
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "bookOwner",
-        as: "listings",
-      },
-    },
-    {
-      $unwind: {
-        path: "$listings",
-      },
-    },
-    {
-      $match: {
-        $nor: [
-          {
-            "listings.status": "canceled",
-          },
-          {
-            "listings.status": "deleted",
-          },
-        ],
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        bookDebt: {
-          $sum: "$listings.cost",
-        },
-        earnings: {
-          $sum: "$listings.commission",
-        },
-        bookCount: {
-          $sum: 1,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        bookDebt: {
-          $sum: "$bookDebt",
-        },
-        earnings: {
-          $sum: "$earnings",
-        },
-        bookAvg: {
-          $avg: "$bookCount",
-        },
-      },
-    },
-  ]);
-  const userData = await User.aggregate([
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "bookOwner",
-        as: "listings",
-      },
-    },
-    {
-      $unwind: {
-        path: "$listings",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $match: {
-        $nor: [
-          {
-            "listings.status": "registered",
-          },
-          {
-            "listings.status": "printed_label",
-          },
-          {
-            "listings.status": "deleted",
-          },
-          {
-            "listings.status": "canceled",
-          },
-          {
-            "listings.status": "given_money",
-          },
-        ],
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        listings: {
-          $addToSet: "$listings",
-        },
-        email: {
-          $first: "$email",
-        },
-        profile: {
-          $first: "$profile",
-        },
-        mustGive: {
-          $sum: "$listings.cost",
-        },
-        earnings: {
-          $sum: "$listings.commission",
-        },
-      },
-    },
-    {
-      $addFields: {
-        books: {
-          $size: "$listings",
-        },
-        totalCost: {
-          $add: ["$mustGive", "$earnings"],
-        },
-      },
-    },
-    {
-      $project: {
-        listings: 0,
-      },
-    },
-    {
-      $sort: {
-        books: -1,
-      },
-    },
-  ]);
-  const staff = await User.aggregate([
-    {
-      $match: {
-        role: {
-          $in: ["admin", "seller"],
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "verifiedBy",
-        as: "verified",
-      },
-    },
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "soldBy",
-        as: "sold",
-      },
-    },
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "deletedBy",
-        as: "deleted",
-      },
-    },
-    {
-      $addFields: {
-        verifiedBooks: {
-          $size: "$verified",
-        },
-        soldBooks: {
-          $size: "$sold",
-        },
-        deletedBooks: {
-          $size: "$deleted",
-        },
-      },
-    },
-    {
-      $project: {
-        sold: 0,
-        verified: 0,
-        deleted: 0,
-      },
-    },
-  ]);
+  req.params = res.locals.requestData.params
+  const stats = await getGlobalStats(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const userData = await getStatsPerUser(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const staff = await getStaffStatistics(Boolean(req.params.schoolID), req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   // console.log(stats);
   res.render("admin/page/users", {
     title: "Users",
@@ -273,63 +67,11 @@ export async function users(req: Request, res: Response): Promise<void> {
   });
 }
 
+// [2, 3, 4, ...(false ? [2,3,4] : []), 8, 7]
+
 export async function buyers(req: Request, res: Response): Promise<void> {
-  const data = await Buyer.aggregate([
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "boughtBy",
-        as: "books",
-      },
-    },
-    {
-      $addFields: {
-        bookCount: {
-          $size: "$books",
-        },
-      },
-    },
-    {
-      $unwind: {
-        path: "$books",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        name: {
-          $first: "$name",
-        },
-        surname: {
-          $first: "$surname",
-        },
-        email: {
-          $first: "$email",
-        },
-        phone: {
-          $first: "$phone",
-        },
-        books: {
-          $first: "$bookCount",
-        },
-        moneySpent: {
-          $sum: {
-            $add: ["$books.cost", "$books.commission"],
-          },
-        },
-        profit: {
-          $sum: "$books.commission",
-        },
-      },
-    },
-    {
-      $sort: {
-        books: -1,
-      },
-    },
-  ]);
+  req.params = res.locals.requestData.params
+  const data = await getBuyerStats(req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   let sum;
   try {
     sum = data
@@ -337,7 +79,7 @@ export async function buyers(req: Request, res: Response): Promise<void> {
         return value.moneySpent;
       })
       .reduce((partialSum, a) => partialSum + a, 0);
-  } catch (_) {}
+  } catch (_) { }
   res.render("admin/page/buyers", {
     title: "Buyers",
     buyers: data,
@@ -345,97 +87,10 @@ export async function buyers(req: Request, res: Response): Promise<void> {
   });
 }
 
-export async function books(req: Request, res: Response) {
-  const result = await Book.aggregate([
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "book",
-        as: "listings",
-      },
-    },
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "book",
-        as: "listings",
-      },
-    },
-    {
-      $addFields: {
-        available: {
-          $size: {
-            $filter: {
-              input: "$listings",
-              as: "available",
-              cond: {
-                $eq: ["$$available.status", "accepted"],
-              },
-            },
-          },
-        },
-        sold: {
-          $size: {
-            $filter: {
-              input: "$listings",
-              as: "available",
-              cond: {
-                $eq: ["$$available.status", "sold"],
-              },
-            },
-          },
-        },
-      },
-    },
-    {
-      $unwind: "$listings",
-    },
-    {
-      $match: {
-        $nor: [
-          {
-            "listings.status": "canceled",
-          },
-          {
-            "listings.status": "deleted",
-          },
-        ],
-      },
-    },
-    {
-      $group: {
-        _id: "$_id",
-        avgCost: {
-          $avg: "$listings.cost",
-        },
-        sold: {
-          $first: "$sold",
-        },
-        available: {
-          $first: "$available",
-        },
-        title: {
-          $first: "$title",
-        },
-        publisher: {
-          $first: "$publisher",
-        },
-        costTable: {
-          $addToSet: "$listings.cost",
-        },
-      },
-    },
-    {
-      $sort: {
-        sold: -1,
-      },
-    },
-  ]);
-  result.forEach((value) => {
-    value.median = median(value.costTable);
-  });
+export async function books(req: Request, res: Response): Promise<void> {
+  req.params = res.locals.requestData.params
+
+  const result = await getBookStats(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   res.render("admin/page/books", { title: "Books", data: result });
 }
 
@@ -459,397 +114,119 @@ export async function apiBooks(req: Request, res: Response) {
     to: string;
     exact: boolean;
   };
-  BookListing.aggregate([
-    {
-      $addFields: {
-        fromDate: new Date(from),
-        toDate: new Date(to),
-      },
-    },
-    {
-      $match: {
-        $expr: {
-          $or: [
-            {
-              $and: [
-                {
-                  $gt: ["$createdAt", "$fromDate"],
-                },
-                {
-                  $lt: ["$createdAt", "$toDate"],
-                },
-              ],
-            },
-            {
-              $and: [
-                {
-                  $gt: ["$whenPrinted", "$fromDate"],
-                },
-                {
-                  $lt: ["$whenPrinted", "$toDate"],
-                },
-              ],
-            },
-            {
-              $and: [
-                {
-                  $gt: ["$whenVerified", "$fromDate"],
-                },
-                {
-                  $lt: ["$whenVerified", "$toDate"],
-                },
-              ],
-            },
-            {
-              $and: [
-                {
-                  $gt: ["$whenSold", "$fromDate"],
-                },
-                {
-                  $lt: ["$whenSold", "$toDate"],
-                },
-              ],
-            },
-            {
-              $and: [
-                {
-                  $gt: ["$whenGivenMoney", "$fromDate"],
-                },
-                {
-                  $lt: ["$whenGivenMoney", "$toDate"],
-                },
-              ],
-            },
-            {
-              $and: [
-                {
-                  $gt: ["$whenCanceled", "$fromDate"],
-                },
-                {
-                  $lt: ["$whenCanceled", "$toDate"],
-                },
-              ],
-            },
-            {
-              $and: [
-                {
-                  $gt: ["$whenDeleted", "$fromDate"],
-                },
-                {
-                  $lt: ["$whenDeleted", "$toDate"],
-                },
-              ],
-            },
-          ],
-        },
-      },
-    },
-    {
-      $project: {
-        dates: [
-          {
-            type: "created",
-            date: "$createdAt",
-          },
-          {
-            type: "printed_label",
-            date: "$whenPrinted",
-          },
-          {
-            type: "accepted",
-            date: "$whenVerified",
-          },
-          {
-            type: "sold",
-            date: "$whenSold",
-          },
-          {
-            type: "given_money",
-            date: "$whenGivenMoney",
-          },
-          {
-            type: "canceled",
-            date: "$whenCanceled",
-          },
-          {
-            type: "deleted",
-            date: "$whenDeleted",
-          },
-        ],
-      },
-    },
-    {
-      $unwind: "$dates",
-    },
-    {
-      $group: {
-        _id: exact
-          ? {
-              year: {
-                $year: "$dates.date",
-              },
-              month: {
-                $month: "$dates.date",
-              },
-              day: {
-                $dayOfMonth: "$dates.date",
-              },
-              hour: {
-                $hour: "$dates.date",
-              },
-              // minute: {
-              //   $minute: "$dates.date",
-              // },
-            }
-          : {
-              year: {
-                $year: "$dates.date",
-              },
-              month: {
-                $month: "$dates.date",
-              },
-              day: {
-                $dayOfMonth: "$dates.date",
-              },
-            },
-        created: {
-          $sum: {
-            $cond: {
-              if: {
-                $eq: ["$dates.type", "created"],
-              },
-              then: 1,
-              else: 0,
-            },
-          },
-        },
-        printed_label: {
-          $sum: {
-            $cond: {
-              if: {
-                $eq: ["$dates.type", "printed_label"],
-              },
-              then: 1,
-              else: 0,
-            },
-          },
-        },
-        accepted: {
-          $sum: {
-            $cond: {
-              if: {
-                $eq: ["$dates.type", "accepted"],
-              },
-              then: 1,
-              else: 0,
-            },
-          },
-        },
-        sold: {
-          $sum: {
-            $cond: {
-              if: {
-                $eq: ["$dates.type", "sold"],
-              },
-              then: 1,
-              else: 0,
-            },
-          },
-        },
-        given_money: {
-          $sum: {
-            $cond: {
-              if: {
-                $eq: ["$dates.type", "given_money"],
-              },
-              then: 1,
-              else: 0,
-            },
-          },
-        },
-        canceled: {
-          $sum: {
-            $cond: {
-              if: {
-                $eq: ["$dates.type", "canceled"],
-              },
-              then: 1,
-              else: 0,
-            },
-          },
-        },
-        deleted: {
-          $sum: {
-            $cond: {
-              if: {
-                $eq: ["$dates.type", "deleted"],
-              },
-              then: 1,
-              else: 0,
-            },
-          },
-        },
-      },
-    },
-    {
-      $addFields: {
-        date: {
-          $dateFromParts: exact
-            ? {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-                hour: "$_id.hour",
-                // minute: "$_id.minute",
-              }
-            : {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-        },
-      },
-    },
-    {
-      $match: {
-        $expr: {
-          $ne: ["$date", null],
-        },
-      },
-    },
-  ]).exec(
-    (
-      err: Error,
-      userStatistics: {
-        date: Date;
-        _id: {
-          year: number;
-          month: number;
-          day: number;
-          hour?: number;
-          minute?: number;
+
+  const [err, bookStatistics] = await getBookGraph(from, to, exact);
+
+  if (err) {
+    return res.status(500).end();
+  }
+
+  const dataset: Dataset[] = [];
+  dataset.push({
+    label: "Books Created",
+    data: bookStatistics.map((val) => {
+      if (val.date) {
+        return {
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+          y: val.created,
         };
-        created: number;
-        printed_label: number;
-        accepted: number;
-        sold: number;
-        given_money: number;
-        canceled: number;
-        deleted: number;
-      }[],
-    ) => {
-      if (err) {
-        return res.status(500).end();
       }
-      // console.log(userStatistics);
-      const dataset: Dataset[] = [];
-      dataset.push({
-        label: "Books Created",
-        data: userStatistics.map((val) => {
-          if (val.date) {
-            return {
-              x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-              y: val.created,
-            };
-          }
-        }),
-        borderColor: "green",
-        fill: true,
-      });
-      dataset.push({
-        label: "Labels Printed",
-        data: userStatistics.map((val) => {
-          return val.date
-            ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-                y: val.printed_label,
-              }
-            : undefined;
-        }),
-        borderColor: "blue",
-        fill: true,
-      });
-      dataset.push({
-        label: "Books Accepted",
-        data: userStatistics.map((val) => {
-          return val.date
-            ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-                y: val.accepted,
-              }
-            : undefined;
-        }),
-        borderColor: "yellow",
-        fill: true,
-      });
-      dataset.push({
-        label: "Books Sold",
-        data: userStatistics.map((val) => {
-          return val.date
-            ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-                y: val.sold,
-              }
-            : undefined;
-        }),
-        borderColor: "white",
-        fill: true,
-      });
-      dataset.push({
-        label: "Money Given",
-        data: userStatistics.map((val) => {
-          return val.date
-            ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-                y: val.given_money,
-              }
-            : undefined;
-        }),
-        borderColor: "orange",
-        fill: true,
-      });
-      dataset.push({
-        label: "Books Canceled",
-        data: userStatistics.map((val) => {
-          return val.date
-            ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-                y: val.canceled,
-              }
-            : undefined;
-        }),
-        borderColor: "red",
-        fill: true,
-      });
-      dataset.push({
-        label: "Books Deleted",
-        data: userStatistics.map((val) => {
-          return val.date
-            ? {
-                x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-                y: val.deleted,
-              }
-            : undefined;
-        }),
-        borderColor: "purple",
-        fill: true,
-      });
-      dataset.forEach((data) => {
-        // console.log(data.data, "not sorted");
-        data.data.sort(
-          (a, b) =>
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            new Date(moment(a.x, "DD/MM/YYYY/HH:mm:ss")) -
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            new Date(moment(b.x, "DD/MM/YYYY/HH:mm:ss")),
-        );
-        // console.log(data.data, "sorted");
-      });
-      return res.json(dataset).end();
-    },
-  );
+    }),
+    borderColor: "green",
+    fill: true,
+  });
+  dataset.push({
+    label: "Labels Printed",
+    data: bookStatistics.map((val) => {
+      return val.date
+        ? {
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+          y: val.printed_label,
+        }
+        : undefined;
+    }),
+    borderColor: "blue",
+    fill: true,
+  });
+  dataset.push({
+    label: "Books Accepted",
+    data: bookStatistics.map((val) => {
+      return val.date
+        ? {
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+          y: val.accepted,
+        }
+        : undefined;
+    }),
+    borderColor: "yellow",
+    fill: true,
+  });
+  dataset.push({
+    label: "Books Sold",
+    data: bookStatistics.map((val) => {
+      return val.date
+        ? {
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+          y: val.sold,
+        }
+        : undefined;
+    }),
+    borderColor: "white",
+    fill: true,
+  });
+  dataset.push({
+    label: "Money Given",
+    data: bookStatistics.map((val) => {
+      return val.date
+        ? {
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+          y: val.given_money,
+        }
+        : undefined;
+    }),
+    borderColor: "orange",
+    fill: true,
+  });
+  dataset.push({
+    label: "Books Canceled",
+    data: bookStatistics.map((val) => {
+      return val.date
+        ? {
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+          y: val.canceled,
+        }
+        : undefined;
+    }),
+    borderColor: "red",
+    fill: true,
+  });
+  dataset.push({
+    label: "Books Deleted",
+    data: bookStatistics.map((val) => {
+      return val.date
+        ? {
+          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+          y: val.deleted,
+        }
+        : undefined;
+    }),
+    borderColor: "purple",
+    fill: true,
+  });
+  dataset.forEach((data) => {
+
+    data.data.sort(
+      (a, b) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        new Date(moment(a.x, "DD/MM/YYYY/HH:mm:ss")) -
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        new Date(moment(b.x, "DD/MM/YYYY/HH:mm:ss")),
+    );
+  });
+  return res.json(dataset).end();
+
 }
 export async function apiUsers(req: Request, res: Response) {
   await check("from", "no from date provided").exists().run(req);
@@ -865,125 +242,30 @@ export async function apiUsers(req: Request, res: Response) {
     to: string;
     exact: boolean;
   };
-  User.aggregate([
-    {
-      $addFields: {
-        fromDate: new Date(from),
-        toDate: new Date(to),
-      },
-    },
-    {
-      $match: {
-        $expr: {
-          $or: [
-            {
-              $and: [
-                { $gt: ["$createdAt", "$fromDate"] },
-                { $lt: ["$createdAt", "$toDate"] },
-              ],
-            },
-          ],
-        },
-      },
-    },
-    exact
-      ? {
-          $group: {
-            _id: {
-              hour: {
-                $hour: "$createdAt",
-              },
-              minute: {
-                $minute: "$createdAt",
-              },
-              month: {
-                $month: "$createdAt",
-              },
-              day: {
-                $dayOfMonth: "$createdAt",
-              },
-              year: {
-                $year: "$createdAt",
-              },
-            },
-            count: {
-              $sum: 1,
-            },
-          },
-        }
-      : {
-          $group: {
-            _id: {
-              month: {
-                $month: "$createdAt",
-              },
-              day: {
-                $dayOfMonth: "$createdAt",
-              },
-              year: {
-                $year: "$createdAt",
-              },
-            },
-            count: {
-              $sum: 1,
-            },
-          },
-        },
-    {
-      $addFields: {
-        date: {
-          $dateFromParts: exact
-            ? {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-                hour: "$_id.hour",
-                minute: "$_id.minute",
-              }
-            : {
-                year: "$_id.year",
-                month: "$_id.month",
-                day: "$_id.day",
-              },
-        },
-      },
-    },
-    {
-      $match: {
-        $expr: {
-          $ne: ["$date", null],
-        },
-      },
-    },
-    {
-      $project: {
-        _id: false,
-      },
-    },
-  ]).exec((err: Error, userStatistics: { date: Date; count: number }[]) => {
-    if (err) {
-      return res.status(500).end();
-    }
-    // console.log(userStatistics);
-    userStatistics.sort(function (a, b) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      return new Date(b.date) - new Date(a.date);
-    });
-    const dataset: Dataset[] = [];
-    dataset.push({
-      label: "Registered Users",
-      data: userStatistics.map((val) => {
-        return {
-          x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
-          y: val.count,
-        };
-      }),
-      borderColor: "green",
-      fill: false,
-    });
-    return res.json(dataset).end();
+
+
+  const [err, userStatistics] = await getUserGraph(from, to, exact);
+  if (err) {
+    return res.status(500).end();
+  }
+  userStatistics.sort(function (a, b) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    return new Date(b.date) - new Date(a.date);
   });
+  const dataset: Dataset[] = [];
+  dataset.push({
+    label: "Registered Users",
+    data: userStatistics.map((val) => {
+      return {
+        x: moment(new Date(val.date)).format("DD/MM/YYYY/HH:mm:ss"),
+        y: val.count,
+      };
+    }),
+    borderColor: "green",
+    fill: false,
+  });
+  return res.json(dataset).end();
 }
 
 export const getEditUser = async (req: Request, res: Response) => {
@@ -994,70 +276,7 @@ export const getEditUser = async (req: Request, res: Response) => {
     req.flash("errors", errors.array());
     return res.redirect("back");
   }
-  const user = await User.aggregate([
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(req.params.userID),
-      },
-    },
-    {
-      $lookup: {
-        from: "booklistings",
-        localField: "_id",
-        foreignField: "bookOwner",
-        as: "books",
-      },
-    },
-    {
-      $unwind: {
-        path: "$books",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: "books",
-        localField: "books.book",
-        foreignField: "_id",
-        as: "books.book",
-      },
-    },
-    // {
-    //   $match: {
-    //     "books.status": {
-    //       $in: ["sold", "accepted"],
-    //     },
-    //   },
-    // },
-    {
-      $group: {
-        _id: "$_id",
-        availableBooks: {
-          $addToSet: "$books",
-        },
-        email: {
-          $first: "$email",
-        },
-        role: {
-          $first: "$role",
-        },
-        profile: {
-          $first: "$profile",
-        },
-        debt: {
-          $sum: {
-            $cond: [
-              {
-                $eq: ["$books.status", "sold"],
-              },
-              "$books.cost",
-              0,
-            ],
-          },
-        },
-      },
-    },
-  ]);
+  const user = await (getUser(new ObjectID(req.params.userID)));
   // console.log(JSON.stringify(user));
   user[0].gravatar = function (size: number = 200) {
     if (!this.email) {
@@ -1128,13 +347,13 @@ export const postGiveMoneyUser = async (req: Request, res: Response) => {
   const [err, listings] = await BookListing.find({
     bookOwner: req.params.userID,
     status: { $in: ["sold", "accepted"] },
-  }).then(a=>[null, a]).catch(a=>[a, null]);
-  
+  }).then(a => [null, a]).catch(a => [a, null]);
+
   if (err) {
     req.flashError(err, req.language.errors.internal, false);
     return res.redirect("back");
   }
-  
+
   listings.forEach((listing: BookListingDocument) => {
     listing.status = "given_money";
     listing.whenGivenMoney = new Date();

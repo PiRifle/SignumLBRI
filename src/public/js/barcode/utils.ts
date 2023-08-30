@@ -18,27 +18,27 @@ export function setupBarcodeScanner() {
         formatsToSupport: formatsToSupport,
     };
     let reader: Html5Qrcode;
-        if (!("BarcodeDetector" in window)) {
-            reader = new Html5Qrcode("reader");
-            console.log(
-                "Barcode Detector is not supported by this browser! Using legacy",
-            );
-        } else {
-            console.log("Barcode Detector supported!");
+    if (!("BarcodeDetector" in window)) {
+        reader = new Html5Qrcode("reader");
+        console.log(
+            "Barcode Detector is not supported by this browser! Using legacy",
+        );
+    } else {
+        console.log("Barcode Detector supported!");
 
-            //@ts-ignore
-            barcodeDetector = new BarcodeDetector({
-                formats: ["ean_13"],
-            });
-        }
+        //@ts-ignore
+        barcodeDetector = new BarcodeDetector({
+            formats: ["ean_13"],
+        });
+    }
 
     return async function instantiateScan(
         _callback: (decodedText: string, result: Html5QrcodeResult) => void,
         disableStop: boolean = false
     ) {
-        function callback(decodedText: string, result: Html5QrcodeResult){
-            if(!disableStop){
-                if(reader){
+        function callback(decodedText: string, result: Html5QrcodeResult) {
+            if (!disableStop) {
+                if (reader) {
                     reader.stop()
                 }
             }

@@ -38,7 +38,7 @@ block content
                 div=user.profile.phone 
               td=user.mustGive.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
               td
-                a.btn.btn-primary(href=user._id+"/manage") Manage
+                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`) Manage
       h2 Staff List
       table.table
         thead 
@@ -61,4 +61,4 @@ block content
                 div=user.email 
                 div=user.profile.phone 
               td 
-                a.btn.btn-primary(href=user._id+"/manage") Manage
+                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`) Manage
