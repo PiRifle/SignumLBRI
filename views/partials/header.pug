@@ -62,6 +62,9 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
                 if user.isAdmin()
                   li.nav-item 
                     a.nav-link(href="/setup")= language.website.button.addAccount
+                if user.isHeadAdmin()
+                  li.nav-item 
+                    a.nav-link(href="/school/add") Dodaj szkołe 
                 li.dropdown-divider
                 li.nav-item
                   a.nav-link(href='/logout')= language.website.button.logout

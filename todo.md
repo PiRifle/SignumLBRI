@@ -7,6 +7,7 @@
 - dodaj rangę headadmin zarządzający wszystkimi szkołami oraz ich statystykami
 - ~~dodaj wsparcie języków, tłumaczenia~~
 - bugchecki
+- dodaj tagi wyszukiwania w panelu administracji za pomocą tagify
 
 <!-- 
 Polityka prywatności

@@ -17,6 +17,12 @@ block content
           div total Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
           div total Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
       h2 User List
+      form(action="", method="get") 
+        .d-flex.flex-wrap
+          for i in ["registered","printed_label","accepted","sold","given_money","canceled","deleted"]
+            div.mx-2
+              input(onChange="this.form.submit()", id=i, type="checkbox", name=i, checked=userData.filter[i] && "checked")
+              label.ms-1(for=i)= language.statuses[i]
       table.table
         thead 
           th Name

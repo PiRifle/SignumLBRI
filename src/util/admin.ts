@@ -49,6 +49,9 @@ export function getUser(userID: ObjectID){
             availableBooks: {
               $addToSet: "$books",
             },
+            school:{
+              $first: "$school"
+            },
             email: {
               $first: "$email",
             },
@@ -685,8 +688,8 @@ export function getStaffStatistics(includeAdmin = false, schoolID?: ObjectID){
       ]);
 }
 
-export function getStatsPerUser(filter: ("registered"|"printed_label"|"accepted"|"sold"|"given_money"|"canceled"|"deleted")[] = ["accepted", "sold"],schoolID?: ObjectID){
-    return User.aggregate<{_id: ObjectID, email: string, profile: {name: string, surname: string, phone: string}, mustGive: number, earnings: number, books: number, totalCost: number}>([
+export async function getStatsPerUser(filter: ("registered"|"printed_label"|"accepted"|"sold"|"given_money"|"canceled"|"deleted")[] = ["accepted", "sold"],schoolID?: ObjectID){
+    const query = await User.aggregate<{_id: ObjectID, email: string, profile: {name: string, surname: string, phone: string}, mustGive: number, earnings: number, books: number, totalCost: number, query: {[key: string]: boolean}}>([
         ...(schoolID ? [{
             $match: {
                 "school": schoolID
@@ -773,6 +776,9 @@ export function getStatsPerUser(filter: ("registered"|"printed_label"|"accepted"
           },
         },
       ]);
+    (query as any).filter = {}
+    filter.forEach(a=>{(query as any).filter[a] = true})
+  return query
 }
 
 export function getGlobalStats(filter: ("registered"|"printed_label"|"accepted"|"sold"|"given_money"|"canceled"|"deleted")[] = ["canceled", "deleted"],schoolID?: ObjectID){
