@@ -21,7 +21,7 @@ block content
                             td=item.book[0].publisher.length > 40 ? item.book[0].publisher.substring(0, 40 - 3) + "..." :  item.book[0].publisher
                             td=item.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
                             td=item.status
-        h5 You need to him #{euser.debt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} from sold books! 
+        h5 You need to give him #{euser.debt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} from sold books! 
 
             form.form-horizontal(action='giveMoney', method='POST')
                 input(type="submit", value="Give Money").btn.btn-primary
