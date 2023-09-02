@@ -89,11 +89,30 @@ export async function buyers(req: Request, res: Response): Promise<void> {
   });
 }
 
+export async function buyerDetails(req:Request, res:Response){
+  await check("buyerID").exists().isMongoId().run(req);
+  const errors = validationResult(req);
+  
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect("back");
+  }
+  
+  const buyer = await Buyer.findById(new ObjectID(req.params.buyerID));
+  const books = await BookListing.find({boughtBy: buyer._id}).populate("book")
+
+  return res.render("admin/page/buyer", {title: "Buyer", buyerInfo: buyer, books})
+}
+
 export async function books(req: Request, res: Response): Promise<void> {
   req.params = res.locals.requestData.params;
 
   const result = await getBookStats(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   res.render("admin/page/books", { title: "Books", data: result });
+}
+
+export async function earnings(req: Request, res: Response) {
+  return res.render("admin/page/earnings", {title: "Earnings"})
 }
 
 interface Dataset {

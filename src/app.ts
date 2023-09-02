@@ -326,6 +326,10 @@ adminSchoolRoutes.get(
   adminController.books,
 );
 
+adminSchoolRoutes.get(
+  "/earnings",
+  adminController.earnings,
+);
 
 // adminRoutes.use("/:schoolID", (req, res, next) => {res.locals.requestData = {query: req.query, params: req.params}; next();},  adminController.checkSchoolPermissions, adminSchoolRoutes);
 
