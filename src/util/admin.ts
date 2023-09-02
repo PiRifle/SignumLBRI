@@ -776,9 +776,9 @@ export async function getStatsPerUser(filter: ("registered"|"printed_label"|"acc
           },
         },
       ]);
-    (query as any).filter = {}
-    filter.forEach(a=>{(query as any).filter[a] = true})
-  return query
+    (query as any).filter = {};
+    filter.forEach(a=>{(query as any).filter[a] = true;});
+  return query;
 }
 
 export function getGlobalStats(filter: ("registered"|"printed_label"|"accepted"|"sold"|"given_money"|"canceled"|"deleted")[] = ["canceled", "deleted"],schoolID?: ObjectID){

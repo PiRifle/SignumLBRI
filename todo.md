@@ -3,11 +3,11 @@
 - ~~zabezpiecz /setup i /signup przed nieuprawionymi rejestracjami~~ chyba worky?
 - handling errorów
 - ~~redo otoczki graficznej~~
-- zmień sposób działania analityki stron z rozdzieleniem na szkoły
-- dodaj rangę headadmin zarządzający wszystkimi szkołami oraz ich statystykami
+- ~~zmień sposób działania analityki stron z rozdzieleniem na szkoły~~
+- ~~dodaj rangę headadmin zarządzający wszystkimi szkołami oraz ich statystykami~~
+- dodaj pobór zysku szkół
 - ~~dodaj wsparcie języków, tłumaczenia~~
 - bugchecki
-- dodaj tagi wyszukiwania w panelu administracji za pomocą tagify
 
 <!-- 
 Polityka prywatności

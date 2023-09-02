@@ -55,13 +55,15 @@ export async function main(req: Request, res: Response): Promise<void> {
 }
 export async function users(req: Request, res: Response): Promise<void> {
   req.params = res.locals.requestData.params;
-  const stats = await getGlobalStats(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const stats = await getGlobalStats(["registered","printed_label","given_money","canceled","deleted"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const statsTotal = await getGlobalStats(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const userData = await getStatsPerUser(Object.keys(req.query).length > 0 ? [...Object.keys(req.query)] : undefined as any, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const staff = await getStaffStatistics(Boolean(req.params.schoolID), req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   // console.log(stats);
   res.render("admin/page/users", {
     title: "Users",
     stats: stats[0],
+    statsTotal: statsTotal[0],
     userData: userData,
     staff: staff,
   });
@@ -279,8 +281,8 @@ export const getEditUser = async (req: Request, res: Response) => {
   const user = await (getUser(new ObjectID(req.params.userID)));
 
   if (!req.user.isHeadAdmin() && req.user.school.toString() != user[0].school.toString()){
-    req.flashError(null, "You dont have permission to view that profile")
-    return res.redirect('/')
+    req.flashError(null, "You dont have permission to view that profile");
+    return res.redirect("/");
   }
 
   // console.log(JSON.stringify(user));
