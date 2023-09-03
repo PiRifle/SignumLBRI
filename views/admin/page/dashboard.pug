@@ -3,13 +3,13 @@ include ../layout
 block content 
     main.col-md-9.ms-sm-auto.col-lg-10.px-md-4
       .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
-        h1.h2 Statistics
-        h2 Time Spent 
+        h1.h2=language.website.headers.statistics
+        h2=language.website.headers.timeSpent 
       table.table
         thead 
-          th Role 
-          th Average Time Spent 
-          th Total Time Spent  
+          th=language.website.table.headers.role 
+          th=language.website.table.headers.averageTimeSpent 
+          th=language.website.table.headers.totalTimeSpent  
         tbody 
           each role in data 
             if role._id

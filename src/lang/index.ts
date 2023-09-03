@@ -1,6 +1,7 @@
-export { pl } from "./pl";
-export { uk } from "./uk";
-export { en } from "./en";
+// export { pl } from "./pl";
+// export { uk } from "./uk";
+// export { en } from "./en";
+export { dbg } from "./dbg";
 
 export interface Language {
   mail: {

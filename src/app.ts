@@ -333,12 +333,12 @@ adminSchoolRoutes.get(
 
 // adminRoutes.use("/:schoolID", (req, res, next) => {res.locals.requestData = {query: req.query, params: req.params}; next();},  adminController.checkSchoolPermissions, adminSchoolRoutes);
 
-adminRoutes.get("/", (req, res)=>res.redirect("/admin/school"));
+adminRoutes.get("/", (req, res) => res.redirect("/admin/school"));
 adminRoutes.use("/school/:schoolID?/",
-  (req, res, next) => {res.locals.requestData = {query: req.query, params: req.params, page:req.path}; next();}, 
+  (req, res, next) => { res.locals.requestData = { query: req.query, params: req.params, page: req.path }; next(); },
   // (req, res, next) => {console.log(req.path); next()},
-  (req, res, next)=>{if(req.user.isHeadAdmin() || req.params.schoolID) return next(); else return res.redirect(`/admin/school/${res.locals.availableSchools[0]._id}`);}, 
-  adminController.checkSchoolPermissions, 
+  (req, res, next) => { if (req.user.isHeadAdmin() || req.params.schoolID) return next(); else return res.redirect(`/admin/school/${res.locals.availableSchools[0]._id}`); },
+  adminController.checkSchoolPermissions,
   adminSchoolRoutes);
 adminRoutes.use("/api/", adminApiRoutes);
 
@@ -348,6 +348,7 @@ adminRoutes.get(
     res.redirect(`/admin/user/${req.params.userID}/manage`);
   },
 );
+
 
 adminRoutes.get(
   "/user/:userID/manage",
@@ -360,6 +361,10 @@ adminRoutes.post(
 adminRoutes.post(
   "/user/:userID/giveMoney",
   adminController.postGiveMoneyUser,
+);
+adminRoutes.get(
+  "/buyer/:buyerID",
+  adminController.getBuyerDetails,
 );
 
 // adminRoutes.post(

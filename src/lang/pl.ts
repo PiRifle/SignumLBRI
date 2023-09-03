@@ -102,9 +102,23 @@ export const pl = {
     description: "\"Sprzedawaj, rozdawaj, zarabiaj!\" To nasza wiadomość. Twoje podręczniki szkolne zyskują drugie życie dzięki szybkiemu i wygodnemu procesowi sprzedaży i odkupu na naszej platformie.",
     creator: "- Twórca Blind Dating 2",
     empty: "Trochę tu pusto...",
+    table: {
+      headers: {
+        print: "",
+        title: "",
+        publisher: "",
+        price: "",
+        printed: "",
+        status: "",
+        manage: "",
+        ID: "",
+        available: "",
+        sold: "",
+      }
+    },
     headers: {
       books: "Twoje Książki",
-      login: "Logowanie",
+      // login: "Logowanie",
       sellBook: "Sprzedaj Książkę",
       hello: "Cześć!",
       addAccount: "Dodaj Konto",
@@ -160,4 +174,5 @@ export const pl = {
       school: { placeholder: "Wprowadź nazwę szkoły", label: "Szkoła" }
     },
   }
-} as Language;
+}
+// } as Language;

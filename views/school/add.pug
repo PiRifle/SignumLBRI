@@ -2,34 +2,34 @@ extends ../layout
 
 block content
   .page-header
-    h3 Witaj!
-    p Dodaj nową szkołę do systemu
+    h3= language.website.headers.hello
+    p= language.website.description.addSchool
     hr
   form.form-horizontal(method="POST" enctype='multipart/form-data')
     input(type='hidden', name='_csrf', value=_csrf)
     .input-group.mb-3.row.justify-content-md-center
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='name') Nazwa Szkoły
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='name')=language.website.input.schoolName.label
       .col-sm-7
         div.d-flex.flex-row
-            input(type="text", name="name", placeholder="Nazwa Szkoły" ).form-control
+            input(type="text", name="name", placeholder=language.website.input.schoolName.placeholder ).form-control
     .input-group.mb-3.row.justify-content-md-center.my-4
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='fullname') Pełna nazwa szkoły
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='fullname')=language.website.input.schoolFullName.label
       .col-sm-7
-        input(type="fullname", name="longname", placeholder="Pełna nazwa szkoły").form-control
+        input(type="fullname", name="longname", placeholder=language.website.input.schoolFullName.placeholder).form-control
     .input-group.mb-3.row.justify-content-md-center.my-4
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='commission') Mnożnik marży
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='commission')=language.website.input.commissionMultiplier.label
       .col-sm-7
         input(type='number', name='commission', id='commission', value="0.07", step="0.01", min="0.01", max="0.99").form-control
     .input-group.mb-3.row.justify-content-md-center.my-4
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='street') Lokalizacja Szkoły
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='street')=language.website.input.schoolLocalization.label
       .col-sm-7
-        input(type='text', name='street', id='street', placeholder='Lokalizacja Szkoły', required).form-control
+        input(type='text', name='street', id='street', placeholder=language.website.input.schoolLocalization.placeholder, required).form-control
     .input-group.mb-3.row.justify-content-md-center.my-4
-      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='icon') Logo Szkoły
+      label.col-sm-3.col-form-label.text-right.font-weight-bold(for='icon')=language.website.input.schoolLogo.label
       .col-sm-7
-        input(type='file', name='icon', id='icon', placeholder='Logo Szkoły').form-control
+        input(type='file', name='icon', id='icon', placeholder=language.website.input.schoolLogo.placeholder).form-control
     .input-group.mb-3.row.justify-content-md-center.m-4
       .offset-sm-3.col-sm-7
         button.btn.btn-success(type='submit')
           i.fa.fa-user-plus
-          | Zapisz
+          | #{language.website.button.save}

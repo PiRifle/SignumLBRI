@@ -6,18 +6,18 @@ block content
         |  <div class="modal-dialog" role="document">
         |    <div class="modal-content">
         |      <div class="modal-header">
-        |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        |        <h5 class="modal-title" id="exampleModalLabel">#{language.website.headers.cancelListing}</h5>
         |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
         |      <div class="modal-body">
-        |        ...
+        |        #{language.website.description.sellListing}
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">#{language.website.header.cancel}</button>
         form(action="sell", method="post")
-            button(type="submit").btn.btn-success Sprzedaj
+            button(type="submit").btn.btn-success=language.website.button.sell
         |      </div>
         |    </div>
         |  </div>
@@ -26,19 +26,19 @@ block content
         |  <div class="modal-dialog" role="document">
         |    <div class="modal-content">
         |      <div class="modal-header">
-        |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        |        <h5 class="modal-title" id="exampleModalLabel">#{language.website.headers.acceptListing}</h5>
         |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
         |      <div class="modal-body">
-        |        ...
+        |        #{language.website.description.acceptListing}
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">#{language.website.button.cancel}</button>
 
         form(action="accept", method="post")
-            button(type="submit").btn.btn-success Przyjmij
+            button(type="submit").btn.btn-success=language.website.button.accept
 
         |      </div>
         |    </div>
@@ -48,25 +48,25 @@ block content
         |  <div class="modal-dialog" role="document">
         |    <div class="modal-content">
         |      <div class="modal-header">
-        |        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        |        <h5 class="modal-title" id="exampleModalLabel">#{language.website.headers.deleteListing}</h5>
         |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
         |      </div>
         |      <div class="modal-body">
-        |        ...
+        |        #{language.website.description.deleteListing}
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">#{language.website.button.cancel}</button>
         form(action="delete", method="post")
-            button(type="submit").btn.btn-danger Usuń
+            button(type="submit").btn.btn-danger=language.website.button.delete
         |      </div>
         |    </div>
         |  </div>
         |</div>
 
     .col
-        h2 Rejestr Książek 
+        h2=language.website.headers.listingRegistry
         if paging
             form(method="get").d-inline
                 button(type="submit" name="page" value=paging.prevPage disabled=paging.prevPage ? false : true).btn.btn-primary <
@@ -103,17 +103,17 @@ block content
                                 div.d-flex.flex-col
                                     div.col
                                         center
-                                            a(href=`/book/${item._id}/manage`).btn.btn-primary.m-auto Zarządzaj
+                                            a(href=`/book/${item._id}/manage`).btn.btn-primary.m-auto=language.website.buttons.manage
                                         if edit
                                             if item.status != "sold" && user.isSeller()
                                                 center
                                                     if (item.status == "registered" || item.status == "printed_label")
-                                                        button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.mt-2 Przyjmij
+                                                        button(data-bs-toggle="modal" data-bs-target="#acceptModal").btn.btn-warning.mt-2=language.website.buttons.accept
                                                     else if (item.status != "deleted")
-                                                        button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.mt-2 Sprzedaj
+                                                        button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.mt-2=language.website.buttons.sell
                                             if  user.isAdmin() && item.status != "deleted"
                                                 center
-                                                    button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.mt-2 Usuń
+                                                    button(data-bs-toggle="modal" data-bs-target="#deleteModal").btn.btn-danger.mt-2=language.website.buttons.delete
                        
 
                                 

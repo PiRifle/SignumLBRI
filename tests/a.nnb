@@ -1,0 +1,29 @@
+{
+    "cells": [
+        {
+            "language": "typescript",
+            "source": [
+                "const util = require('util');\n\n\nfunction dbgRun(stack=[]){\n    return new Proxy({\n        a:\"b\",\n        [Symbol.toPrimitive](hint){\n            // console.log(\"hit toPrimitive\", hint)\n            // console.log(\"export\", stack.join(\".\"))\n            return stack.join('.').toString()\n        },\n        \n        [util.inspect.custom]() {\n            console.log(\"hit util inspect\")\n            return stack.join('.')\n        },\n        // toJSON(..._){\n        //     console.log(\"hit toJson\")\n        //     return stack.join('.')\n        // }\n        }, {\n        get(t, p, r){\n            console.log(p, typeof(p))\n            \n            if (typeof(p) == \"symbol\"){\n                // console.log(\"hit toPrimitive\")\n                return Reflect.get(t,p,r);\n                // return dbgRun([...stack])\n            }\n\n            return dbgRun([...stack, p])\n        },\n        \n    })\n}\n\nconst logger = dbgRun()\n\nconst c = logger.a.v.c.d.e.f\n\nconsole.log(\"logging\", c)"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "a string",
+                                "v string",
+                                "c string",
+                                "d string",
+                                "e string",
+                                "f string",
+                                "logging function Object() { [native code] }",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

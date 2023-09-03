@@ -6,7 +6,7 @@ block content
         |  <div class="modal-dialog" role="document">
         |    <div class="modal-content">
         |      <div class="modal-header">
-        |        <h5 class="modal-title" id="exampleModalLabel">Sprzedaj Książkę</h5>
+        |        <h5 class="modal-title" id="exampleModalLabel">#{language.website.headers.sellBook}</h5>
         |        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
         |          <span aria-hidden="true">&times;</span>
         |        </button>
@@ -16,22 +16,22 @@ block content
         h5 Suma:
             span#costSum
         .input-group.mb-3.row.justify-content-md-center
-            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Imię i Nazwisko
+            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='name')=language.website.input.nameSurname.label
             .col-sm-7
                 div.d-flex.flex-row
-                    input(type="text", name="name", placeholder="Imię", required, autofocus).form-control.me-2.d-inline
-                    input(type="text", name="surname", placeholder="Nazwisko" required).form-control.ms-2.d-inline
+                    input(type="text", name="name", placeholder=language.website.input.name.placeholder, required, autofocus).form-control.me-2.d-inline
+                    input(type="text", name="surname", placeholder=language.website.input.surname.placeholder, required).form-control.ms-2.d-inline
         .input-group.mb-3.row.justify-content-md-center.my-4
-            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email') Email
+            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='email')=language.website.input.email.label
             .col-sm-7
-                input(type="email", name="email", placeholder="E-Mail" required).form-control
+                input(type="email", name="email", placeholder=language.website.input.email.placeholder required).form-control
         .input-group.mb-3.row.justify-content-md-center.my-4
-            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='phone') Numer Telefonu
+            label.col-sm-3.col-form-label.text-right.font-weight-bold(for='phone')=language.website.input.phone.label
             .col-sm-7
-                input(type="phone", name="phone", placeholder="Nr. Telefonu" required).form-control
+                input(type="phone", name="phone", placeholder=language.website.input.phone.placeholder, required).form-control
         |      </div>
         |      <div class="modal-footer">
-        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        |        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">#{language.website.button.cancel}</button>
         button(type="submit").btn.btn-success=language.website.button.sell
         |      </div>
         |    </div>
@@ -40,19 +40,19 @@ block content
     h2 Kasa 
     .input-group 
         .input-group-prepend 
-            span.input-group-text Wpisz ID Zlecenia
+            span.input-group-text=language.website.descriptions.inputListingID
         input(type="number" name="itemIDSell").form-control.numeric
         if device.mobile()
             .input-group-append  
                 button(type="button").mobile.fa.fa-camera.border-0.scan-barcode-addToCart.h-100
     table.table.sellTable
         thead 
-            th ID
-            th Tytuł
-            th Wydawca 
-            th Cena 
-            th Status
-            th Edit
+            th=language.website.table.headers.ID
+            th=language.website.table.headers.title
+            th=language.website.table.headers.publisher 
+            th=language.website.table.headers.price
+            th=language.website.table.headers.status
+            th=language.website.table.headers.edit
         tbody 
 
       

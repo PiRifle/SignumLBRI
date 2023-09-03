@@ -12,11 +12,11 @@ block content
                 div(class="max-md:overflow-scroll")
                     table.w-full.table-auto.my-6(class="max-md:text-3xs text-sm")
                         thead.bg-gray-700.text-white.uppercase.border-gray-50.border
-                            th.px-6.py-3 Drukuj
-                            th.px-6.py-3 Tytuł
-                            th.px-6.py-3(class="max-md:hidden") Wydawca
-                            th.px-6.py-3 Cena
-                            th.px-6.py-3 Wydrukowane
+                            th.px-6.py-3= language.website.table.header.print
+                            th.px-6.py-3= language.website.table.header.title
+                            th.px-6.py-3(class="max-md:hidden")= language.website.table.header.publisher
+                            th.px-6.py-3= language.website.table.header.price
+                            th.px-6.py-3= language.website.table.header.printed
                         tbody 
                             each listing in listings
                                 tr.border-b.py-2

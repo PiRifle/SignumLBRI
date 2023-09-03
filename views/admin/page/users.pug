@@ -3,15 +3,17 @@ include ../layout
 block content 
     main.col-md-9.ms-sm-auto.col-lg-10.px-md-4
       .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
-        h1.h2 Users
+        h1.h2=language.website.headers.users
         .btn-toolbar.mb-2.mb-md-0
           .btn-group.me-2
             button.btn.btn-sm.btn-outline-secondary(type='button') Share
             button.btn.btn-sm.btn-outline-secondary(type='button') Export
             input.form-control(name="dates", readonly="readonly")
       canvas#myChart.my-4.w-100(width='900' height='380' datasetSource="api/users")
-      h2 Statistics 
+      h2=language.website.headers.statistics
       .d-flex.justify-content-evenly.flex-wrap.flex-row
+        if statsBought
+          div Actual Earnings: #{statsBought.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
         if statsTotal
           div Books per user AVG: #{Math.ceil(statsTotal.bookAvg)}
           div Total Debt: #{statsTotal.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
@@ -29,13 +31,13 @@ block content
               label.ms-1(for=i)= language.statuses[i]
       table.table
         thead 
-          th Name
-          th Surname 
-          th Earnings 
-          th Books 
-          th Contact
-          th Debt
-          th(width="40px") Manage
+          th= language.website.table.header.name
+          th= language.website.table.header.surname 
+          th= language.website.table.header.earnings 
+          th= language.website.table.header.books 
+          th= language.website.table.header.contact
+          th= language.website.table.header.debt
+          th(width="40px")= language.website.table.header.manage
         tbody 
           each user in userData
             tr 
@@ -48,17 +50,17 @@ block content
                 div=user.profile.phone 
               td=user.mustGive.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
               td
-                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`) Manage
+                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`)= language.website.button.manage
       h2 Staff List
       table.table
         thead 
-          th Name
-          th Surname 
-          th Books Sold
-          th Books Accepted
-          th Books Deleted
-          th Contact
-          th(width="40px") Manage
+          th= language.website.table.header.name
+          th= language.website.table.header.surname 
+          th= language.website.table.header.booksSold
+          th= language.website.table.header.booksAccepted
+          th= language.website.table.header.booksDeleted
+          th= language.website.table.header.contact
+          th(width="40px")= language.website.table.header.manage
         tbody 
           each user in staff
             tr 
@@ -71,4 +73,4 @@ block content
                 div=user.email 
                 div=user.profile.phone 
               td 
-                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`) Manage
+                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`)= language.website.button.manage

@@ -178,7 +178,7 @@ export async function getUserGraph(from: string, to: string, exact: boolean, sch
             _id: false,
           },
         },
-      ]);
+      ]).then(a=>[null, a]).catch(a=>[a, null]);
     
       return (res as [Error|null, { date: Date; count: number }[]|null]);
 }

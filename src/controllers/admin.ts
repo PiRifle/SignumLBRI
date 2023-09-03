@@ -55,7 +55,8 @@ export async function main(req: Request, res: Response): Promise<void> {
 }
 export async function users(req: Request, res: Response): Promise<void> {
   req.params = res.locals.requestData.params;
-  const stats = await getGlobalStats(["registered","printed_label","given_money","canceled","deleted"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const stats = await getGlobalStats(["registered", "printed_label", "given_money", "canceled", "deleted"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const statsBought = await getGlobalStats(["registered", "printed_label", "accepted", "canceled", "deleted"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const statsTotal = await getGlobalStats(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const userData = await getStatsPerUser(Object.keys(req.query).length > 0 ? [...Object.keys(req.query)] : undefined as any, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const staff = await getStaffStatistics(Boolean(req.params.schoolID), req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
@@ -64,6 +65,7 @@ export async function users(req: Request, res: Response): Promise<void> {
     title: "Users",
     stats: stats[0],
     statsTotal: statsTotal[0],
+    statsBought: statsBought[0],
     userData: userData,
     staff: staff,
   });
@@ -89,19 +91,19 @@ export async function buyers(req: Request, res: Response): Promise<void> {
   });
 }
 
-export async function buyerDetails(req:Request, res:Response){
+export async function getBuyerDetails(req: Request, res: Response) {
   await check("buyerID").exists().isMongoId().run(req);
   const errors = validationResult(req);
-  
+
   if (!errors.isEmpty()) {
     req.flash("errors", errors.array());
     return res.redirect("back");
   }
-  
-  const buyer = await Buyer.findById(new ObjectID(req.params.buyerID));
-  const books = await BookListing.find({boughtBy: buyer._id}).populate("book")
 
-  return res.render("admin/page/buyer", {title: "Buyer", buyerInfo: buyer, books})
+  const buyer = await Buyer.findById(new ObjectID(req.params.buyerID));
+  const books = await BookListing.find({ boughtBy: buyer._id , school: res.locals.availableSchools}).populate("book school bookOwner");
+
+  return res.render("admin/page/buyer", { title: "Buyer", buyerInfo: buyer, books });
 }
 
 export async function books(req: Request, res: Response): Promise<void> {
@@ -112,7 +114,7 @@ export async function books(req: Request, res: Response): Promise<void> {
 }
 
 export async function earnings(req: Request, res: Response) {
-  return res.render("admin/page/earnings", {title: "Earnings"})
+  return res.render("admin/page/earnings", { title: "Earnings" });
 }
 
 interface Dataset {
@@ -299,7 +301,7 @@ export const getEditUser = async (req: Request, res: Response) => {
   }
   const user = await (getUser(new ObjectID(req.params.userID)));
 
-  if (!req.user.isHeadAdmin() && req.user.school.toString() != user[0].school.toString()){
+  if (!req.user.isHeadAdmin() && req.user.school.toString() != user[0].school.toString()) {
     req.flashError(null, "You dont have permission to view that profile");
     return res.redirect("/");
   }

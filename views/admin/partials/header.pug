@@ -1,5 +1,5 @@
 header.navbar.navbar-dark.sticky-top.bg-dark.flex-md-nowrap.p-0.shadow
-    a.navbar-brand.col-md-3.col-lg-2.me-0.px-3.fs-6(href="#")
+    a.navbar-brand.col-md-3.col-lg-2.me-0.px-3.fs-6(href="/admin")
         center
             i.fa-solid.fa-bookmark.mx-2
             | SignumLBRI
@@ -14,6 +14,7 @@ header.navbar.navbar-dark.sticky-top.bg-dark.flex-md-nowrap.p-0.shadow
                 else
                     img(src=user.gravatar(30), alt=(user.profile.name || user.email || user.id))
                 span.ms-2= user.profile.name || user.email || user.id                    
-            a.nav-link.px-2.my-auto.d-inline(href='/logout') Logout
+            a.nav-link.px-2.my-auto.d-inline(href='/')=language.website.button.backMainPage
+            a.nav-link.px-2.my-auto.d-inline(href='/logout')=language.website.button.logout
     //-     li.nav-item
     //-         a.nav-link.px-3(href='/logout') Logout

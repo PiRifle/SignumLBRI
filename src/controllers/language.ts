@@ -9,7 +9,7 @@ export function languageMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+) { 
   if (req.session.usesLang){
     req.language = (langProvider as LangPicker)[req.session.usesLang];
   }else{
@@ -17,7 +17,7 @@ export function languageMiddleware(
     if (lang) {
       req.language = (langProvider as LangPicker)[lang];
     } else {
-      req.language = langProvider.pl;
+      req.language = langProvider.dbg;
     }
   }
     res.locals.language = req.language;
