@@ -8,15 +8,15 @@ block content
       if setup
         +header= language.website.headers.hello
         +divider
-        p Stwórz konto administratora aby móc korzystać z programu!
+        p=language.website.descriptions.createHeadAdmin
       else 
         +header= language.website.headers.addAccount
         +divider
-        p Stwórz nowe konto użytkownika i rozszerz swój zespół :)
+        p=language.website.descriptions.createTeamAccount
     else 
         +header= language.website.headers.hello
         +divider
-        p.-mt-8 Stwórz konto użytkownika aby móc sprzedać swoje książki
+        p.-mt-8=language.website.descriptions.createUser
     div(class="md:w-3/5")
       form(id='signup-form', method='POST')
         input(type='hidden', name='_csrf', value=_csrf)
@@ -44,13 +44,13 @@ block content
                 option headadmin 
           if schools
             div(class="w-full").px-2
-              +form_select('school', 'school', language.website.input.school.label, language.website.input.school.label.placeholder)(required)
+              +form_select('school', 'school', language.website.input.school.label, language.website.input.school.placeholder)(required)
                 each school in schools
                   option(value=school._id)= school.name 
           div.m-2
             input#privacy(type="checkbox", name="privacy" required)
-            label(for="privacy").ml-2 Akceptuję
-              +link("/privacy").ml-2 Politykę Prywatności
+            label(for="privacy").ml-2=language.website.acceptPrivacy.nonhighlight
+              +link("/privacy").ml-2=language.website.acceptPrivacy.highlight
         .mt-14
           +button(type='submit')
             i.fa.fa-user-plus.mr-2

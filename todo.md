@@ -3,12 +3,15 @@
 - ~~zabezpiecz /setup i /signup przed nieuprawionymi rejestracjami~~ chyba worky?
 - handling errorów
 - ~~redo otoczki graficznej~~
-- zmień sposób działania analityki stron z rozdzieleniem na szkoły
-- dodaj rangę headadmin zarządzający wszystkimi szkołami oraz ich statystykami
+- ~~zmień sposób działania analityki stron z rozdzieleniem na szkoły~~
+- ~~dodaj rangę headadmin zarządzający wszystkimi szkołami oraz ich statystykami~~
+- dodaj pobór zysku szkół
 - ~~dodaj wsparcie języków, tłumaczenia~~
 - bugchecki
+<!-- - dodaj wyszukiwanie gdzie książki są dostępne -->
+<!-- - napraw działanie rejestru zleceń aby nie było zleceń innych szkół -->
 
-
+<!-- 
 Polityka prywatności
 I. Postanowienia ogólne
 1.	Polityka prywatności określa, jak zbierane, przetwarzane i przechowywane są dane osobowe Użytkowników niezbędne do świadczenia usług drogą elektroniczną za pośrednictwem serwisu internetowego [adres strony] (dalej: Serwis).
@@ -46,4 +49,4 @@ IX. Zautomatyzowane podejmowanie decyzji i profilowanie
 X. Postanowienia końcowe
 1.	Administrator ma prawo do wprowadzenia zmian w Polityce prywatności, przy czym prawa Użytkowników nie zostaną ograniczone.
 2.	Informacja o wprowadzonych zmianach pojawi się w formie komunikatu dostępnego w Serwisie.
-3.	W sprawach nieuregulowanych w niniejszej Polityce prywatności obowiązują przepisy RODO i przepisy prawa polskiego.
+3.	W sprawach nieuregulowanych w niniejszej Polityce prywatności obowiązują przepisy RODO i przepisy prawa polskiego. -->

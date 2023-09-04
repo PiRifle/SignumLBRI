@@ -148,3 +148,18 @@ body {
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
 }
+
+
+
+.nav-link > img {
+  transition: all 0.2s ease;
+  filter: brightness(0.8);
+}
+
+.nav-link, .active > img {
+  filter: brightness(1);
+}
+
+.nav-link:hover > img {
+  filter: brightness(1);
+}

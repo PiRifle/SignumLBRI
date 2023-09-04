@@ -34,6 +34,7 @@ export type BookListingDocument = mongoose.Document & {
   | "sold"
   | "given_money"
   | "canceled"
+  | "returned"
   | "deleted";
   label: LabelDocument;
   school: SchoolDocument;

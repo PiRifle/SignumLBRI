@@ -12,11 +12,11 @@ block content
             div(class="max-md:overflow-scroll")
                 table.w-full.table-auto.my-6(class="max-md:text-3xs text-sm")
                     thead.text-sm.bg-gray-700.text-white.uppercase.border-gray-50.border
-                        th.px-6.py-3 Tytuł
+                        th.px-6.py-3= language.website.table.headers.title
                         if !device.mobile()
-                            th.px-6.py-3 Wydawca 
-                            th.px-6.py-3 Cena 
-                        th.px-6.py-3 Status
+                            th.px-6.py-3= language.website.table.headers.publisher
+                            th.px-6.py-3= language.website.table.headers.price
+                        th.px-6.py-3= language.website.table.headers.status
                         th.px-6.py-3 
                     tbody
                         each bookListing in bookListings

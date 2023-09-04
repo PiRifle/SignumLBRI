@@ -2,8 +2,8 @@ extends layout
 
 block content
   center 
-    h1 Witaj
-    p.lead Jak ci dzień mija!
+    h1= language.website.headers.hello
+    p.lead= language.website.descriptions.adminMainPage
     hr
 
     center
@@ -14,10 +14,10 @@ block content
       if !device.mobile()
         table.table
           thead 
-            th Tytuł
-            th Wydawca
-            th Dostępne
-            th Sprzedane
+            th= language.website.table.headers.title
+            th= language.website.table.headers.publisher
+            th= language.website.table.headers.available
+            th= language.website.table.headers.sold
           tbody
             each book in availableBooks
               tr

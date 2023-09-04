@@ -1,0 +1,33 @@
+extends ../../layout
+
+block content
+    .container.pl-sm-0.pr-sm-0.pl-lg-3.pr-lg-3(style="width:80%")
+        div(style="height:30px")
+        .page-header.mb-4
+            h3 #{buyerInfo.name} #{buyerInfo.surname} 
+            span #{buyerInfo.phone} / #{buyerInfo.email}
+        //-     hr
+        h5=language.website.headers.books
+        table.table 
+            thead 
+                th=language.website.table.headers.title 
+                th=language.website.table.headers.publisher 
+                th=language.website.table.headers.paid
+                th=language.website.table.headers.commission
+                th=language.website.table.headers.school 
+                th=language.website.table.headers.user
+            tbody
+                each item in books
+                    if item.book
+                        tr
+                            td=item.book.title.length > 70 ? item.book.title.substring(0, 70 - 3) + "..." : item.book.title
+                            td=item.book.publisher.length > 40 ? item.book.publisher.substring(0, 40 - 3) + "..." :  item.book.publisher
+                            td=(item.cost + item.commission).toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                            td=item.commission.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
+                            td=item.school.name
+                            td
+                                a(href=`/admin/user/${item.bookOwner._id}/manage`) #{item.bookOwner.profile.name} #{item.bookOwner.profile.surname}
+        //- h5 You need to give him #{euser.debt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })} from sold books! 
+
+        //-     form.form-horizontal(action='giveMoney', method='POST')
+        //-         input(type="submit", value="Give Money").btn.btn-primary

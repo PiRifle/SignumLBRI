@@ -203,6 +203,19 @@ export const isAdmin = (
   res.redirect("/login");
 };
 
+export const isHeadAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const user = req.user as UserDocument;
+  if (user.isHeadAdmin()) {
+    return next();
+  }
+  res.redirect("/login");
+};
+
+
 export const isSellerApp = (
   req: Request,
   res: Response,

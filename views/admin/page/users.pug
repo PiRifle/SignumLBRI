@@ -3,29 +3,41 @@ include ../layout
 block content 
     main.col-md-9.ms-sm-auto.col-lg-10.px-md-4
       .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
-        h1.h2 Users
+        h1.h2=language.website.headers.users
         .btn-toolbar.mb-2.mb-md-0
           .btn-group.me-2
             button.btn.btn-sm.btn-outline-secondary(type='button') Share
             button.btn.btn-sm.btn-outline-secondary(type='button') Export
             input.form-control(name="dates", readonly="readonly")
       canvas#myChart.my-4.w-100(width='900' height='380' datasetSource="api/users")
-      h2 Statistics 
+      h2=language.website.headers.statistics
       .d-flex.justify-content-evenly.flex-wrap.flex-row
+        if statsBought
+          div Aktualne Zarobki: #{statsBought.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+        if statsTotal
+          div(aria-label="nigger Nigerr") Books per user AVG: #{Math.ceil(statsTotal.bookAvg)}
+          div Dług (wszystkie zlecenia): #{statsTotal.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div Maksymalny zarobek (Wszystkie zlecenia): #{statsTotal.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
         if stats
-          div Books per user AVG: #{Math.ceil(stats.bookAvg)}
-          div total Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-          div total Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-      h2 User List
+          //- div Books per user AVG: #{Math.ceil(stats.bookAvg)}
+          div Aktualny Dług: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div Przewidywany zarobek: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+      h2=language.website.headers.userList
+      form(action="", method="get") 
+        .d-flex.flex-wrap
+          for i in ["registered","printed_label","accepted","sold","given_money","returned","canceled","deleted"]
+            div.mx-2
+              input(onChange="this.form.submit()", id=i, type="checkbox", name=i, checked=userData.filter[i] && "checked")
+              label.ms-1(for=i)= language.statuses[i]
       table.table
         thead 
-          th Name
-          th Surname 
-          th Earnings 
-          th Books 
-          th Contact
-          th Debt
-          th(width="40px") Manage
+          th= language.website.table.headers.name
+          th= language.website.table.headers.surname 
+          th= language.website.table.headers.earnings 
+          th= language.website.table.headers.books 
+          th= language.website.table.headers.contact
+          th= language.website.table.headers.debt
+          th(width="40px")= language.website.table.headers.manage
         tbody 
           each user in userData
             tr 
@@ -38,17 +50,17 @@ block content
                 div=user.profile.phone 
               td=user.mustGive.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
               td
-                a.btn.btn-primary(href=user._id+"/manage") Manage
-      h2 Staff List
+                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`)= language.website.button.manage
+      h2=language.website.headers.staffList
       table.table
         thead 
-          th Name
-          th Surname 
-          th Books Sold
-          th Books Accepted
-          th Books Deleted
-          th Contact
-          th(width="40px") Manage
+          th= language.website.table.headers.name
+          th= language.website.table.headers.surname 
+          th= language.website.table.headers.booksSold
+          th= language.website.table.headers.booksAccepted
+          th= language.website.table.headers.booksDeleted
+          th= language.website.table.headers.contact
+          th(width="40px")= language.website.table.headers.manage
         tbody 
           each user in staff
             tr 
@@ -61,4 +73,4 @@ block content
                 div=user.email 
                 div=user.profile.phone 
               td 
-                a.btn.btn-primary(href=user._id+"/manage") Manage
+                a.btn.btn-primary(href=`/admin/user/${user._id}/manage`)= language.website.button.manage

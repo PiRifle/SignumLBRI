@@ -3,15 +3,16 @@ include ../layout
 block content 
     main.col-md-9.ms-sm-auto.col-lg-10.px-md-4
       .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
-        h1.h2 Buyers 
+        h1.h2=language.website.headers.buyers
       table.table
         thead
-          th Name 
-          th Surname 
-          th Books Bought 
-          th Money spent 
-          th Profit 
-          th Contact
+          th=language.website.table.headers.name 
+          th=language.website.table.headers.surname 
+          th=language.website.table.headers.booksBought 
+          th=language.website.table.headers.moneySpent 
+          th=language.website.table.headers.profit 
+          th=language.website.table.headers.contact
+          th(style="width: 140px")=language.website.table.headers.manage
         tbody 
           each buyer in buyers 
             tr 
@@ -23,5 +24,7 @@ block content
               td
                 div=buyer.email 
                 div=buyer.phone 
+              td 
+                a.btn.btn-primary(href=`/admin/buyer/${buyer._id}/`)=language.website.button.more
       h5 Total money spent: #{buyerSum.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
       

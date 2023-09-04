@@ -339,6 +339,10 @@ export async function getBookRegistry(
     limit: 10,
   };
   const query: FilterQuery<BookListingDocument> = {};
+  
+  if (!req.user.isHeadAdmin()){
+    query.school = req.user.school._id;
+  }
 
   if (req.user.isAdmin()) {
     query.status = { $nin: ["canceled", "deleted"] };

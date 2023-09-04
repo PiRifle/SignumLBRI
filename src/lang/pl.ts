@@ -3,17 +3,17 @@ import { Language } from ".";
 export const pl = {
   mail: {
     accountVerifyPrompt: {
-      subject: "",
-      text: "",
+      subject: "Potwierdzenie konta",
+      text: "Twoje konto zostało utworzone. Zweryfikuj swoje konto, klikając na link wysłany poniżej."
     },
     accountVerified: {
-      subject: "",
-      text: "",
+      subject: "Konto zweryfikowane",
+      text: "Twoje konto zostało pomyślnie zweryfikowane"
     },
     passwordChanged: {
-      subject: "",
-      text: "",
-    },
+      subject: "Zmiana hasła",
+      text: "Hasło zostało zmienione."
+    }
   },
   titles: {
     login: "Logowanie",
@@ -33,6 +33,7 @@ export const pl = {
     accepted: "Książka zaakceptowana przez sprzedawcę",
     sold: "Książka sprzedana",
     given_money: "Wysłano pieniądze",
+    returned: "Zwrócono Książkę",
     canceled: "Ogłoszenie anulowane",
     deleted: "Ogłoszenie usunięte",
   },
@@ -76,7 +77,6 @@ export const pl = {
       schoolNameBlank: "Podaj nazwę szkoły",
       schoolstreetBlank: "Podaj nazwę szkoły",
       schoolComissionMultiplierInvalid: "Podaj prawidłowy współczynnik marży",
-
       isbnInvalid: "Podano nieprawidłowy kod ISBN",
       phoneInvalid: "Podano nieprawidłowy numer telefonu",
       bookTitleBlank: "Tytuł książki nie może być pusty",
@@ -93,8 +93,8 @@ export const pl = {
       passwordNotMatch: "Hasła nie pasują do siebie",
       tokenNotProvided: "Nie podano tokena autoryzacyjnego",
       tokenInvalid: "Token konta jest nieprawidłowy lub wygasł.",
-      passwordTokenInvalid: "Token konta jest nieprawidłowy lub wygasł.",
-    },
+      passwordTokenInvalid: "Token konta jest nieprawidłowy lub wygasł."
+    }
   },
   website: {
     title: "Targi Książek",
@@ -102,14 +102,73 @@ export const pl = {
     description: "\"Sprzedawaj, rozdawaj, zarabiaj!\" To nasza wiadomość. Twoje podręczniki szkolne zyskują drugie życie dzięki szybkiemu i wygodnemu procesowi sprzedaży i odkupu na naszej platformie.",
     creator: "- Twórca Blind Dating 2",
     empty: "Trochę tu pusto...",
+    table: {
+      headers: {
+        print: "Drukuj",
+        title: "Tytuł",
+        publisher: "Wydawca",
+        price: "Cena",
+        printed: "Wydrukowano",
+        status: "Status",
+        manage: "Zarządzanie",
+        ID: "ID",
+        available: "Dostępne",
+        sold: "Sprzedane",
+        role: "Rola",
+        averageTimeSpent: "Średni czas spędzony",
+        totalTimeSpent: "Całkowity czas spędzony",
+        name: "Imię",
+        surname: "Nazwisko",
+        booksBought: "Książki kupione",
+        moneySpent: "Wydane pieniądze",
+        profit: "Zysk",
+        contact: "Kontakt",
+        costAvg: "Średni koszt",
+        costMedian: "Mediana kosztu",
+        earnings: "Zarobki",
+        books: "Książki",
+        debt: "Dług",
+        booksSold: "Książki sprzedane",
+        booksAccepted: "Książki zaakceptowane",
+        booksDeleted: "Książki usunięte",
+        paid: "Zapłacono",
+        commission: "Prowizja",
+        school: "Szkoła",
+        user: "Użytkownik",
+        edit: "Edycja"
+      }
+    },
     headers: {
+      userList: "Lista Użytkowników",
+      staffList: "Lista Pracowników",
       books: "Twoje Książki",
-      login: "Logowanie",
-      sellBook: "Sprzedaj Książkę",
-      hello: "Cześć!",
-      addAccount: "Dodaj Konto",
-      privacyPolicy: "Polityka Prywatności",
+      sellBook: "Sprzedaj książkę",
+      hello: "Witaj",
+      addAccount: "Dodaj konto",
+      privacyPolicy: "Polityka prywatności",
       manage: "Zarządzaj Etykietami",
+      forgotPassword: "Zapomniałem hasła",
+      verifyAgain: "Zweryfikuj ponownie",
+      login: "Logowanie",
+      manageProfile: "Zarządzaj profilem",
+      resetPassword: "Resetuj hasło",
+      statistics: "Statystyki",
+      timeSpent: "Czas spędzony",
+      buyers: "Kupujący",
+      bookDetails: "Szczegóły książki",
+      users: "Użytkownicy",
+      giveMoney: "Prześlij pieniądze",
+      profileInfo: "Informacje o profilu",
+      school: "Szkoła",
+      menu: "Menu",
+      dashboard: "Panel główny",
+      earnings: "Zarobki",
+      book: "Książka",
+      cancelListing: "Anuluj ogłoszenie",
+      cancel: "Anuluj",
+      acceptListing: "Akceptuj ogłoszenie",
+      deleteListing: "Usuń ogłoszenie",
+      listingRegistry: "Rejestr ogłoszeń"
     },
     button: {
       manage: "Zarządzaj",
@@ -131,8 +190,8 @@ export const pl = {
       previous: "Poprzedni",
       labels: "Etykiety",
       send: "Wyślij",
-      analitycs: "Analizy",
-      resetPassword: "Resetuj Hasło",
+      analitycs: "Analityka",
+      resetPassword: "Resetuj hasło",
       forgotPassword: "Zapomniałem Hasła?",
       login: "Logowanie",
       signup: "Rejestracja",
@@ -142,7 +201,18 @@ export const pl = {
       privacyPolicy: "Polityka Prywatności",
       changePassword: "Zmień Hasło",
       print: "Drukuj",
-      printLabel: "Drukuj Etykietę"
+      printLabel: "Drukuj etykietę",
+      forgotPasword: "Zapomniałem Hasła?",
+      more: "Więcej",
+      share: "Udostępnij",
+      export: "Eksport",
+      giveMoney: "Prześlij pieniądze",
+      backMainPage: "Wróć do strony głównej",
+      all: "Wszystkie",
+      availableBook: "Dostępne książki",
+      home: "Strona główna",
+      addSchool: "Dodaj szkołę",
+      save: "Zapisz"
     },
     input: {
       email: { placeholder: "Wprowadź swój adres email", label: "Email" },
@@ -151,13 +221,62 @@ export const pl = {
       surname: { placeholder: "Wprowadź swoje nazwisko", label: "Nazwisko" },
       phone: { placeholder: "Wprowadź swój numer telefonu", label: "Numer Telefonu" },
       confirmPassword: { placeholder: "Potwierdź swoje hasło", label: "Potwierdź Hasło" },
-      isbn: { placeholder: "Wprowadź ISBN książki", label: "ISBN" },
+      isbn: { placeholder: "Wprowadź Kod Kreskowy z Tyłu Książki", label: "ISBN" },
       title: { placeholder: "Wprowadź tytuł książki", label: "Tytuł" },
       publisher: { placeholder: "Wprowadź nazwę wydawcy", label: "Wydawca" },
       authors: { placeholder: "Wprowadź autora/autorów, oddzielonych przecinkami", label: "Autorzy" },
       pubDate: { placeholder: "Wprowadź rok wydania (RRRR)", label: "Rok Wydania" },
       role: { placeholder: "Wprowadź swoją rolę lub stanowisko", label: "Rola" },
-      school: { placeholder: "Wprowadź nazwę szkoły", label: "Szkoła" }
+      school: { placeholder: "Wprowadź nazwę szkoły", label: "Szkoła" },
+      newPassword: {
+        label: "Nowe hasło",
+        placeholder: "Wprowadź nowe hasło"
+      },
+      nameSurname: {
+        label: "Imię i Nazwisko"
+      },
+      schoolName: {
+        label: "Nazwa szkoły",
+        placeholder: "Wprowadź nazwę szkoły"
+      },
+      schoolFullName: {
+        label: "Pełna nazwa szkoły",
+        placeholder: "Wprowadź pełną nazwę szkoły"
+      },
+      commissionMultiplier: {
+        label: "Współczynnik marży",
+        placeholder: "Wprowadź współczynnik marży"
+      },
+      schoolLocalization: {
+        label: "Lokalizacja szkoły",
+        placeholder: "Wprowadź lokalizację szkoły"
+      },
+      schoolLogo: {
+        label: "Logo szkoły",
+        placeholder: "Wprowadź link do logo szkoły"
+      }
     },
-  }
-} as Language;
+    descriptions: {
+      resetPasswordInstructions: "Wprowadź swój adres email, aby otrzymać instrukcje resetowania hasła.",
+      AccountVerifyInstructions: "Sprawdź swoją skrzynkę odbiorczą i kliknij link w wiadomości email, aby zweryfikować swoje konto.",
+      createHeadAdmin: "Utwórz głównego administratora dla nowej szkoły.",
+      createTeamAccount: "Dodaj nowe konto do zespołu.",
+      createUser: "Utwórz nowego użytkownika.",
+      inputListingID: "Wprowadź ID Zlecenia.",
+      confirmAccept: "Potwierdź akceptację tej operacji.",
+      confirmDelete: "Potwierdź usunięcie tej operacji.",
+      confirmCancel: "Potwierdź anulowanie tej operacji.",
+      sellListing: "Dodaj książkę do listy sprzedaży.",
+      acceptListing: "Zaakceptuj ogłoszenie o sprzedaży książki.",
+      deleteListing: "Usuń ogłoszenie o sprzedaży książki.",
+      adminMainPage: "Przejdź do strony głównej panelu administracyjnego.",
+      searchListingID: "Wprowadź ID Zlecenia",
+      addSchool: "Dodaj nową szkołę."
+    },
+    acceptPrivacy: {
+      nonhighlight: "Akceptuję",
+      highlight: "Politykę prywatności"
+    }
+  },
+};
+// } as Language;

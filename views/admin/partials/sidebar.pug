@@ -1,23 +1,45 @@
 nav#sidebarMenu.col-md-3.col-lg-2.d-md-block.bg-light.sidebar.collapse
-    .position-sticky.pt-3.sidebar-sticky
-        ul.nav.flex-column
+    .position-sticky.pt-3.sidebar-sticky.d-flex.flex-column
+        ul.nav.flex-column 
+            h6.m-2.text-center=language.website.headers.school
+            if user.isHeadAdmin()
+                li.nav-item
+                    a.nav-link.text-center.m-2(href=`/admin/school/${requestData.page}`)=language.website.button.all
+            for school in availableSchools 
+                li.nav-item
+                    a.nav-link(href=`/admin/school/${school._id}${requestData.page}`, class=`${requestData.params.schoolID==school._id.toString() && "active"}`)
+                        img.me-3(src=school.getIcon({width: 30, quality:20}))
+                        | #{school.name}
+        ul.nav.flex-column(style='flex-grow: 1')
+            h6.m-2.text-center=language.website.headers.menu
             li.nav-item
-            a.nav-link(class=(title === 'Dashboard') ? 'active' : undefined, aria-current='page' href='/admin')
-                span.align-text-bottom(data-feather='home')
-                |               Dashboard
+                a.nav-link(class=(title === 'Dashboard') ? 'active' : undefined, aria-current='page' href=`/admin/school/${requestData.params.schoolID || ""}`)
+                    span.align-text-bottom(data-feather='home')
+                    |               #{language.website.headers.dashboard}
             li.nav-item
-            a.nav-link(class=(title === 'Users') ? 'active' : undefined, aria-current='page' href='/admin/users')
-                span.align-text-bottom(data-feather='users')
-                |               Users
+                a.nav-link(class=(title === 'Users') ? 'active' : undefined, aria-current='page' href=`/admin/school/${requestData.params.schoolID || ""}/users`)
+                    span.align-text-bottom(data-feather='users')
+                    |               #{language.website.headers.users}
             li.nav-item
-            a.nav-link(class=(title === 'Buyers') ? 'active' : undefined, aria-current='page' href='/admin/buyers')
-                span.align-text-bottom(data-feather='shopping-cart')
-                |               Buyers
+                a.nav-link(class=(title === 'Buyers') ? 'active' : undefined, aria-current='page' href=`/admin/school/${requestData.params.schoolID || ""}/buyers`)
+                    span.align-text-bottom(data-feather='shopping-cart')
+                    |               #{language.website.headers.buyers}
             li.nav-item
-            a.nav-link(class=(title === 'Books') ? 'active' : undefined, aria-current='page' href='/admin/books')
-                span.align-text-bottom(data-feather='book')
-                |               Books
-
+                a.nav-link(class=(title === 'Books') ? 'active' : undefined, aria-current='page' href=`/admin/school/${requestData.params.schoolID || ""}/books`)
+                    span.align-text-bottom(data-feather='book')
+                    |               #{language.website.headers.books}
+            li.nav-item
+                a.nav-link(class=(title === 'Earnings') ? 'active' : undefined, aria-current='page' href=`/admin/school/${requestData.params.schoolID || ""}/earnings`)
+                    span.align-text-bottom(data-feather='dollar-sign')
+                    |               #{language.website.headers.earnings}
+        div.nav.m-3
+            form.d-flex.flex-column.my-auto.justify-center(action="/language", method="POST")
+                button.btn.btn-link(name="language", value="uk") Ukrainian
+                button.btn.btn-link(name="language", value="pl") Polish
+                button.btn.btn-link(name="language", value="en") English
+                button.btn.btn-link(name="language", value="bad_pl") XD
+                button.btn.btn-link(name="language", value="nya") Anime
+                button.btn.btn-link(name="language", value="dbg") Debug
         //- h6.sidebar-heading.d-flex.justify-content-between.align-items-center.px-3.mt-4.mb-1.text-muted.text-uppercase
         //-     span Saved reports
         //-     a.link-secondary(href='#' aria-label='Add a new report')
