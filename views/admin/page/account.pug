@@ -9,10 +9,10 @@ block content
         h5 Books
         table.table 
             thead 
-                th= language.website.table.header.title
-                th= language.website.table.header.publisher
-                th= language.website.table.header.price
-                th= language.website.table.header.status
+                th= language.website.table.headers.title
+                th= language.website.table.headers.publisher
+                th= language.website.table.headers.price
+                th= language.website.table.headers.status
             tbody
                 each item in euser.availableBooks
                     if item.book[0]

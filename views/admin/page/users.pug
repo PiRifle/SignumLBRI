@@ -22,7 +22,7 @@ block content
           //- div Books per user AVG: #{Math.ceil(stats.bookAvg)}
           div Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
           div Predicted Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-      h2 User List
+      h2=language.website.headers.userList
       form(action="", method="get") 
         .d-flex.flex-wrap
           for i in ["registered","printed_label","accepted","sold","given_money","canceled","deleted"]
@@ -31,13 +31,13 @@ block content
               label.ms-1(for=i)= language.statuses[i]
       table.table
         thead 
-          th= language.website.table.header.name
-          th= language.website.table.header.surname 
-          th= language.website.table.header.earnings 
-          th= language.website.table.header.books 
-          th= language.website.table.header.contact
-          th= language.website.table.header.debt
-          th(width="40px")= language.website.table.header.manage
+          th= language.website.table.headers.name
+          th= language.website.table.headers.surname 
+          th= language.website.table.headers.earnings 
+          th= language.website.table.headers.books 
+          th= language.website.table.headers.contact
+          th= language.website.table.headers.debt
+          th(width="40px")= language.website.table.headers.manage
         tbody 
           each user in userData
             tr 
@@ -51,16 +51,16 @@ block content
               td=user.mustGive.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
               td
                 a.btn.btn-primary(href=`/admin/user/${user._id}/manage`)= language.website.button.manage
-      h2 Staff List
+      h2=language.website.headers.staffList
       table.table
         thead 
-          th= language.website.table.header.name
-          th= language.website.table.header.surname 
-          th= language.website.table.header.booksSold
-          th= language.website.table.header.booksAccepted
-          th= language.website.table.header.booksDeleted
-          th= language.website.table.header.contact
-          th(width="40px")= language.website.table.header.manage
+          th= language.website.table.headers.name
+          th= language.website.table.headers.surname 
+          th= language.website.table.headers.booksSold
+          th= language.website.table.headers.booksAccepted
+          th= language.website.table.headers.booksDeleted
+          th= language.website.table.headers.contact
+          th(width="40px")= language.website.table.headers.manage
         tbody 
           each user in staff
             tr 

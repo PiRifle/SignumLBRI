@@ -17,7 +17,7 @@ export function languageMiddleware(
     if (lang) {
       req.language = (langProvider as LangPicker)[lang];
     } else {
-      req.language = langProvider.dbg;
+      req.language = langProvider.pl;
     }
   }
     res.locals.language = req.language;

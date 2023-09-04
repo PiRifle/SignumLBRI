@@ -8,6 +8,8 @@
 - dodaj pobór zysku szkół
 - ~~dodaj wsparcie języków, tłumaczenia~~
 - bugchecki
+<!-- - dodaj wyszukiwanie gdzie książki są dostępne -->
+<!-- - napraw działanie rejestru zleceń aby nie było zleceń innych szkół -->
 
 <!-- 
 Polityka prywatności

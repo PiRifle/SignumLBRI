@@ -44,7 +44,7 @@ block content
                 option headadmin 
           if schools
             div(class="w-full").px-2
-              +form_select('school', 'school', language.website.input.school.label, language.website.input.school.label.placeholder)(required)
+              +form_select('school', 'school', language.website.input.school.label, language.website.input.school.placeholder)(required)
                 each school in schools
                   option(value=school._id)= school.name 
           div.m-2

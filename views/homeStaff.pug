@@ -14,10 +14,10 @@ block content
       if !device.mobile()
         table.table
           thead 
-            th= language.website.table.header.title
-            th= language.website.table.header.publisher
-            th= language.website.table.header.available
-            th= language.website.table.header.sold
+            th= language.website.table.headers.title
+            th= language.website.table.headers.publisher
+            th= language.website.table.headers.available
+            th= language.website.table.headers.sold
           tbody
             each book in availableBooks
               tr
