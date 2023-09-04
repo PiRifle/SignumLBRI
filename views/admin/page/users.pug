@@ -13,19 +13,19 @@ block content
       h2=language.website.headers.statistics
       .d-flex.justify-content-evenly.flex-wrap.flex-row
         if statsBought
-          div Actual Earnings: #{statsBought.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div Aktualne Zarobki: #{statsBought.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
         if statsTotal
-          div Books per user AVG: #{Math.ceil(statsTotal.bookAvg)}
-          div Total Debt: #{statsTotal.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-          div Max Earnings: #{statsTotal.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div(aria-label="nigger Nigerr") Books per user AVG: #{Math.ceil(statsTotal.bookAvg)}
+          div Dług (wszystkie zlecenia): #{statsTotal.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div Maksymalny zarobek (Wszystkie zlecenia): #{statsTotal.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
         if stats
           //- div Books per user AVG: #{Math.ceil(stats.bookAvg)}
-          div Debt: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
-          div Predicted Earnings: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div Aktualny Dług: #{stats.bookDebt.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          div Przewidywany zarobek: #{stats.earnings.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
       h2=language.website.headers.userList
       form(action="", method="get") 
         .d-flex.flex-wrap
-          for i in ["registered","printed_label","accepted","sold","given_money","canceled","deleted"]
+          for i in ["registered","printed_label","accepted","sold","given_money","returned","canceled","deleted"]
             div.mx-2
               input(onChange="this.form.submit()", id=i, type="checkbox", name=i, checked=userData.filter[i] && "checked")
               label.ms-1(for=i)= language.statuses[i]

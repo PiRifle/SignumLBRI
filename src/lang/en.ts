@@ -33,6 +33,7 @@ export const lang = {
     accepted: "Book Accepted by Seller",
     sold: "Book Sold",
     given_money: "Money Sent",
+    returned: "Book Returned",
     canceled: "Listing Canceled",
     deleted: "Listing Deleted",
   },

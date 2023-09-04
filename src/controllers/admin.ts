@@ -55,8 +55,8 @@ export async function main(req: Request, res: Response): Promise<void> {
 }
 export async function users(req: Request, res: Response): Promise<void> {
   req.params = res.locals.requestData.params;
-  const stats = await getGlobalStats(["registered", "printed_label", "given_money", "canceled", "deleted"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
-  const statsBought = await getGlobalStats(["registered", "printed_label", "accepted", "canceled", "deleted"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const stats = await getGlobalStats(["registered", "printed_label", "given_money", "canceled", "deleted", "returned"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
+  const statsBought = await getGlobalStats(["registered", "printed_label", "accepted","returned", "canceled", "deleted"], req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const statsTotal = await getGlobalStats(undefined, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const userData = await getStatsPerUser(Object.keys(req.query).length > 0 ? [...Object.keys(req.query)] : undefined as any, req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
   const staff = await getStaffStatistics(Boolean(req.params.schoolID), req.params.schoolID ? new ObjectId(req.params.schoolID) : undefined);
@@ -114,7 +114,17 @@ export async function books(req: Request, res: Response): Promise<void> {
 }
 
 export async function earnings(req: Request, res: Response) {
-  return res.render("admin/page/earnings", { title: "Earnings" });
+  
+  const listingsSold = await BookListing.find({school: req.user.school._id, status: {$in: ["sold"]}}, "commission cost")
+  const listingsGivenMoney = await BookListing.find({school: req.user.school._id, status: {$in: ["given_money"]}}, "commission cost")
+
+  const moneyFlow = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission+currVal.cost, 0)+listingsGivenMoney.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission+currVal.cost, 0)
+  const returnMoney = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.cost, 0)
+  const earned = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission, 0)+listingsGivenMoney.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission, 0)
+  const returnToCreator = earned*0.20
+  const earnedForSchool = earned-returnToCreator
+  return res.render("admin/page/earnings", { title: "Earnings",  moneyFlow, returnMoney, earned, returnToCreator, earnedForSchool});
+
 }
 
 interface Dataset {
@@ -138,7 +148,7 @@ export async function apiBooks(req: Request, res: Response) {
     exact: boolean;
   };
 
-  const [err, bookStatistics] = await getBookGraph(from, to, exact);
+  const [err, bookStatistics] = await getBookGraph(from, to, exact, req.user.isHeadAdmin() ? undefined : new ObjectID(req.user.school._id));
 
   if (err) {
     return res.status(500).end();
@@ -267,7 +277,7 @@ export async function apiUsers(req: Request, res: Response) {
   };
 
 
-  const [err, userStatistics] = await getUserGraph(from, to, exact);
+  const [err, userStatistics] = await getUserGraph(from, to, exact, req.user.isHeadAdmin() ? undefined : new ObjectID(req.user.school._id));
   if (err) {
     return res.status(500).end();
   }
@@ -384,7 +394,14 @@ export const postGiveMoneyUser = async (req: Request, res: Response) => {
   }
 
   listings.forEach((listing: BookListingDocument) => {
-    listing.status = "given_money";
+    if (listing.status == "accepted"){
+      listing.status = "returned";
+    }
+    
+    if (listing.status == "sold"){
+      listing.status = "given_money";
+    }
+
     listing.whenGivenMoney = new Date();
     listing.givenMoneyBy = req.user as UserDocument;
     listing.save((err) => {

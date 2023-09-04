@@ -33,6 +33,7 @@ export const bad_pl = {
     accepted: "Książka zaakceptowana przez sprzedawcę, szacun za to",
     sold: "Książka sprzedana, hajs w kieszeni",
     given_money: "Hajs wysłany, teraz do piwa",
+    returned: "Książka zwrócona, lekki huj",
     canceled: "Ogłoszenie anulowane, aż szkoda gadać",
     deleted: "Ogłoszenie usunięte, coś tam było nie halo",
   },

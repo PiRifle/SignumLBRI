@@ -781,7 +781,7 @@ export async function getStatsPerUser(filter: ("registered"|"printed_label"|"acc
   return query;
 }
 
-export function getGlobalStats(filter: ("registered"|"printed_label"|"accepted"|"sold"|"given_money"|"canceled"|"deleted")[] = ["canceled", "deleted"],schoolID?: ObjectID){
+export function getGlobalStats(filter: ("registered"|"printed_label"|"accepted"|"sold"|"given_money"|"canceled"|"deleted"|"returned")[] = ["canceled", "deleted"],schoolID?: ObjectID){
     return User.aggregate<{bookDebt: number, earnings: number, bookAvg: number}>([
         ...(schoolID ? [{
             $match: {

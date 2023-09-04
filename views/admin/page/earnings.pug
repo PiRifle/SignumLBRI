@@ -5,9 +5,9 @@ block content
         .d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom
             h1.h2 Earnings
         ul.d-flex.justify-content-evenly.flex-wrap.flex-row
-          li Obrót 
-          li Pieniądze do zwrotu 
-          li zarobione pieniądze
-          li pieniądze do oddania
-          li zysk
+          li Obrót: #{moneyFlow.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          li Pieniądze do zwrotu uczniom: #{returnMoney.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          li Zarobione pieniądze (przed rozliczeniem): #{earned.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          li Pieniądze dla twórcy (na kawę i serwery): #{returnToCreator.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
+          li Twój Zysk: #{earnedForSchool.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })}
           

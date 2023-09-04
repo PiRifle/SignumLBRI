@@ -31,6 +31,7 @@ export const nya = {
       accepted: "Book Accepted by Sellew, UwU~",
       sold: "Book Sold, Nyaa~",
       given_money: "Money Sent, Senpai~",
+      returned: "Book Returned, Senpai~",
       canceled: "Listing Canceled, Nyaa~",
       deleted: "Listing Deleted, UwU~",
     },

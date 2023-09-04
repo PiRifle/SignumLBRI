@@ -33,6 +33,7 @@ export const pl = {
     accepted: "Książka zaakceptowana przez sprzedawcę",
     sold: "Książka sprzedana",
     given_money: "Wysłano pieniądze",
+    returned: "Zwrócono Książkę",
     canceled: "Ogłoszenie anulowane",
     deleted: "Ogłoszenie usunięte",
   },

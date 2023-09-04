@@ -38,6 +38,7 @@ export interface Language {
     accepted: string;
     sold: string;
     given_money: string;
+    returned: string;
     canceled: string;
     deleted: string;
   };

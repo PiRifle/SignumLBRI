@@ -341,7 +341,7 @@ export async function getBookRegistry(
   const query: FilterQuery<BookListingDocument> = {};
   
   if (!req.user.isHeadAdmin()){
-    query.school = req.user.school._id
+    query.school = req.user.school._id;
   }
 
   if (req.user.isAdmin()) {
