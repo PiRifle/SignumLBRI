@@ -4,6 +4,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "target": "esnext",
+    "allowJs": true,
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,

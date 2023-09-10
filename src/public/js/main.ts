@@ -130,7 +130,7 @@ async function castData() {
 $("button.sellBooks").on("click", (e: any) => {
   let ids: string[] = [];
   let costs: number[] = [];
-  $("table.sellTable > tbody")
+  $(isMobile ? ".sellMobile > ul" : "table.sellTable > tbody")
     .children()
     .each((index, element) => {
       const elem = element.getAttribute("data-book-id");
@@ -162,11 +162,29 @@ $("input[name='itemIDSell']").on("focusout", (event: any) => {
     if (value.status == 200) {
       const resp = await value.json();
       if (resp) {
-        if (!$(`tr[data-book-id="${resp._id}"]`)[0]) {
-          $("table.sellTable > tbody").append(`
+        if (isMobile){
+          if (!$(`li[data-book-id="${resp._id}"]`)[0]){
+            $(".sellMobile > ul").append(`
+            <li class="row py-2 ${resp.status != "accepted" && "bg-danger"}" data-book-id="${resp._id}" data-book-cost="${Math.ceil(resp.cost + resp.commission)}" >
+              <div class="col">
+                <h5>${shorten(resp.book.title, 40)}</h5>
+                <p>Publisher: ${shorten(resp.book.title, 40)}</p>
+                Status: ${resp.status} <br> ID: ${resp._id}
+                <h6>Price: ${(resp.cost + resp.commission).toLocaleString("pl-PL", {style: "currency",currency: "PLN",})}</h6>
+              </div>
+              <div class="col-4">
+                <button class="btn btn-danger rmBook" onclick="window.rmbook(this)">Usuń</button>
+              </div>
+              <hr>
+            </li>
+            `)
+          }
+        }else{
+          if (!$(`tr[data-book-id="${resp._id}"]`)[0]) {
+            $("table.sellTable > tbody").append(`
             <tr data-book-id="${resp._id}" data-book-cost="${Math.ceil(
               resp.cost + resp.commission,
-            )}" ${resp.status != "accepted" ? "class='bg-danger'" : undefined}>
+              )}" ${resp.status != "accepted" ? "class='bg-danger'" : undefined}>
               <td>${resp._id}</td>
               <td>${shorten(resp.book.title, 40)}</td>
               <td>${shorten(resp.book.publisher, 80)}</td>
@@ -176,11 +194,12 @@ $("input[name='itemIDSell']").on("focusout", (event: any) => {
               })}</td>
               <td>${resp.status}</td>
               <td>
-                <button onclick="window.rmbook(this)" class="btn btn-danger rmBook">Usuń</button>
+              <button onclick="window.rmbook(this)" class="btn btn-danger rmBook">Usuń</button>
               </td>
-            </tr>
-          `);
-        }
+              </tr>
+              `);
+            }
+          }
       }
       $(event.target).trigger("focus");
     }

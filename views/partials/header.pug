@@ -19,6 +19,9 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
         ul.nav.navbar-nav
           li.nav-item(class=(title === 'Home') ? 'active' : undefined)
             a.nav-link(href='/')=language.website.button.home
+          if user && user.isSeller()
+            li.nav-item(class=(title === 'Kasa') ? 'active' : undefined)
+              a.nav-link(href='/bulk') Kasa  
           if user && user.role == "student"
             li.nav-item(class=(title === 'Wydrukuj Etykietę') ? 'active' : undefined)
               a.nav-link(href='/label')= language.website.button.labels
@@ -30,9 +33,9 @@ nav.navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top
           //-   a.nav-link(href='/api') API Examples
           //- li.nav-item(class=(title === 'Contact') ? 'active' : undefined)
           //-   a.nav-link(href='/contact') Contact
-        if !device.mobile()
-          if !disableSearch
-            .col
+        .col
+          if !device.mobile()
+            if !disableSearch
               if user && user.role != "student"
                 form(action="/find", method="get")
                   .input-group 

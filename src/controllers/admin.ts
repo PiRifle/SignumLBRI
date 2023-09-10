@@ -115,14 +115,14 @@ export async function books(req: Request, res: Response): Promise<void> {
 
 export async function earnings(req: Request, res: Response) {
   
-  const listingsSold = await BookListing.find({school: req.user.school._id, status: {$in: ["sold"]}}, "commission cost")
-  const listingsGivenMoney = await BookListing.find({school: req.user.school._id, status: {$in: ["given_money"]}}, "commission cost")
+  const listingsSold = await BookListing.find({school: req.user.school._id, status: {$in: ["sold"]}}, "commission cost");
+  const listingsGivenMoney = await BookListing.find({school: req.user.school._id, status: {$in: ["given_money"]}}, "commission cost");
 
-  const moneyFlow = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission+currVal.cost, 0)+listingsGivenMoney.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission+currVal.cost, 0)
-  const returnMoney = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.cost, 0)
-  const earned = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission, 0)+listingsGivenMoney.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission, 0)
-  const returnToCreator = earned*0.20
-  const earnedForSchool = earned-returnToCreator
+  const moneyFlow = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission+currVal.cost, 0)+listingsGivenMoney.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission+currVal.cost, 0);
+  const returnMoney = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.cost, 0);
+  const earned = listingsSold.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission, 0)+listingsGivenMoney.reduce((prevVal, currVal, currIdx, arr)=>prevVal+currVal.commission, 0);
+  const returnToCreator = earned*0.20;
+  const earnedForSchool = earned-returnToCreator;
   return res.render("admin/page/earnings", { title: "Earnings",  moneyFlow, returnMoney, earned, returnToCreator, earnedForSchool});
 
 }
