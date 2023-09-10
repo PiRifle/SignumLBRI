@@ -490,7 +490,7 @@ export const deleteBook = (req: Request, res: Response): void => {
 };
 
 export function getBulkSell(req: Request, res: Response) {
-  res.render("book/bulk", { disableSearch: true });
+  res.render("book/bulk", { disableSearch: true, title: "Kasa" });
 }
 
 export async function postBulkSell(req: Request, res: Response) {
@@ -522,7 +522,7 @@ export async function postBulkSell(req: Request, res: Response) {
   const findA = await Promise.all(
     bookIDS.map(async (book: string) => {
       const [err, find] = await BookListing.findOneAndUpdate(
-        { _id: req.params.id, status: "accepted" , ...(!req.user.isHeadAdmin() && {school: req.user.school}) },
+        { _id: book, status: "accepted" , ...(!req.user.isHeadAdmin() && {school: req.user.school}) },
         {
           status: "sold",
           boughtBy: buyer,
@@ -531,6 +531,8 @@ export async function postBulkSell(req: Request, res: Response) {
         },
       ).then(a=>[null, a]).catch((err) =>[err, null]);
       
+      // console.log(find);
+
       if (err) return req.flashError(err, req.language.errors.internal);
 
       if (find == null) {

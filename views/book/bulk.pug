@@ -45,16 +45,19 @@ block content
         if device.mobile()
             .input-group-append  
                 button(type="button").mobile.fa.fa-camera.border-0.scan-barcode-addToCart.h-100
-    table.table.sellTable
-        thead 
-            th=language.website.table.headers.ID
-            th=language.website.table.headers.title
-            th=language.website.table.headers.publisher 
-            th=language.website.table.headers.price
-            th=language.website.table.headers.status
-            th=language.website.table.headers.edit
-        tbody 
-
+    if !device.mobile()
+        table.table.sellTable
+            thead 
+                th=language.website.table.headers.ID
+                th=language.website.table.headers.title
+                th=language.website.table.headers.publisher 
+                th=language.website.table.headers.price
+                th=language.website.table.headers.status
+                th=language.website.table.headers.edit
+            tbody 
+    else 
+        div.sellMobile.py-2
+            ul.px-2
       
     button(data-bs-toggle="modal" data-bs-target="#sellModal").btn.btn-warning.m-1.sellBooks= language.website.button.sell
 
