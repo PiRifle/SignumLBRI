@@ -18,7 +18,8 @@ maskMoney($);
 window.JQuery = $;
 
 const container = document.querySelector('.book-render')
-if (container){
+
+if (container && (navigator as any).gpu){
   console.log("loading webrenderer")
   import(/* webpackChunkName: "webgl" */ "./webrender").then(({setupRenderer})=>{setupRenderer()}).catch((error) => {
     console.log(error)

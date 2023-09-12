@@ -79,7 +79,7 @@ export async function setupRenderer(): Promise<any> {
     const renderer = new THREE.WebGLRenderer({ antialias: false })
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(Math.min(window.innerWidth, window.innerHeight), Math.min(window.innerWidth, window.innerHeight))
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio/1.5, 2/1.5))
+    renderer.setPixelRatio(window.devicePixelRatio)
     if (!container) return null;
     container.append(renderer.domElement)
     window.addEventListener("resize", onWindowResize, false)
