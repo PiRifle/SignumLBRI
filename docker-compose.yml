@@ -34,6 +34,6 @@ services:
       # NODE_ENV: production
       NODE_ENV: developement
       MONGODB_URI: mongodb://mongo:27017/
-      MONGODB_URI_LOCAL: mongodb://mongo:27017/
+      MONGODB_URI_LOCAL: mongodb://192.168.8.182:27017/
     # ports:
     #   - 3000:3000

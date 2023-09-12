@@ -8,7 +8,9 @@ import flash from "express-flash";
 import path from "path";
 import mongoose from "mongoose";
 import passport from "passport";
+import ejs from "ejs";
 import bluebird from "bluebird";
+
 import { MONGODB_URI, SESSION_SECRET, version } from "./util/secrets";
 import MobileDetect from "mobile-detect";
 // Controllers (route handlers)
@@ -114,12 +116,20 @@ app.use(
   express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }),
 );
 app.use(performanceController.registerPerformance);
+
+// console.log(app.get("views"))
+
 /**
  * Primary app routes.
  */
 // app.get("/contact", contactController.getContact);
 // app.post("/contact", contactController.postContact);
 app.get("/", passportConfig.isAnonymous, homeController.index);
+app.get("/email", async (req, res)=>{
+  return res.send(await ejs.renderFile(`${res.app.get("views")}/email/validate.ejs`, {...res.locals, registerUrl: `http://${req.headers.host}/verify`}))
+  // return res.send(await ejs.renderFile(`${res.app.get("views")}/email/validate.ejs`, {...res.locals, registerUrl: `http://${req.headers.host}/verify`}))
+
+});
 app.get("/privacy", homeController.policy);
 app.post("/error/send", errorController.postError);
 app.get("/library", bookController.getLibrary);

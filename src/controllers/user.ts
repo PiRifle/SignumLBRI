@@ -18,6 +18,8 @@ import {
 } from "../util/secrets";
 import { School } from "../models/School";
 import { ObjectID } from "bson";
+// import pug from "pug"
+import ejs from "ejs";
 
 /**
  * Login page.
@@ -263,14 +265,18 @@ export const postSignup = async (
     },
   });
 
+  // console.log(pug.renderFile(`${res.app.get("views")}/email/validate.pug`, {...res.locals, registerUrl: `http://${req.headers.host}/verify/${token}`}))
+
   const mailOptions = {
     to: user.email,
     from: MAIL_SHOWMAIL,
     subject: "Zweryfikuj swoje konto",
+    html: await ejs.renderFile(`${res.app.get("views")}/email/validate.ejs`, {...res.locals, registerUrl: `http://${req.headers.host}/verify/${token}`}),
     text: `
 Witaj w SignumLBRI\n
 Kliknij w link poniżej aby dokończyć rejestrację :))\n
-http://${req.headers.host}/verify/${token}\n\n`,
+http://${req.headers.host}/verify/${token}\n\n`
+,
   };
 
   const mail = await transporter
