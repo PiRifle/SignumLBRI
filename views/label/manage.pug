@@ -28,7 +28,7 @@ block content
 
                                     td.px-6.py-3= listing.book.title.length > 40 ? listing.book.title.substring(0, 40 - 3) + "..." : listing.book.title
                                     td.px-6.py-3(class="max-md:hidden")= listing.book.publisher.length > 80 ? listing.book.publisher.substring(0, 80 - 3) + "..." : listing.book.publisher
-                                    td.px-6.py-3= listing.cost
+                                    td.px-6.py-3= listing.cost.toLocaleString('pl-PL', { style: 'currency', currency: 'PLN' })
                                     td.px-6.py-3= listing.label.print ? 'Tak' : "Nie"
                 .flex.flex-row.space-x-4.items-center.justify-center.m-4
                     +button(type="submit")= language.website.button.print

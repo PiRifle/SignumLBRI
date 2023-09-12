@@ -189,7 +189,7 @@ export const getPrintSetup = (req: Request, res: Response): void => {
   BookListing.find(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    req.user.isSeller() ? {} : { bookOwner: req.user },
+    {...(req.user.isSeller() ? {} : { bookOwner: req.user }), status: {$nin: ["canceled", "deleted"]}},
   )
     .populate("book")
     .populate({ path: "label" })
