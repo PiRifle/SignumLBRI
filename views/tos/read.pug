@@ -1,0 +1,75 @@
+extends ../layout_tailwindcss
+
+include ../mixins/prebuild_blocks
+
+block content
+    .container.mx-auto.my-10
+        +header Regulamin
+        +divider()
+        ol.list-decimal
+            li Cel serwisu internetowego “Targi książki”.
+                p Strona powstała w celu ułatwienia zakupu oraz sprzedaży podręczników oraz innych rodzajów książek przez uczniów szkół średnich w Opolu. 
+            li Rejestracja oraz konto użytkownika.
+                ol.list-decimal.list-inside.pl-5
+                    li Aby móc korzystać ze strony internetowej, należy w pierwszej kolejności zarejestrować się, tym samym zakładając konto użytkownika.
+                    li W tym celu, potencjalny użytkownik musi podać swoje prawdziwe dane osobowe oraz kontaktowe, tj. imię, nazwisko, email, numer telefonu, nazwa szkoły do której się uczęszcza.
+                    li Zarejestrowanie użytkownika i w rezultacie zapisanie jego danych osobowych oznacza, że użytkownik wyraził zgodę na przetwarzanie przez właściciela danych osobowych użytkownika w formularzu rejestracji.
+            li Proces wystawiania książek na sprzedaż.
+                ol.list-decimal.list-inside.pl-5
+                    li Umieszczanie książek w serwisie internetowym.
+                        ul.list-disc.list-inside.pl-5
+                            li Wystawiając książkę na sprzedaż, należy wprowadzić jej ISBN (kod kreskowy znajdujący się z tyłu książki) oraz ustalić i wpisać cenę, za którą zamierzamy sprzedać książkę.
+                            li Nie istnieją żadne ograniczenia, co do ilości wystawionych książek na sprzedaż.
+
+                    li Drukowanie etykiet z kodem kreskowym danej książki.
+                        ul.list-disc.list-inside.pl-5
+                            li Aby opisać fizycznie każdą z wystawionych książek, należy wydrukować etykietę, wyciąć ją wzdłuż wyznaczonych linii, a następnie włożyć do właściwej książki. 
+                            li Strona umożliwia wydruk wielu etykiet naraz. 
+
+                    li Oddawanie książek w punkcie sprzedaży.
+                        ul.list-disc.list-inside.pl-5
+                            li Książkę, która zawiera w środku wydrukowaną i wyciętą etykietę należy oddać do specjalnie wyznaczonego punktu w swojej szkole.
+                            li Książki nie zwierające etykiet nie będą przyjmowane.
+            li Płatności i rozliczenia.
+                ol.list-decimal.list-inside.pl-5
+                    li Dokonywanie płatności za zakupione książki odbywa się w wyznaczonym przez szkołę punkcie.
+                    li Cena wyznaczona przez sprzedającego jest jego stuprocentowym zyskiem. Procent zysku dla samorządu i serwisu jest doliczany do ustalonej ceny przez sprzedającego.
+                    li Każdy sprzedający ustala ceny indywidualnie.
+                    li Terminy, w których trzeba będzie dokonać płatności ustala samorząd szkolny i indywidualnie zakomunikuje uczniom.
+            li Zasady dotyczące pobierania opłat.
+                ol.list-decimal.list-inside.pl-5
+                    li Procent doliczany do ustalonej przez sprzedającego kwoty, wyznacza samodzielnie samorząd każdej szkoły.
+                    li Procent zysku przeznaczonego dla samorządu nie może przewyższyć 100% wyznaczonej ceny przez sprzedającego.
+                    li Twórca aplikacji pobiera 20% od każdej ceny dla własnych zysków.
+                    li Użytkownik nie ponosi żadnych kosztów za wystawianie książek na sprzedaż.
+
+            li Terminy i dostępność.
+                ol.list-decimal.list-inside.pl-5
+                    li Wszystkie terminy związane z całym przedsięwzięciem ustala każdy samorząd szkolny z osobna.
+                    li Terminy zostaną indywidualnie przekazane uczniom przez samorząd szkolny.
+
+            li Prawa i obowiązki użytkowników.
+                ol.list-decimal.list-inside.pl-5
+                    li Sprzedający w każdym momencie może zrezygnować ze swojej oferty i wycofać  książki ze sprzedaży bez żadnych konsekwencji.
+                    li Każdy użytkownik serwisu internetowego jest zobowiązany do zapoznania się z regulaminem oraz przestrzegania go.
+                    li Strona internetowa jest obsługiwana przez wszelkiego rodzaju przeglądarki internetowe. Nie wymaga się żadnych szczególnych właściwości urządzenia końcowego użytkownika.
+                    li Zabronione jest korzystanie w jakikolwiek sposób niezgodny z prawem lub nieuczciwy, albo w sposób, zmierzający do osiągnięcia niezgodnego z prawem lub nieuczciwego celu.
+                    li Każde naruszenie regulaminu będzie wiązało się z uniemożliwieniem korzystania ze strony dla konsumenta.
+
+            li Ochrona danych użytkownika.
+                p Właściciel strony szanuje w pełni prywatność użytkowników. Szczegółowe informacje na temat sposobu gromadzenia i przetwarzania danych osobowych użytkownika lub innych informacji, jak również sytuacji, w których właściciel  może je ujawnić, znajdują się w zakładce Polityka Prywatności.
+
+            li Reklamacje i konflikty.
+                li Wszelkie nieporozumienia, konflikty i reklamacje są rozwiązywane pomiędzy sprzedawcą, a kupującym.
+                li W ciężkich przypadkach należy zgłosić się o pomoc do samorządu szkolnego, który bezstronnie postara się  rozstrzygnąć spór. 
+                li Istnieje również możliwość odmowy pomocy przez samorząd szkolny. W tym wypadku osoby w konflikcie muszą rozwiązać konflikt we własnym gronie.
+
+            li Odpowiedzialność serwisu.
+                p Serwis oraz jego właściciel, nie ponosi odpowiedzialności za nieudane transakcje, konflikty, reklamacje oraz wszelkie nieporozumienia.
+
+            li Zmiana warunków strony internetowej.
+                li Właściciel strony internetowej zastrzega sobie prawo do dokonywania modyfikacji niniejszego regulaminu, w dowolnym momencie jego obowiązywania zamieszczając zaktualizowaną wersję na stronie internetowej, który zaczyna obowiązywać użytkowników od momentu jego publikacji, chyba że inaczej wskazano w zmodyfikowanym regulaminie.
+                li Każdy użytkownik ma obowiązek zapoznania się z modyfikacjami  regulaminu.
+                li Dalsze korzystanie ze strony internetowej jest równoznaczne z akceptacją zmodyfikowanego regulaminu strony internetowej. 
+
+            li Pytania lub uwagi dotyczące strony internetowej można zgłaszać na następujący adres email: piotrekpolocz@gmail.com.

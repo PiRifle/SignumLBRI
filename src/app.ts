@@ -121,6 +121,7 @@ app.use(performanceController.registerPerformance);
 // app.post("/contact", contactController.postContact);
 app.get("/", passportConfig.isAnonymous, homeController.index);
 app.get("/privacy", homeController.policy);
+app.get("/tos", homeController.tos);
 app.post("/error/send", errorController.postError);
 app.get("/library", bookController.getLibrary);
 app.post("/language", changeLanguage);

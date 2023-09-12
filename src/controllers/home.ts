@@ -70,6 +70,11 @@ export const policy = (req: Request, res: Response) => {
   res.render("privacy_policy/read");
 };
 
+export const tos = (req: Request, res: Response) => {
+  res.render("tos/read");
+};
+
+
 export const index = async (req: Request, res: Response): Promise<void> => {
   if ((req.user as UserDocument).role != "student") {
     res.render("homeStaff", {
